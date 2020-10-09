@@ -9,6 +9,14 @@ You need three processes running for the full development enviroment
 2. `npm run node` runs up a blockchain node, generate typechain interfaces, compile and deploy smart-contracts then watch for changes in smart contracts and deploy them.
 3. `npm run frontend` runs a dev-server for a create-react-application from packages/buidler-demo/frontend that is served on http://localhost:3000/ with hot-reloading. This will also reload when you change smart contracts
 
+### Use a browser wallet to interact with Ethereum
+
+1. Use Metamask or some other wallet provider (https://metamask.io/).
+2. Use Mnemonic "shrug antique orange tragic direct drop abstract ring carry price anchor train".
+3. Set the Network to custom rpc at "http://127.0.0.1:8545/".
+
+Demo should be working!
+
 # Packages
 
 ## @symfoni/buidler-demo
