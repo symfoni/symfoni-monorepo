@@ -1,0 +1,59 @@
+{
+  "name": "@symfoni/buidler-demo",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "spinners-react": "^1.0.4",
+    "web3modal": "^1.9.0"
+  },
+  "devDependencies": {
+    "@blockchangers/buidler-typechain": "^0.1.6",
+    "@nomiclabs/buidler": "^1.4.7",
+    "@nomiclabs/buidler-waffle": "^2.1.0",
+    "@openzeppelin/contracts": "^2.5.1",
+    "@symfoni/buidler-react": "^0.0.1",
+    "@typechain/ethers-v5": "^1.0.0",
+    "@types/chai": "^4.2.12",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^12.12.62",
+    "buidler-deploy": "^0.6.0-beta.16",
+    "buidler-ethers-v5": "^0.2.2",
+    "chai": "^4.2.0",
+    "ethers": "^5.0.14",
+    "ts-generator": "0.0.8",
+    "ts-node": "^9.0.0",
+    "typechain": "^2.0.0",
+    "typescript": "^4.0.3"
+  },
+  "files": [
+    "dist/src/",
+    "src/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build-react": "tsc --p tsconfig.react.json",
+    "build": "tsc",
+    "buidl": "tsc",
+    "watch": "npx buidler node --network buidlerevm && tsc -w",
+    "node": "npx buidler compile && npx buidler typechain && npx buidler node --network buidlerevm --watch"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

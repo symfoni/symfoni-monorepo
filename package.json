@@ -1,0 +1,15 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.22.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "scripts": {
+    "test": "npx lerna run test",
+    "watch": "npx lerna run watch --parallel",
+    "frontend": "cd packages/react-demo && npm start",
+    "node": "npx lerna run node --stream"
+  }
+}

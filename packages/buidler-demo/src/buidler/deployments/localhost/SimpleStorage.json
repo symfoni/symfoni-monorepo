@@ -1,0 +1,204 @@
+{
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "name",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "uri",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "docHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "Document",
+      "type": "event"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "name",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getDocument",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "docURI",
+          "type": "string"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "docHash",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getDocumentList",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "documentList",
+          "type": "bytes32[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "name",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "uri",
+          "type": "string"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "documentHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setDocument",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "receipt": {
+    "to": null,
+    "from": "0x81a6Fe25534cb713DFDd75e5DD49bA5c02EDe148",
+    "contractAddress": "0x92e6eb469B08541efD1D0B08FC1bdAdEf3C733C0",
+    "transactionIndex": 0,
+    "gasUsed": "353914",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x3b5f07a4de91546c61f0d2b52461e6b91912cfbd0cd617ef57366572861a9390",
+    "transactionHash": "0x4839606f18751746e02e08d03055fb106b872271305b0061d25184f4dcd032a6",
+    "logs": [],
+    "blockNumber": 1,
+    "cumulativeGasUsed": "353914",
+    "status": 1,
+    "byzantium": true
+  },
+  "address": "0x92e6eb469B08541efD1D0B08FC1bdAdEf3C733C0",
+  "args": [],
+  "solcInputHash": "0x9f3c45fe9fa9d71e7fcf5176b1d5955befc6a1dfad79fd5f29a3e6e03f85ec24",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.15+commit.6a57276f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"name\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"uri\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"docHash\",\"type\":\"bytes32\"}],\"name\":\"Document\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"name\",\"type\":\"bytes32\"}],\"name\":\"getDocument\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"docURI\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"docHash\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getDocumentList\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"documentList\",\"type\":\"bytes32[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"name\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"uri\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"documentHash\",\"type\":\"bytes32\"}],\"name\":\"setDocument\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Store & retreive value in a variable\",\"methods\":{},\"title\":\"Storage\"},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"contracts/SimpleStorage/SimpleStorage.sol\":\"SimpleStorage\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":50},\"remappings\":[]},\"sources\":{\"contracts/SimpleStorage/SimpleStorage.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity >=0.5.5 <0.7.0;\\n\\n/**\\n * @title Storage\\n * @dev Store & retreive value in a variable\\n */\\ncontract SimpleStorage {\\n    struct Doc {\\n        string docURI;\\n        bytes32 docHash;\\n    }\\n    mapping(bytes32 => Doc) internal _documents;\\n    bytes32[] internal _documentList;\\n    event Document(bytes32 name, string uri, bytes32 docHash);\\n\\n    function getDocument(bytes32 name)\\n        external\\n        view\\n        returns (string memory docURI, bytes32 docHash)\\n    {\\n        require(\\n            bytes(_documents[name].docURI).length != 0,\\n            \\\"Document cannot be empty.\\\"\\n        );\\n        return (_documents[name].docURI, _documents[name].docHash);\\n    }\\n\\n    function setDocument(\\n        bytes32 name,\\n        string calldata uri,\\n        bytes32 documentHash\\n    ) external {\\n        require(\\n            _documents[name].docHash == bytes32(0),\\n            \\\"Cannot override document.\\\"\\n        );\\n        _documents[name] = Doc({docURI: uri, docHash: documentHash});\\n        _documentList.push(name);\\n        emit Document(name, uri, documentHash);\\n    }\\n\\n    function getDocumentList()\\n        external\\n        view\\n        returns (bytes32[] memory documentList)\\n    {\\n        return _documentList;\\n    }\\n}\\n\",\"keccak256\":\"0xc9eadd4d8f9640305e84aedc555b93f5c98eda25645ee701f2406fa2a6d11074\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610570806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063010648ca14610046578063b10d6b41146100bd578063f036d2e814610159575b600080fd5b6100bb6004803603606081101561005c57600080fd5b81359190810190604081016020820135600160201b81111561007d57600080fd5b82018360208201111561008f57600080fd5b803590602001918460018302840111600160201b831117156100b057600080fd5b9193509150356101b1565b005b6100da600480360360208110156100d357600080fd5b503561032c565b6040518080602001838152602001828103825284818151815260200191508051906020019080838360005b8381101561011d578181015183820152602001610105565b50505050905090810190601f16801561014a5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b61016161044a565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561019d578181015183820152602001610185565b505050509050019250505060405180910390f35b60008481526020819052604090206001015415610211576040805162461bcd60e51b815260206004820152601960248201527821b0b73737ba1037bb32b93934b232903237b1bab6b2b73a1760391b604482015290519081900360640190fd5b6040805160606020601f860181900402820181018352918101848152909182919086908690819085018382808284376000920182905250938552505050602091820184905286815280825260409020825180519192610275928492909101906104a3565b50602091820151600191820155805480820182556000919091527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6018590556040805186815290810183905260609181018281529181018490527f89730c201d2df6a4cef4e892559e63e022078b0ee939d11b6ced61fb098b282491869186918691869160808201858580828437600083820152604051601f909101601f191690920182900397509095505050505050a150505050565b600081815260208190526040812054606091906002600019610100600184161502019091160461039f576040805162461bcd60e51b81526020600482015260196024820152782237b1bab6b2b73a1031b0b73737ba1031329032b6b83a3c9760391b604482015290519081900360640190fd5b6000838152602081815260409182902060018082015482548551600293821615610100026000190190911692909204601f8101859004850283018501909552848252919391929091849183018282801561043a5780601f1061040f5761010080835404028352916020019161043a565b820191906000526020600020905b81548152906001019060200180831161041d57829003601f168201915b5050505050915091509150915091565b6060600180548060200260200160405190810160405280929190818152602001828054801561049857602002820191906000526020600020905b815481526020019060010190808311610484575b505050505090505b90565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106104e457805160ff1916838001178555610511565b82800160010185558215610511579182015b828111156105115782518255916020019190600101906104f6565b5061051d929150610521565b5090565b6104a091905b8082111561051d576000815560010161052756fea265627a7a723158204cd9dfd89e74fb8de49ee82d9675edd1da80b1c544b8763735915366eba93d1b64736f6c634300050f0032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c8063010648ca14610046578063b10d6b41146100bd578063f036d2e814610159575b600080fd5b6100bb6004803603606081101561005c57600080fd5b81359190810190604081016020820135600160201b81111561007d57600080fd5b82018360208201111561008f57600080fd5b803590602001918460018302840111600160201b831117156100b057600080fd5b9193509150356101b1565b005b6100da600480360360208110156100d357600080fd5b503561032c565b6040518080602001838152602001828103825284818151815260200191508051906020019080838360005b8381101561011d578181015183820152602001610105565b50505050905090810190601f16801561014a5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b61016161044a565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561019d578181015183820152602001610185565b505050509050019250505060405180910390f35b60008481526020819052604090206001015415610211576040805162461bcd60e51b815260206004820152601960248201527821b0b73737ba1037bb32b93934b232903237b1bab6b2b73a1760391b604482015290519081900360640190fd5b6040805160606020601f860181900402820181018352918101848152909182919086908690819085018382808284376000920182905250938552505050602091820184905286815280825260409020825180519192610275928492909101906104a3565b50602091820151600191820155805480820182556000919091527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6018590556040805186815290810183905260609181018281529181018490527f89730c201d2df6a4cef4e892559e63e022078b0ee939d11b6ced61fb098b282491869186918691869160808201858580828437600083820152604051601f909101601f191690920182900397509095505050505050a150505050565b600081815260208190526040812054606091906002600019610100600184161502019091160461039f576040805162461bcd60e51b81526020600482015260196024820152782237b1bab6b2b73a1031b0b73737ba1031329032b6b83a3c9760391b604482015290519081900360640190fd5b6000838152602081815260409182902060018082015482548551600293821615610100026000190190911692909204601f8101859004850283018501909552848252919391929091849183018282801561043a5780601f1061040f5761010080835404028352916020019161043a565b820191906000526020600020905b81548152906001019060200180831161041d57829003601f168201915b5050505050915091509150915091565b6060600180548060200260200160405190810160405280929190818152602001828054801561049857602002820191906000526020600020905b815481526020019060010190808311610484575b505050505090505b90565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106104e457805160ff1916838001178555610511565b82800160010185558215610511579182015b828111156105115782518255916020019190600101906104f6565b5061051d929150610521565b5090565b6104a091905b8082111561051d576000815560010161052756fea265627a7a723158204cd9dfd89e74fb8de49ee82d9675edd1da80b1c544b8763735915366eba93d1b64736f6c634300050f0032",
+  "devdoc": {
+    "details": "Store & retreive value in a variable",
+    "methods": {},
+    "title": "Storage"
+  },
+  "userdoc": {
+    "methods": {}
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 957,
+        "contract": "contracts/SimpleStorage/SimpleStorage.sol:SimpleStorage",
+        "label": "_documents",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes32,t_struct(Doc)953_storage)"
+      },
+      {
+        "astId": 960,
+        "contract": "contracts/SimpleStorage/SimpleStorage.sol:SimpleStorage",
+        "label": "_documentList",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_bytes32)dyn_storage"
+      }
+    ],
+    "types": {
+      "t_array(t_bytes32)dyn_storage": {
+        "base": "t_bytes32",
+        "encoding": "dynamic_array",
+        "label": "bytes32[]",
+        "numberOfBytes": "32"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_bytes32,t_struct(Doc)953_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct SimpleStorage.Doc)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Doc)953_storage"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Doc)953_storage": {
+        "encoding": "inplace",
+        "label": "struct SimpleStorage.Doc",
+        "members": [
+          {
+            "astId": 950,
+            "contract": "contracts/SimpleStorage/SimpleStorage.sol:SimpleStorage",
+            "label": "docURI",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 952,
+            "contract": "contracts/SimpleStorage/SimpleStorage.sol:SimpleStorage",
+            "label": "docHash",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32"
+          }
+        ],
+        "numberOfBytes": "64"
+      }
+    }
+  },
+  "gasEstimates": {
+    "creation": {
+      "codeDepositCost": "278400",
+      "executionCost": "318",
+      "totalCost": "278718"
+    },
+    "external": {
+      "getDocument(bytes32)": "infinite",
+      "getDocumentList()": "infinite",
+      "setDocument(bytes32,string,bytes32)": "infinite"
+    }
+  }
+}
