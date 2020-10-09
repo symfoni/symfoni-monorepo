@@ -2,9 +2,10 @@
   "name": "@symfoni/buidler-demo",
   "version": "0.1.0",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/BuidlerSymfoniReact.js",
+  "types": "./lib/BuidlerSymfoniReact.d.ts",
   "dependencies": {
+    "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "@types/react": "^16.9.0",
@@ -32,8 +33,7 @@
     "typescript": "^4.0.3"
   },
   "files": [
-    "dist/src/",
-    "src/",
+    "lib/",
     "LICENSE",
     "README.md"
   ],

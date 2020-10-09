@@ -7,7 +7,6 @@ import { SpinnerCircular } from "spinners-react";
 // contracts
 // import SimpleStorageArtifact from "./buidler/artifacts/SimpleStorage.json";
 import SimpleStorageDeployment from "./buidler/deployments/localhost/SimpleStorage.json";
-// import { SimpleStorage } from "./buidler/typechain/SimpleStorage";
 import { SimpleStorageFactory } from "./buidler/typechain/SimpleStorageFactory";
 import { SimpleStorage } from "./buidler/typechain/SimpleStorage";
 
@@ -45,7 +44,7 @@ export interface BuidlerSymfoniReactProps {
 
 }
 
-export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = ({ children }) => {
+export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props: React.PropsWithChildren<BuidlerSymfoniReactProps>) => {
     const [ready, setReady] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
     const [/* providerName */, setProviderName] = useState<string>();
@@ -163,7 +162,7 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = ({ childr
                 <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
                     <SimpleStorageContext.Provider value={[SimpleStorage, setSimpleStorage]}>
                         {ready &&
-                            (children)
+                            (props.children)
                         }
                         {!ready &&
                             <div>
