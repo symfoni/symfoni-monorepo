@@ -13,12 +13,10 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "isolatedModules": true,
-    "declaration": true,
-    "declarationMap": true,
-    // "noEmit": true,
+    "noEmit": true,
     "jsx": "react"
   },
-  "include": ["./scripts", "./test", "./deploy", "./src"],
+  "include": ["./scripts", "./test", "./deploy"],
   "files": [
     "./buidler.config.ts",
     "./node_modules/buidler-ethers-v5/src/type-extensions.d.ts",

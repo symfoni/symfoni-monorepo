@@ -2,7 +2,7 @@ import { Box, Footer, Grommet, Main, Text } from "grommet";
 import React from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 // import { BuidlerSymfoniReact } from "./BuidlerSymfoniReact";
-import { BuidlerSymfoniReact } from "@symfoni/buidler-demo";
+import { BuidlerSymfoniReact, } from "./buidler/BuidlerSymfoniReact";
 import { SimpleStorage } from './components/SimpleStorage';
 import { Navigation } from './ui/Navigation';
 
@@ -25,8 +25,6 @@ function App() {
   // }, []);
 
   return (
-    // <drizzleReactHooks.DrizzleProvider drizzle={drizzle}>
-
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Grommet>
         <BuidlerSymfoniReact>
@@ -50,7 +48,6 @@ function App() {
         </BuidlerSymfoniReact>
       </Grommet>
     </BrowserRouter >
-    // </drizzleReactHooks.DrizzleProvider>
   );
 }
 

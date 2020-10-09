@@ -23,12 +23,12 @@ const config: BuidlerConfig = {
     },
   },
   paths: {
-    artifacts: "./src/buidler/artifacts",
+    artifacts: "./frontend/src/buidler/artifacts",
     // "cache": "./.dist/.cache/buidler/cache",
     // "sources": "./.symf/",
     // "tests": "./.symf/tests",
     // deploy: "./deploy",
-    deployments: "./src/buidler/deployments",
+    deployments: "./frontend/src/buidler/deployments",
     // react: "./frontend/src/buidler",
   },
   solc: {
@@ -38,7 +38,7 @@ const config: BuidlerConfig = {
     },
   },
   typechain: {
-    outDir: "./src/buidler/typechain",
+    outDir: "./frontend/src/buidler/typechain",
     target: "ethers-v5",
   },
   namedAccounts: {

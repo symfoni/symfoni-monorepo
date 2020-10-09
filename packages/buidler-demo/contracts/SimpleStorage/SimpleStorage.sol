@@ -21,7 +21,7 @@ contract SimpleStorage {
     {
         require(
             bytes(_documents[name].docURI).length != 0,
-            "Document cannot be empty."
+            "Document cannot be empty2."
         );
         return (_documents[name].docURI, _documents[name].docHash);
     }

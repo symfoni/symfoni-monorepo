@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { providers, Signer, ethers } from "ethers";
-import React, { useEffect, useState, ReactChildren } from "react";
-import Web3Modal, { IProviderOptions } from "web3modal";
+import { ethers, providers, Signer } from "ethers";
+import React, { useEffect, useState } from "react";
 import { SpinnerCircular } from "spinners-react";
-
+import Web3Modal, { IProviderOptions } from "web3modal";
 // contracts
 // import SimpleStorageArtifact from "./buidler/artifacts/SimpleStorage.json";
-import SimpleStorageDeployment from "./buidler/deployments/localhost/SimpleStorage.json";
-import { SimpleStorageFactory } from "./buidler/typechain/SimpleStorageFactory";
-import { SimpleStorage } from "./buidler/typechain/SimpleStorage";
+import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json";
+import { SimpleStorage } from "./typechain/SimpleStorage";
+import { SimpleStorageFactory } from "./typechain/SimpleStorageFactory";
+
 
 
 interface SimpleStorageBuidler extends Contract {
@@ -44,13 +44,12 @@ export interface BuidlerSymfoniReactProps {
 
 }
 
-export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props: React.PropsWithChildren<BuidlerSymfoniReactProps>) => {
+export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) => {
     const [ready, setReady] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
     const [/* providerName */, setProviderName] = useState<string>();
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
     const [provider, setProvider] = useState<providers.Provider>(defaultProvider);
-    const [contracts, setContracts] = useState<{ [contractName: string]: Contract }>(defaultContracts);
     const [SimpleStorage, setSimpleStorage] = useState<SimpleStorageBuidler>(SimpleStorageDefault);
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
 
