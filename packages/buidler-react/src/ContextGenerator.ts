@@ -7,9 +7,11 @@ import {
 } from "ts-morph";
 import { JsxEmit } from "typescript";
 
+const CONTEXT_FILE_NAME = "BuidlerContext.tsx";
+
 export class ContextGenerator {
   private project: Project;
-  private file: SourceFile;
+  private sourceFiles: SourceFile[];
   constructor(outdir: string) {
     this.project = new Project({
       // TODO : tsconfig can depend on frontend project
@@ -31,10 +33,18 @@ export class ContextGenerator {
         // outDir: outdir
       }
     });
-    this.file = this.project.createSourceFile(
-      outdir + "/BuidlerContext.tsx",
-      "// Start buidler context"
+    this.project.addSourceFilesAtPaths(outdir + "/**/*{.d.ts,.ts,.tsx}");
+    this.sourceFiles = this.project.getSourceFiles();
+    this.ensure_buidler_context_file();
+  }
+  private ensure_buidler_context_file() {
+    const exist = this.sourceFiles.find(
+      file => file.getBaseName() === CONTEXT_FILE_NAME
     );
+    if (!exist) {
+      const newFile = this.project.createSourceFile(CONTEXT_FILE_NAME);
+      this.sourceFiles = [...this.sourceFiles, newFile];
+    }
   }
 
   emit_console() {
