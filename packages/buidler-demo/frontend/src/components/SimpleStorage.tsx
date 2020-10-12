@@ -14,7 +14,6 @@ interface Document {
 
 export const SimpleStorage: React.FC<Props> = () => {
     const [SimpleStorage] = useContext(SimpleStorageContext)
-    const [file, setFile] = useState<{ name: string, type: string, data: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [documents, setDocuments] = useState<Document[]>([]);
 
@@ -33,7 +32,6 @@ export const SimpleStorage: React.FC<Props> = () => {
                             setDocuments(old => [...old, { name: newName }])
                     })
                 } catch (error) {
-
                 }
             }
         };
@@ -58,33 +56,37 @@ export const SimpleStorage: React.FC<Props> = () => {
         }
     }
 
-    const setDocument = async () => {
-        if (SimpleStorage.instance && file) {
+    const setDocument = async (file: { name: string, type: string, data: string }) => {
+        if (SimpleStorage.instance) {
             const urlToDoc = "https://somestorage.com"
-            const nameBytes32 = ethers.utils.formatBytes32String(file.name)
+            const nameBytes32 = ethers.utils.formatBytes32String(file.name.substr(0, 31))
             const hashOfDocument = ethers.utils.sha256(ethers.utils.toUtf8Bytes(file.data))
             /* const tx =  */await SimpleStorage.instance.setDocument(nameBytes32, urlToDoc, hashOfDocument)
         }
     }
 
     const handleFile = (event: any) => {
+        console.log("Handle File")
         event.preventDefault();
         const reader = new FileReader();
         if (fileInputRef.current?.files) {
+            console.log("Running")
             const file = fileInputRef.current.files[0]
             reader.onload = (e) => {
+                console.log("Onload ", e.target)
                 if (e.target) {
                     if (typeof e.target.result === "string") {
-                        setFile({
+                        setDocument({
                             name: file.name,
                             type: file.type,
                             data: e.target.result
                         })
-                        setDocument()
                     }
                 };
             }
-            reader.readAsDataURL(file)
+            setTimeout(() => {
+                reader.readAsDataURL(file)
+            }, 500)
         }
     }
 
@@ -115,7 +117,7 @@ export const SimpleStorage: React.FC<Props> = () => {
                             {
                                 property: "name",
                                 header: "Name",
-                                render: (data) => data.name.substr(0, 6),
+                                render: (data) => data.name.substr(0, 31),
                             },
                             {
                                 property: "hash",
