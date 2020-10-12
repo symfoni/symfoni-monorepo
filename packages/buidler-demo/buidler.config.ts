@@ -29,7 +29,7 @@ const config: BuidlerConfig = {
     // "tests": "./.symf/tests",
     // deploy: "./deploy",
     deployments: "./frontend/src/buidler/deployments",
-    // react: "./frontend/src/buidler",
+    react: "./frontend/src/buidler",
   },
   solc: {
     optimizer: {

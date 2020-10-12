@@ -34,23 +34,26 @@
     "@types/fs-extra": "^5.0.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.38",
+    "buidler-deploy": "^0.6.0-beta.16",
     "chai": "^4.2.0",
     "dotenv": "^6.2.0",
     "mocha": "^5.2.0",
     "prettier": "^1.17.0",
     "source-map-support": "^0.5.12",
+    "ts-generator": "0.0.8",
+    "ts-node": "^9.0.0",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "buidler-deploy": "^0.6.0-beta.16",
-    "ts-generator": "0.0.8",
-    "ts-node": "^9.0.0",
     "typechain": "^2.0.0",
     "typescript": "^4.0.3"
   },
   "peerDependencies": {
+    "@blockchangers/buidler-typechain": "^0.1.6",
     "@nomiclabs/buidler": "^1.0.1",
-    "buidler-deploy": "^0.6.0-beta.16",
-    "@blockchangers/buidler-typechain": "^0.1.6"
+    "buidler-deploy": "^0.6.0-beta.16"
+  },
+  "dependencies": {
+    "ts-morph": "^8.1.1"
   }
 }

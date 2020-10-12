@@ -4,6 +4,7 @@ import { readArtifactSync, readArtifact } from "@nomiclabs/buidler/plugins";
 
 import path from "path";
 import fs from "fs-extra";
+import { ContextGenerator } from "./ContextGenerator";
 
 export default function() {
   /* extend config */
@@ -50,12 +51,18 @@ export default function() {
         }
         return artifact;
       };
+
       // get all typechains objects
       // for each typechain object
       // Check if it has deployment, then add code that will connect contract init to that instace
 
       // Get
-      console.log(await bre.deployments.all());
+      if (!bre.config.paths.react) {
+        throw Error("Please configure a buidler react path");
+      }
+      const context = new ContextGenerator(bre.config.paths.react);
+      context.emit_console();
+      // console.log(await bre.deployments.get("SimpleStorage"));
       await bre.run("react:run", args);
     });
 }
