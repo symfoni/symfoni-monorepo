@@ -153,18 +153,13 @@ export class BuidlerContextGenerator {
         ]
       }
     ]);
-    reactComponent.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: []
-      }
-    ]);
+
     reactComponent.addVariableStatements([
       {
         declarationKind: VariableDeclarationKind.Const,
         declarations: [
           {
-            name: "const [signer, setSigner]",
+            name: "[signer, setSigner]",
             initializer: "useState<Signer | undefined>(defaultSigner)"
           }
         ]
