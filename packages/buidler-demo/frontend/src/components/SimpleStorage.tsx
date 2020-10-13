@@ -1,7 +1,9 @@
 import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { SimpleStorageContext } from './../buidler/BuidlerSymfoniReact';
+import { CurrentAddressContext, ProviderContext, SignerContext, SimpleStorageContext } from './../buidler/BuidlerSymfoniReact';
+import { Client, Identity, KeyInfo, Buckets } from '@textile/hub'
+
 
 interface Props { }
 
@@ -14,6 +16,9 @@ interface Document {
 
 export const SimpleStorage: React.FC<Props> = () => {
     const [SimpleStorage] = useContext(SimpleStorageContext)
+    const [provider] = useContext(ProviderContext)
+    const [currentAddress] = useContext(CurrentAddressContext)
+    const [signer] = useContext(SignerContext)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [documents, setDocuments] = useState<Document[]>([]);
 
@@ -37,6 +42,35 @@ export const SimpleStorage: React.FC<Props> = () => {
         };
         doAsync();
     }, [SimpleStorage])
+
+    useEffect(() => {
+        if (provider && signer) {
+            const encoder = new TextEncoder()
+            console.log(encoder.encode("a"))
+            if (!("TextEncoder" in window))
+                alert("Sorry, this browser does not support TextEncoder...");
+            const identity: Identity = {
+                sign: async (bytes) => {
+                    const signedAsString = await signer.signMessage(bytes)
+                    return encoder.encode(signedAsString)
+
+                },
+                public: {
+                    verify: async (data: Uint8Array, sig: Uint8Array): Promise<boolean> => {
+                        return true
+                    },
+                    bytes: encoder.encode(currentAddress.substring(2))
+                }
+            }
+            authorize({ key: "bdsmrirkgb3n5qndmntxuy4w6jq" }, identity)
+        }
+    }, [provider, signer])
+
+    async function authorize(key: KeyInfo, identity: Identity) {
+        const client = await Client.withKeyInfo(key)
+        await client.getToken(identity)
+        return client
+    }
 
     const getDocument = async (name: string) => {
         if (SimpleStorage.instance) {
