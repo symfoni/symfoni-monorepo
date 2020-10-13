@@ -130,5 +130,80 @@ export class BuidlerContextGenerator {
         ]
       }
     ]);
+
+    reactComponent.addVariableStatements([
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: "[messages, setMessages]",
+            initializer: "useState<string[]>([])"
+          }
+        ]
+      }
+    ]);
+    reactComponent.addVariableStatements([
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: "[/* providerName */, setProviderName]",
+            initializer: "useState<string>()"
+          }
+        ]
+      }
+    ]);
+    reactComponent.addVariableStatements([
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: []
+      }
+    ]);
+    reactComponent.addVariableStatements([
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: "const [signer, setSigner]",
+            initializer: "useState<Signer | undefined>(defaultSigner)"
+          }
+        ]
+      }
+    ]);
+    reactComponent.addVariableStatements([
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: "[provider, setProvider]",
+            initializer: "useState<providers.Provider>(defaultProvider)"
+          }
+        ]
+      }
+    ]);
+    reactComponent.addVariableStatements([
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: "[currentAddress, setCurrentAddress]",
+            initializer: "useState<string>(defaultCurrentAddress)"
+          }
+        ]
+      }
+    ]);
+
+    // Must be handled by contract later
+    // reactComponent.addVariableStatements([
+    //   {
+    //     declarationKind: VariableDeclarationKind.Const,
+    //     declarations: [
+    //       // {
+    //       //   name: "const [SimpleStorage, setSimpleStorage]",
+    //       //   initializer: "useState<SimpleStorageBuidler>(SimpleStorageDefault);"
+    //       // },
+    //     ]
+    //   }
+    // ]);
   }
 }
