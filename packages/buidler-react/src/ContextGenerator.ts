@@ -68,11 +68,12 @@ export class ContextGenerator {
 
   emit_console() {
     this.project.save();
-    const sourceFile = this.project.getSourceFile(
-      this.BUIDLER_CONTEXT_FILE_NAME
-    );
-    if (!sourceFile) throw Error("No buidler context file");
-    const emitOutput = sourceFile.getPreEmitDiagnostics();
-    console.log(emitOutput);
+    console.log("Files saved to disk");
+    // const sourceFile = this.project.getSourceFile(
+    //   this.BUIDLER_CONTEXT_FILE_NAME
+    // );
+    // if (!sourceFile) throw Error("No buidler context file");
+    // const emitOutput = sourceFile.getPreEmitDiagnostics();
+    // console.log(emitOutput);
   }
 }

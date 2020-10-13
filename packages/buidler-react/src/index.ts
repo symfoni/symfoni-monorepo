@@ -31,26 +31,26 @@ export default function() {
     .addFlag("log", "whether to output log")
     .addFlag("watch", "regenerate React component on solidity file change")
     .setAction(async (args, bre) => {
-      const getArtifact = async (contractName: string): Promise<any> => {
-        let artifact;
-        try {
-          artifact = await readArtifact(
-            bre.config.paths.artifacts,
-            contractName
-          );
-        } catch (e) {
-          try {
-            artifact = await readArtifact(
-              bre.config.paths.imports ||
-                path.join(bre.config.paths.root, "imports"),
-              contractName
-            );
-          } catch (ee) {
-            throw e;
-          }
-        }
-        return artifact;
-      };
+      // const getArtifact = async (contractName: string): Promise<any> => {
+      //   let artifact;
+      //   try {
+      //     artifact = await readArtifact(
+      //       bre.config.paths.artifacts,
+      //       contractName
+      //     );
+      //   } catch (e) {
+      //     try {
+      //       artifact = await readArtifact(
+      //         bre.config.paths.imports ||
+      //           path.join(bre.config.paths.root, "imports"),
+      //         contractName
+      //       );
+      //     } catch (ee) {
+      //       throw e;
+      //     }
+      //   }
+      //   return artifact;
+      // };
 
       // get all typechains objects
       // for each typechain object
