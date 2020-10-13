@@ -5,11 +5,11 @@
     "lerna": "^3.22.1"
   },
   "scripts": {
-    "bootstrap": "cd packages/buidler-demo/frontend && yarn && cd ../../.. && npx lerna bootstrap && npm run build",
+    "bootstrap": "cd packages/buidler-demo/frontend && yarn && cd ../../.. && npx lerna bootstrap && yarn run build",
     "build": "npx lerna run build --stream",
     "node": "npx lerna run node --stream",
     "watch": "npx lerna run watch --parallel",
     "test": "npx lerna run test",
-    "frontend": "cd packages/buidler-demo/frontend&& npm start"
+    "frontend": "cd packages/buidler-demo/frontend&& yarn start"
   }
 }

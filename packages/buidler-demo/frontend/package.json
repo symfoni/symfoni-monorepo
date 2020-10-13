@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@textile/hub": "^1.1.1",
     "@types/jest": "^24.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
@@ -21,7 +22,7 @@
     "react-scripts": "3.4.3",
     "spinners-react": "^1.0.4",
     "styled-components": "^5.2.0",
-    "typescript": "~3.7.2",
+    "typescript": "~3.9.3",
     "web3modal": "^1.9.0",
     "xlsx": "^0.16.7"
   },
