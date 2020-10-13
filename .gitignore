@@ -62,3 +62,4 @@ cache
 artifacts
 deployments
 typechain
+packages/buidler-demo/frontend/src/buidler/BuidlerContext.tsx

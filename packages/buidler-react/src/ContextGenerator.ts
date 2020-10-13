@@ -3,16 +3,19 @@ import {
   ScriptTarget,
   ModuleKind,
   ModuleResolutionKind,
-  SourceFile
+  SourceFile,
+  ThisExpression
 } from "ts-morph";
 import { JsxEmit } from "typescript";
-
-const CONTEXT_FILE_NAME = "BuidlerContext.tsx";
+import { BuidlerContextGenerator } from "./BuidlerContextGenerator";
 
 export class ContextGenerator {
   private project: Project;
-  private sourceFiles: SourceFile[];
+  private BUIDLER_CONTEXT_FILE_NAME: string;
+  private outdir: string;
   constructor(outdir: string) {
+    this.outdir = outdir;
+    this.BUIDLER_CONTEXT_FILE_NAME = "BuidlerContext.tsx";
     this.project = new Project({
       // TODO : tsconfig can depend on frontend project
       compilerOptions: {
@@ -30,35 +33,46 @@ export class ContextGenerator {
         isolatedModules: true,
         noEmit: true,
         jsx: JsxEmit.React
-        // outDir: outdir
       }
     });
-    this.project.addSourceFilesAtPaths(outdir + "/**/*{.d.ts,.ts,.tsx}");
-    this.sourceFiles = this.project.getSourceFiles();
+    // this.project.addSourceFilesAtPaths(outdir + "/**/*{.d.ts,.ts,.tsx}");
+    // this.project.addSourceFileAtPath(this.BUIDLER_CONTEXT_FILE_NAME);
     this.ensure_buidler_context_file();
+    this.generate_buidler_context_file();
   }
+
   private ensure_buidler_context_file() {
-    const exist = this.sourceFiles.find(
-      file => file.getBaseName() === CONTEXT_FILE_NAME
-    );
+    const exist = this.project
+      .getSourceFiles()
+      .find(file => file.getBaseName() === this.BUIDLER_CONTEXT_FILE_NAME);
     if (!exist) {
-      const newFile = this.project.createSourceFile(CONTEXT_FILE_NAME);
-      this.sourceFiles = [...this.sourceFiles, newFile];
+      const newFile = this.project.createSourceFile(
+        this.outdir + "/" + this.BUIDLER_CONTEXT_FILE_NAME,
+        undefined,
+        { overwrite: true }
+      );
     }
+  }
+
+  private generate_buidler_context_file() {
+    const buidler_context_file = this.project.getSourceFile(
+      this.BUIDLER_CONTEXT_FILE_NAME
+    );
+    if (!buidler_context_file) {
+      throw Error("No buidler context file");
+    }
+    const buidler_context_generator = new BuidlerContextGenerator(
+      buidler_context_file
+    );
   }
 
   emit_console() {
-    const result = this.project.emitToMemory();
-    console.log("Start emit to console");
-
-    // output the emitted files to the console
-    for (const file of result.getFiles()) {
-      console.log("----");
-      console.log(file.filePath);
-      console.log("----");
-      console.log(file.text);
-      console.log("\n");
-    }
     this.project.save();
+    const sourceFile = this.project.getSourceFile(
+      this.BUIDLER_CONTEXT_FILE_NAME
+    );
+    if (!sourceFile) throw Error("No buidler context file");
+    const emitOutput = sourceFile.getPreEmitDiagnostics();
+    console.log(emitOutput);
   }
 }

@@ -9,8 +9,6 @@ import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json"
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorageFactory } from "./typechain/SimpleStorageFactory";
 
-
-
 interface SimpleStorageBuidler extends Contract {
     storage: any,
     instance?: SimpleStorage, // If we dont have an address for contract, it cannot be initiated. Maybe of type ethers.utils.Interface,
@@ -23,9 +21,9 @@ interface Contract {
 }
 
 /* Contexts */
-type Contracts = { [contractName: string]: SimpleStorageBuidler | Contract }
-const defaultContracts: Contracts = {}
-export const ContractsContext = React.createContext<[Contracts, React.Dispatch<React.SetStateAction<Contracts>>]>([defaultContracts, () => { }]);
+// type Contracts = { [contractName: string]: SimpleStorageBuidler | Contract }
+// const defaultContracts: Contracts = {}
+// export const ContractsContext = React.createContext<[Contracts, React.Dispatch<React.SetStateAction<Contracts>>]>([defaultContracts, () => { }]);
 
 
 const SimpleStorageDefault: SimpleStorageBuidler = { storage: undefined, hasSigner: false, hasInstance: false }
