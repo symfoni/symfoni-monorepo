@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { CurrentAddressContext, ProviderContext, SignerContext, SimpleStorageContext } from './../buidler/BuidlerSymfoniReact';
-// import { Client, Identity, KeyInfo, Buckets } from '@textile/hub'
+import { Client, Identity, KeyInfo, Buckets, PublicKey, PrivateKey, bucketsArchive } from '@textile/hub'
 
 
 interface Props { }
@@ -43,34 +43,35 @@ export const SimpleStorage: React.FC<Props> = () => {
         doAsync();
     }, [SimpleStorage])
 
-    // useEffect(() => {
-    //     if (provider && signer) {
-    //         const encoder = new TextEncoder()
-    //         console.log(encoder.encode("a"))
-    //         if (!("TextEncoder" in window))
-    //             alert("Sorry, this browser does not support TextEncoder...");
-    //         const identity: Identity = {
-    //             sign: async (bytes) => {
-    //                 const signedAsString = await signer.signMessage(bytes)
-    //                 return encoder.encode(signedAsString)
+    useEffect(() => {
+        const doAsync = async () => {
+            if (provider && signer) {
+                const identity = await PrivateKey.fromRandom()
+                console.log(identity)
+                const buckets = await Buckets.withKeyInfo({ key: "bdsmrirkgb3n5qndmntxuy4w6jq" })
+                await buckets.getToken(identity)
+                console.log("buckets ", buckets)
+                if (SimpleStorage.instance) {
+                    const bucketResult = await buckets.getOrCreate(SimpleStorage.instance.address)
+                    if (!bucketResult.root) {
+                        throw Error("Failed to open Bucket.")
+                    }
+                    console.log("Created bucket", bucketResult.root.key)
+                    console.log("Bucket is now", buckets)
+                }
+                // buckets
 
-    //             },
-    //             public: {
-    //                 verify: async (data: Uint8Array, sig: Uint8Array): Promise<boolean> => {
-    //                     return true
-    //                 },
-    //                 bytes: encoder.encode(currentAddress.substring(2))
-    //             }
-    //         }
-    //         authorize({ key: "bdsmrirkgb3n5qndmntxuy4w6jq" }, identity)
-    //     }
-    // }, [provider, signer])
+            }
+        };
+        doAsync();
+    }, [provider, signer])
 
-    // async function authorize(key: KeyInfo, identity: Identity) {
-    //     const client = await Client.withKeyInfo(key)
-    //     await client.getToken(identity)
-    //     return client
-    // }
+
+    async function authorize(key: KeyInfo, identity: Identity) {
+        const client = await Client.withKeyInfo(key)
+        await client.getToken(identity)
+        return client
+    }
 
     const getDocument = async (name: string) => {
         if (SimpleStorage.instance) {

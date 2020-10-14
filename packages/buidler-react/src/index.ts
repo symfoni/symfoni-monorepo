@@ -5,6 +5,7 @@ import { readArtifactSync, readArtifact } from "@nomiclabs/buidler/plugins";
 import path from "path";
 import fs from "fs-extra";
 import { ContextGenerator } from "./ContextGenerator";
+import { Client, Users } from "@textile/hub";
 
 export default function() {
   /* extend config */
@@ -64,5 +65,12 @@ export default function() {
       context.emit_console();
       // console.log(await bre.deployments.get("SimpleStorage"));
       await bre.run("react:run", args);
+    });
+
+  task("storage", "Create React component")
+    .addParam("provider", "Choose what storage provider to use options: hub")
+    .setAction(async (args, bre) => {
+      // const user = new Client()
+      // user.create()
     });
 }

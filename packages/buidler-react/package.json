@@ -54,6 +54,9 @@
     "buidler-deploy": "^0.6.0-beta.16"
   },
   "dependencies": {
-    "ts-morph": "^8.1.1"
+    "@textile/hub": "^1.1.1",
+    "isomorphic-ws": "^4.0.1",
+    "ts-morph": "^8.1.1",
+    "ws": "^7.3.1"
   }
 }
