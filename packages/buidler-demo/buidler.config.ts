@@ -18,7 +18,7 @@ const config: BuidlerConfig = {
         },
       ],
     },
-    dev: {
+    localhost: {
       url: "HTTP://127.0.0.1:8545",
     },
   },
@@ -48,6 +48,19 @@ const config: BuidlerConfig = {
   },
   react: {
     providerPriority: ["web3modal", "dev", "HTTP://127.0.0.1:8545"],
+  },
+  storage: {
+    patterns: {
+      SimpleStorage: {
+        type: "document",
+      },
+    },
+    providers: {
+      localhost: {
+        type: "hub",
+        key: "bdsmrirkgb3n5qndmntxuy4w6jq",
+      },
+    },
   },
 };
 export default config;

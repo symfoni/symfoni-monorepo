@@ -5,6 +5,7 @@ import { CurrentAddressContext, ProviderContext, SignerContext, SimpleStorageCon
 import { Client, Identity, KeyInfo, Buckets, PublicKey, PrivateKey, bucketsArchive } from '@textile/hub'
 
 
+
 interface Props { }
 
 interface Document {

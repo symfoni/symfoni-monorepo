@@ -3,9 +3,7 @@ import { extendConfig, internalTask, task } from "@nomiclabs/buidler/config";
 import { readArtifactSync, readArtifact } from "@nomiclabs/buidler/plugins";
 
 import path from "path";
-import fs from "fs-extra";
 import { ContextGenerator } from "./ContextGenerator";
-import { Client, Users } from "@textile/hub";
 
 export default function() {
   /* extend config */
@@ -15,6 +13,16 @@ export default function() {
     }
     if (userConfig.paths?.react === undefined) {
       config.paths = { ...config.paths, react: "./frontend/src/buidler" };
+    }
+    if (userConfig.storage == undefined) {
+      config.storage = {
+        patterns: {},
+        providers: {}
+      };
+    } else {
+      if (userConfig.storage.patterns) {
+        // TODO Create default configrations
+      }
     }
   });
 
