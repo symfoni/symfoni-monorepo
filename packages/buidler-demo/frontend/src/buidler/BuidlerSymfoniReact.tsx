@@ -117,33 +117,7 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) =
                         }
                     }
                 }
-                // ForEach Contract
-                // contracts
-                let contractAddress = null
-                let instance = undefined
-                if (SimpleStorageDeployment) {
-                    contractAddress = SimpleStorageDeployment.receipt.contractAddress
-                    instance = signer ? SimpleStorageFactory.connect(contractAddress, signer) : SimpleStorageFactory.connect(contractAddress, provider)
-                }
-
-                const contract: SimpleStorageBuidler = {
-                    storage: null,
-                    instance: instance,
-                    factory: signer ? new SimpleStorageFactory(signer) : undefined,
-                    hasSigner: signer ? true : false,
-                    hasInstance: SimpleStorageDeployment ? true : false
-                }
-                setSimpleStorage(contract)
-
-
-                // interface Contract {
-                //     storage: any,
-                //     contract: ethers.utils.Interface,
-                //     factory: ContractFactory,
-                //     ready: () => boolean,
-                //     attach: (address: string) => Promise<Boolean>
-                // }
-
+                setSimpleStorage(getSimpleStorage())
 
                 setReady(true)
             }
@@ -152,6 +126,24 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) =
         return () => { subscribed = false }
     }, [])
 
+
+    const getSimpleStorage = () => {
+        let contractAddress = null
+        let instance = undefined
+        if (SimpleStorageDeployment) {
+            contractAddress = SimpleStorageDeployment.receipt.contractAddress
+            instance = signer ? SimpleStorageFactory.connect(contractAddress, signer) : SimpleStorageFactory.connect(contractAddress, provider)
+        }
+
+        const contract: SimpleStorageBuidler = {
+            storage: null,
+            instance: instance,
+            factory: signer ? new SimpleStorageFactory(signer) : undefined,
+            hasSigner: signer ? true : false,
+            hasInstance: SimpleStorageDeployment ? true : false
+        }
+        return contract
+    }
 
     return (
         <ProviderContext.Provider value={[provider, setProvider]}>

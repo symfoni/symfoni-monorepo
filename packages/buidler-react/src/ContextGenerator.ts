@@ -1,3 +1,4 @@
+import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 import {
   Project,
   ScriptTarget,
@@ -12,9 +13,16 @@ import { BuidlerContextGenerator } from "./BuidlerContextGenerator";
 export class ContextGenerator {
   private project: Project;
   private BUIDLER_CONTEXT_FILE_NAME: string;
+  private bre: BuidlerRuntimeEnvironment;
+  private args: any;
   private outdir: string;
-  constructor(outdir: string) {
-    this.outdir = outdir;
+  constructor(bre: BuidlerRuntimeEnvironment, args: any) {
+    this.bre = bre;
+    this.args = args;
+    if (!this.bre.config.paths.react) {
+      throw Error("Need to configure react paths in buidler config.");
+    }
+    this.outdir = this.bre.config.paths.react;
     this.BUIDLER_CONTEXT_FILE_NAME = "BuidlerContext.tsx";
     this.project = new Project({
       // TODO : tsconfig can depend on frontend project
@@ -39,6 +47,7 @@ export class ContextGenerator {
     // this.project.addSourceFileAtPath(this.BUIDLER_CONTEXT_FILE_NAME);
     this.ensure_buidler_context_file();
     this.generate_buidler_context_file();
+    this.save();
   }
 
   private ensure_buidler_context_file() {
@@ -61,19 +70,22 @@ export class ContextGenerator {
     if (!buidler_context_file) {
       throw Error("No buidler context file");
     }
+    console.log("RUNning");
     const buidler_context_generator = new BuidlerContextGenerator(
-      buidler_context_file
+      buidler_context_file,
+      this.bre,
+      this.args
     );
   }
 
-  emit_console() {
+  save() {
     this.project.save();
     console.log("Files saved to disk");
-    // const sourceFile = this.project.getSourceFile(
-    //   this.BUIDLER_CONTEXT_FILE_NAME
-    // );
-    // if (!sourceFile) throw Error("No buidler context file");
-    // const emitOutput = sourceFile.getPreEmitDiagnostics();
+    const sourceFile = this.project.getSourceFile(
+      this.BUIDLER_CONTEXT_FILE_NAME
+    );
+    if (!sourceFile) throw Error("No buidler context file");
+    const emitOutput = sourceFile.getPreEmitDiagnostics();
     // console.log(emitOutput);
   }
 }

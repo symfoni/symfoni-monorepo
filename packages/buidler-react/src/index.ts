@@ -1,10 +1,16 @@
-import { extendConfig, internalTask, task } from "@nomiclabs/buidler/config";
+import {
+  extendConfig,
+  extendEnvironment,
+  internalTask,
+  task
+} from "@nomiclabs/buidler/config";
 // import { lazyObject } from "@nomiclabs/buidler/plugins";
 import { readArtifactSync, readArtifact } from "@nomiclabs/buidler/plugins";
 
 import path from "path";
 import fs from "fs-extra";
 import { ContextGenerator } from "./ContextGenerator";
+import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 
 export default function() {
   /* extend config */
@@ -15,6 +21,10 @@ export default function() {
     if (userConfig.paths?.react === undefined) {
       config.paths = { ...config.paths, react: "./frontend/src/buidler" };
     }
+  });
+
+  extendEnvironment((bre: BuidlerRuntimeEnvironment) => {
+    //
   });
 
   /* Add task */
@@ -56,12 +66,7 @@ export default function() {
       // for each typechain object
       // Check if it has deployment, then add code that will connect contract init to that instace
 
-      // Get
-      if (!bre.config.paths.react) {
-        throw Error("Please configure a buidler react path");
-      }
-      const context = new ContextGenerator(bre.config.paths.react);
-      context.emit_console();
+      const context = new ContextGenerator(bre, args);
       // console.log(await bre.deployments.get("SimpleStorage"));
       await bre.run("react:run", args);
     });
