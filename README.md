@@ -1,3 +1,15 @@
+Our Contribution to the ETHOnline hackathon
+=========================================
+
+### We wish to improve the output of Buidler, and include Textile out of the box.
+
+There are three Github repositories as part of our project. They are all part of the hackathon:
+
+* [**buidler-symfoni-demo**](https://github.com/symfoni/buidler-symfoni-demo)
+* [buidler-react](https://github.com/symfoni/buidler-react)
+* buidler-plugins (this project)
+
+
 ## Devloping
 
 1. Install lerna globally `npm i -g lerna`
