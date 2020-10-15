@@ -1,3 +1,4 @@
+import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 import {
   Project,
   ScriptTarget,
@@ -38,7 +39,19 @@ export class ContextGenerator {
     // this.project.addSourceFilesAtPaths(outdir + "/**/*{.d.ts,.ts,.tsx}");
     // this.project.addSourceFileAtPath(this.BUIDLER_CONTEXT_FILE_NAME);
     this.ensure_buidler_context_file();
-    this.generate_buidler_context_file();
+  }
+
+  public async generate_buidler_context_file(args: any, bre: BuidlerRuntimeEnvironment) {
+    const buidler_context_file = this.project.getSourceFile(
+      this.BUIDLER_CONTEXT_FILE_NAME
+    );
+    if (!buidler_context_file) {
+      throw Error("No buidler context file");
+    }
+    const buidler_context_generator = new BuidlerContextGenerator(
+      buidler_context_file
+    );
+    await buidler_context_generator.doGenerate(args, bre);
   }
 
   private ensure_buidler_context_file() {
@@ -52,18 +65,6 @@ export class ContextGenerator {
         { overwrite: true }
       );
     }
-  }
-
-  private generate_buidler_context_file() {
-    const buidler_context_file = this.project.getSourceFile(
-      this.BUIDLER_CONTEXT_FILE_NAME
-    );
-    if (!buidler_context_file) {
-      throw Error("No buidler context file");
-    }
-    const buidler_context_generator = new BuidlerContextGenerator(
-      buidler_context_file
-    );
   }
 
   emit_console() {

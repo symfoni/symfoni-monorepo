@@ -61,6 +61,7 @@ export default function() {
         throw Error("Please configure a buidler react path");
       }
       const context = new ContextGenerator(bre.config.paths.react);
+      await context.generate_buidler_context_file(args, bre);
       context.emit_console();
       // console.log(await bre.deployments.get("SimpleStorage"));
       await bre.run("react:run", args);
