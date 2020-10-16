@@ -23,29 +23,41 @@ const contracts = [
   }
 ];
 
+interface Contract {
+  name: string;
+  deploymentFile?: string;
+  artifactFile: string;
+  typechainInstance: string;
+  typechainFactory: string;
+}
+
 export class BuidlerContextGenerator {
   private sourceFile: SourceFile;
-  private bre: BuidlerRuntimeEnvironment;
   private args: any;
+  private bre: BuidlerRuntimeEnvironment;
+  private contracts: Contract[];
   constructor(
     sourceFile: SourceFile,
-    bre: BuidlerRuntimeEnvironment,
-    args: any
+    args: any,
+    bre: BuidlerRuntimeEnvironment
   ) {
     this.bre = bre;
     this.args = args;
     this.sourceFile = sourceFile;
+    this.contracts = [];
   }
 
   async generate() {
-    await this.build_sources();
+    const contracts = await this.get_contracts();
+    this.contracts = contracts;
+    console.log("contracts", contracts);
     this.imports();
     this.statements();
     this.interfaces();
     this.functions();
   }
 
-  private async build_sources() {
+  private async get_contracts() {
     const currentNetwork = this.bre.buidlerArguments.network;
     if (!currentNetwork) {
       throw Error("Could not determine current network");
@@ -65,21 +77,18 @@ export class BuidlerContextGenerator {
       );
     }
 
-    const deployPath =
-      "./" +
-      path.relative(
-        this.bre.config.paths.react,
-        this.bre.config.paths.deployments
-      ) +
-      "/" +
-      currentNetwork;
-    const typechainPath =
-      "./" +
-      path.relative(
-        this.bre.config.paths.react,
-        this.bre.config.typechain.outDir
-      ) +
-      "/";
+    const relativeDeploymentsPath = path.relative(
+      this.bre.config.paths.react,
+      this.bre.config.paths.deployments + "/" + currentNetwork
+    );
+    const relativeTypechainsPath = path.relative(
+      this.bre.config.paths.react,
+      this.bre.config.typechain.outDir
+    );
+    const relativeArtifactsPath = path.relative(
+      this.bre.config.paths.react,
+      this.bre.config.paths.artifacts
+    );
 
     const deploymentFiles = readdirSync(
       this.bre.config.paths.deployments + "/" + currentNetwork
@@ -88,28 +97,51 @@ export class BuidlerContextGenerator {
     const artifactFiles = readdirSync(this.bre.config.paths.artifacts);
 
     const typechainFiles = readdirSync(this.bre.config.typechain.outDir);
-    console.log("deploymentFiles", deploymentFiles);
-    console.log("artifactFiles", artifactFiles);
-    console.log("typechainFiles", typechainFiles);
+    // console.log("deploymentFiles", deploymentFiles);
+    // console.log("artifactFiles", artifactFiles);
+    // console.log("typechainFiles", typechainFiles);
 
-    // for (const file of deploymentFiles) {
-    //   const parts = file.split(".");
-    //   const ext = parts.pop();
-    //   if (ext == "json") {
-    //     this.sourceFile.addImportDeclaration({
-    //       defaultImport: parts[0].concat("Deployment"),
-    //       moduleSpecifier: deployPath + "/" + file
-    //     });
-    //     this.sourceFile.addImportDeclaration({
-    //       namedImports: [parts[0]],
-    //       moduleSpecifier: typechainPath + parts[0]
-    //     });
-    //     this.sourceFile.addImportDeclaration({
-    //       namedImports: [parts[0].concat("Factory")],
-    //       moduleSpecifier: typechainPath + parts[0].concat("Factory")
-    //     });
-    //   }
-    // }
+    let contracts: Contract[] = [];
+    artifactFiles.forEach(artifactFile => {
+      const artifactName = path.basename(artifactFile, ".json");
+
+      const deploymentFile = deploymentFiles.find(deploymentFile => {
+        return path.basename(deploymentFile, ".json") === artifactName;
+      });
+
+      const typechainInstanceFile = typechainFiles.find(typechainFile => {
+        // Because typechain modifies name to other caseing we need to match on casing
+        const hasInstanceFile =
+          path.basename(typechainFile, ".d.ts").toLowerCase() ===
+          artifactName.toLowerCase();
+        return hasInstanceFile;
+      });
+
+      const typechainFactoryFile = typechainFiles.find(typechainFile => {
+        // Because typechain modifies name to other caseing we need to match on casing
+        const hasFactoryFile =
+          path.basename(typechainFile, ".ts").toLowerCase() ===
+          artifactName.toLowerCase() + "factory";
+        return hasFactoryFile;
+      });
+
+      if (!typechainInstanceFile || !typechainFactoryFile) {
+        return;
+        // throw Error("Could not find typechain file for " + artifactName);
+      }
+
+      contracts.push({
+        name: artifactName,
+        deploymentFile: deploymentFile
+          ? `${relativeDeploymentsPath}/${deploymentFile}`
+          : undefined,
+        artifactFile: `${relativeArtifactsPath}/${artifactFile}`,
+        typechainInstance: `${relativeTypechainsPath}/${typechainInstanceFile}`,
+        typechainFactory: `${relativeTypechainsPath}/${typechainFactoryFile}`
+      });
+    });
+
+    return contracts;
   }
 
   private imports() {
