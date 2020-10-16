@@ -7,7 +7,7 @@ wrapping it in a function and publishing it to npm.
 This sample project contains an example on how to do that, but also comes with 
 many more features:
 
-- A mocha test suit ready to use
+- A mocha test suite ready to use
 - TravisCI already setup
 - A package.json with scripts and publishing info
 - Examples on how to do different things
@@ -18,7 +18,7 @@ We recommend developing Buidler plugins using yarn. To start working on your
 project, just run
 
 ```bash
-npm install
+yarn install
 ```
 
 ## Plugin development

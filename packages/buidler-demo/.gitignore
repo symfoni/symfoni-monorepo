@@ -60,6 +60,9 @@ typings/
 # next.js build output
 .next
 
+# VS Code local history data
+.history
+
 cache
 artifacts
 deployments

@@ -56,6 +56,9 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+# VS Code local history data
+.history
+
 # next.js build output
 .next
 cache

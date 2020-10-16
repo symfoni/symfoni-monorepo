@@ -173,6 +173,7 @@ export class BuidlerContextGenerator {
       ]);
     });
   }
+
   private statements() {
     this.sourceFile.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,

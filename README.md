@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Our Contribution to the ETHOnline hackathon
 =========================================
 
@@ -11,6 +12,9 @@ There are three Github repositories as part of our project. They are all part of
 
 
 ## Devloping
+=======
+## Developing
+>>>>>>> b9c4d7d05ab7ceb4011c2bb6c3024dd7b6833386
 
 1. Install lerna globally `npm i -g lerna`
 2. Run `yarn run bootstrap` // This will install all packages and build
@@ -33,12 +37,8 @@ Demo should be working!
 
 ## @symfoni/buidler-demo
 
-Here is the buidler project that will include buidler-react as a plugin to generate the react component that we will use in react-demo
+This is a demo project that includes buidler-react as a plugin to generate the react component that is used to display some example content.
 
 ## @symfoni/buidler-react
 
 Here is the code for the buidler plugin. Lerna will symlink this package to @symfoni/buidler-demo so we can use it there.
-
-## @symfoni/react-demo
-
-This is a standard react app to demonstrate buidler with a react component output.
