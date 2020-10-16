@@ -8,6 +8,9 @@ import {
   VariableStatement
 } from "ts-morph";
 import { ArrowFunction } from "typescript";
+import path from "path";
+import { readdirSync } from "fs-extra";
+import { read } from "fs";
 
 const contracts = [
   {
@@ -32,10 +35,81 @@ export class BuidlerContextGenerator {
     this.bre = bre;
     this.args = args;
     this.sourceFile = sourceFile;
+  }
+
+  async generate() {
+    await this.build_sources();
     this.imports();
     this.statements();
     this.interfaces();
     this.functions();
+  }
+
+  private async build_sources() {
+    const currentNetwork = this.bre.buidlerArguments.network;
+    if (!currentNetwork) {
+      throw Error("Could not determine current network");
+    }
+    if (!this.bre.config.paths.deployments) {
+      throw Error(
+        "You need to configure 'deployments' in buidler config paths."
+      );
+    }
+    if (!this.bre.config.paths.react) {
+      throw Error("You need to configure 'react' in buidler config paths.");
+    }
+
+    if (!this.bre.config.typechain.outDir) {
+      throw Error(
+        "You need to configure the typechain output directory in buidler config."
+      );
+    }
+
+    const deployPath =
+      "./" +
+      path.relative(
+        this.bre.config.paths.react,
+        this.bre.config.paths.deployments
+      ) +
+      "/" +
+      currentNetwork;
+    const typechainPath =
+      "./" +
+      path.relative(
+        this.bre.config.paths.react,
+        this.bre.config.typechain.outDir
+      ) +
+      "/";
+
+    const deploymentFiles = readdirSync(
+      this.bre.config.paths.deployments + "/" + currentNetwork
+    );
+
+    const artifactFiles = readdirSync(this.bre.config.paths.artifacts);
+
+    const typechainFiles = readdirSync(this.bre.config.typechain.outDir);
+    console.log("deploymentFiles", deploymentFiles);
+    console.log("artifactFiles", artifactFiles);
+    console.log("typechainFiles", typechainFiles);
+
+    // for (const file of deploymentFiles) {
+    //   const parts = file.split(".");
+    //   const ext = parts.pop();
+    //   if (ext == "json") {
+    //     this.sourceFile.addImportDeclaration({
+    //       defaultImport: parts[0].concat("Deployment"),
+    //       moduleSpecifier: deployPath + "/" + file
+    //     });
+    //     this.sourceFile.addImportDeclaration({
+    //       namedImports: [parts[0]],
+    //       moduleSpecifier: typechainPath + parts[0]
+    //     });
+    //     this.sourceFile.addImportDeclaration({
+    //       namedImports: [parts[0].concat("Factory")],
+    //       moduleSpecifier: typechainPath + parts[0].concat("Factory")
+    //     });
+    //   }
+    // }
   }
 
   private imports() {

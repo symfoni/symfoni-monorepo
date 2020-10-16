@@ -16,11 +16,12 @@ export class ContextGenerator {
   private bre: BuidlerRuntimeEnvironment;
   private args: any;
   private outdir: string;
-  constructor(bre: BuidlerRuntimeEnvironment, args: any) {
+  constructor(args: any, bre: BuidlerRuntimeEnvironment) {
     this.bre = bre;
     this.args = args;
+    // Check for needed config
     if (!this.bre.config.paths.react) {
-      throw Error("Need to configure react paths in buidler config.");
+      throw Error("You need to configure 'react' in buidler config paths.");
     }
     this.outdir = this.bre.config.paths.react;
     this.BUIDLER_CONTEXT_FILE_NAME = "BuidlerContext.tsx";
@@ -43,11 +44,7 @@ export class ContextGenerator {
         jsx: JsxEmit.React
       }
     });
-    // this.project.addSourceFilesAtPaths(outdir + "/**/*{.d.ts,.ts,.tsx}");
-    // this.project.addSourceFileAtPath(this.BUIDLER_CONTEXT_FILE_NAME);
     this.ensure_buidler_context_file();
-    this.generate_buidler_context_file();
-    this.save();
   }
 
   private ensure_buidler_context_file() {
@@ -63,19 +60,19 @@ export class ContextGenerator {
     }
   }
 
-  private generate_buidler_context_file() {
+  async generate() {
     const buidler_context_file = this.project.getSourceFile(
       this.BUIDLER_CONTEXT_FILE_NAME
     );
     if (!buidler_context_file) {
       throw Error("No buidler context file");
     }
-    console.log("RUNning");
     const buidler_context_generator = new BuidlerContextGenerator(
       buidler_context_file,
-      this.bre,
-      this.args
+      this.args,
+      this.bre
     );
+    await buidler_context_generator.generate();
   }
 
   save() {

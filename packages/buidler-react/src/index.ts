@@ -50,9 +50,9 @@ export default function() {
     .addFlag("log", "whether to output log")
     .addFlag("watch", "regenerate React component on solidity file change")
     .setAction(async (args, bre) => {
-      const context = new ContextGenerator(bre, args);
-      // console.log(await bre.deployments.get("SimpleStorage"));
-      await bre.run("react:run", args);
+      const context = new ContextGenerator(args, bre);
+      await context.generate();
+      // await bre.run("react:run", args); // TODO Put in internal task for reuseability
     });
 
   task("storage", "Create React component")
