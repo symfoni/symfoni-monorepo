@@ -8,7 +8,6 @@ import {
 import { readArtifactSync, readArtifact } from "@nomiclabs/buidler/plugins";
 
 import path from "path";
-import fs from "fs-extra";
 import { ContextGenerator } from "./ContextGenerator";
 import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 
@@ -20,6 +19,16 @@ export default function() {
     }
     if (userConfig.paths?.react === undefined) {
       config.paths = { ...config.paths, react: "./frontend/src/buidler" };
+    }
+    if (userConfig.storage == undefined) {
+      config.storage = {
+        patterns: {},
+        providers: {}
+      };
+    } else {
+      if (userConfig.storage.patterns) {
+        // TODO Create default configrations
+      }
     }
   });
 
@@ -69,5 +78,12 @@ export default function() {
       const context = new ContextGenerator(bre, args);
       // console.log(await bre.deployments.get("SimpleStorage"));
       await bre.run("react:run", args);
+    });
+
+  task("storage", "Create React component")
+    .addParam("provider", "Choose what storage provider to use options: hub")
+    .setAction(async (args, bre) => {
+      // const user = new Client()
+      // user.create()
     });
 }
