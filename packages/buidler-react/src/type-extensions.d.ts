@@ -12,22 +12,8 @@ interface TypechainConfig {
 interface Storage {
   patterns: Patterns;
   providers: {
-    [network: string]: StorageProviderConfig;
+    [network: string]: Hub;
   };
-}
-
-interface Patterns {
-  [contractName: string]: Pattern;
-}
-
-interface Pattern {
-  type: "document" | "data";
-  target?: "eth" | "storage"; // Defaults to storage
-  name?: string;
-  save?: string;
-  get?: string;
-  list?: string;
-  check?: string;
 }
 
 interface StorageProviderConfig {
@@ -36,6 +22,20 @@ interface StorageProviderConfig {
 
 interface Hub extends StorageProviderConfig {
   key: string;
+}
+
+interface Patterns {
+  [contractName: string]: Pattern;
+}
+
+interface Pattern {
+  type: "document" | "data";
+  target?: "eth" | "storage";
+  name?: string;
+  save?: string;
+  get?: string;
+  list?: string;
+  check?: string;
 }
 
 declare module "@nomiclabs/buidler/types" {
