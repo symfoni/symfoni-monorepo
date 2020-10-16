@@ -16,7 +16,7 @@ interface Document {
 
 
 export const SimpleStorage: React.FC<Props> = () => {
-    const [SimpleStorage] = useContext(SimpleStorageContext)
+    const SimpleStorage = useContext(SimpleStorageContext)
     const [provider] = useContext(ProviderContext)
     const [currentAddress] = useContext(CurrentAddressContext)
     const [signer] = useContext(SignerContext)
@@ -44,28 +44,28 @@ export const SimpleStorage: React.FC<Props> = () => {
         doAsync();
     }, [SimpleStorage])
 
-    useEffect(() => {
-        const doAsync = async () => {
-            if (provider && signer) {
-                const identity = await PrivateKey.fromRandom()
-                console.log(identity)
-                const buckets = await Buckets.withKeyInfo({ key: "bdsmrirkgb3n5qndmntxuy4w6jq" })
-                await buckets.getToken(identity)
-                console.log("buckets ", buckets)
-                if (SimpleStorage.instance) {
-                    const bucketResult = await buckets.getOrCreate(SimpleStorage.instance.address)
-                    if (!bucketResult.root) {
-                        throw Error("Failed to open Bucket.")
-                    }
-                    console.log("Created bucket", bucketResult.root.key)
-                    console.log("Bucket is now", buckets)
-                }
-                // buckets
+    // useEffect(() => {
+    //     const doAsync = async () => {
+    //         if (provider && signer) {
+    //             const identity = await PrivateKey.fromRandom()
+    //             console.log(identity)
+    //             const buckets = await Buckets.withKeyInfo({ key: "bdsmrirkgb3n5qndmntxuy4w6jq" })
+    //             await buckets.getToken(identity)
+    //             console.log("buckets ", buckets)
+    //             if (SimpleStorage.instance) {
+    //                 const bucketResult = await buckets.getOrCreate(SimpleStorage.instance.address)
+    //                 if (!bucketResult.root) {
+    //                     throw Error("Failed to open Bucket.")
+    //                 }
+    //                 console.log("Created bucket", bucketResult.root.key)
+    //                 console.log("Bucket is now", buckets)
+    //             }
+    //             // buckets
 
-            }
-        };
-        doAsync();
-    }, [provider, signer])
+    //         }
+    //     };
+    //     doAsync();
+    // }, [provider, signer])
 
 
     async function authorize(key: KeyInfo, identity: Identity) {

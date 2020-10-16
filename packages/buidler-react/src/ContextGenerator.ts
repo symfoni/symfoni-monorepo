@@ -75,7 +75,7 @@ export class ContextGenerator {
     await buidler_context_generator.generate();
   }
 
-  save() {
+  async save() {
     this.project.save();
     console.log("Files saved to disk");
     const sourceFile = this.project.getSourceFile(
@@ -84,5 +84,6 @@ export class ContextGenerator {
     if (!sourceFile) throw Error("No buidler context file");
     const emitOutput = sourceFile.getPreEmitDiagnostics();
     // console.log(emitOutput);
+    return true;
   }
 }

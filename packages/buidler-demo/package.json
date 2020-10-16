@@ -28,7 +28,7 @@
     "README.md"
   ],
   "scripts": {
-    "node": "npx buidler compile && npx buidler typechain && npx buidler node --network buidlerevm --watch"
+    "node": "npx buidler compile && npx buidler typechain && npx buidler node --network buidlerevm --watch --reset"
   },
   "browserslist": {
     "production": [

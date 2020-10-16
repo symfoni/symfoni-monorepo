@@ -9,25 +9,17 @@ import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json"
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorageFactory } from "./typechain/SimpleStorageFactory";
 
-interface SimpleStorageBuidler extends Contract {
-    storage: any,
+interface Contract {
     instance?: SimpleStorage, // If we dont have an address for contract, it cannot be initiated. Maybe of type ethers.utils.Interface,
     factory?: SimpleStorageFactory, // If we dont have a signer, we cannot deploy a new factory
-
 }
-interface Contract {
-    hasSigner: boolean,
-    hasInstance: boolean
+const emptyContract: Contract = {
+    instance: undefined,
+    factory: undefined
 }
 
-/* Contexts */
-// type Contracts = { [contractName: string]: SimpleStorageBuidler | Contract }
-// const defaultContracts: Contracts = {}
-// export const ContractsContext = React.createContext<[Contracts, React.Dispatch<React.SetStateAction<Contracts>>]>([defaultContracts, () => { }]);
 
-
-const SimpleStorageDefault: SimpleStorageBuidler = { storage: undefined, hasSigner: false, hasInstance: false }
-export const SimpleStorageContext = React.createContext<[SimpleStorageBuidler, React.Dispatch<React.SetStateAction<SimpleStorageBuidler>>]>([SimpleStorageDefault, () => { }]);
+export const SimpleStorageContext = React.createContext(emptyContract);
 
 const defaultProvider: providers.Provider = ethers.providers.getDefaultProvider()
 export const ProviderContext = React.createContext<[providers.Provider, React.Dispatch<React.SetStateAction<providers.Provider>>]>([defaultProvider, () => { }]);
@@ -48,7 +40,7 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) =
     const [/* providerName */, setProviderName] = useState<string>();
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
     const [provider, setProvider] = useState<providers.Provider>(defaultProvider);
-    const [SimpleStorage, setSimpleStorage] = useState<SimpleStorageBuidler>(SimpleStorageDefault);
+    const [SimpleStorage, setSimpleStorage] = useState<Contract>(emptyContract);
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
 
     /* functions */
@@ -99,25 +91,26 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) =
         let subscribed = true
         const doAsync = async () => {
             setMessages(old => [...old, "Initiating Buidler React"])
-            const provider = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
-            if (subscribed && provider) {
-                setProvider(provider)
-                setProviderName(provider.constructor.name)
-                setMessages(old => [...old, "Useing provider: " + provider.constructor.name])
+            const _provider = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
+            if (subscribed && _provider) {
+                setProvider(_provider)
+                setProviderName(_provider.constructor.name)
+                setMessages(old => [...old, "Useing provider: " + _provider.constructor.name])
                 // Web3Provider
-                let signer;
-                if (provider.constructor.name === "Web3Provider") {
-                    const web3provider = provider as ethers.providers.Web3Provider
-                    signer = await web3provider.getSigner()
-                    if (subscribed && signer) {
-                        setSigner(signer)
-                        const address = await signer.getAddress()
+                let _signer;
+                if (_provider.constructor.name === "Web3Provider") {
+                    const web3provider = _provider as ethers.providers.Web3Provider
+                    _signer = await web3provider.getSigner()
+                    console.log("signer", _signer)
+                    if (subscribed && _signer) {
+                        setSigner(_signer)
+                        const address = await _signer.getAddress()
                         if (subscribed && address) {
                             setCurrentAddress(address)
                         }
                     }
                 }
-                setSimpleStorage(getSimpleStorage())
+                setSimpleStorage(getSimpleStorage(_signer))
 
                 setReady(true)
             }
@@ -127,20 +120,18 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) =
     }, [])
 
 
-    const getSimpleStorage = () => {
+    const getSimpleStorage = (_signer?: Signer) => {
         let contractAddress = null
         let instance = undefined
+        console.log("signer in get", _signer)
         if (SimpleStorageDeployment) {
             contractAddress = SimpleStorageDeployment.receipt.contractAddress
-            instance = signer ? SimpleStorageFactory.connect(contractAddress, signer) : SimpleStorageFactory.connect(contractAddress, provider)
+            instance = _signer ? SimpleStorageFactory.connect(contractAddress, _signer) : SimpleStorageFactory.connect(contractAddress, provider)
         }
 
-        const contract: SimpleStorageBuidler = {
-            storage: null,
+        const contract: Contract = {
             instance: instance,
-            factory: signer ? new SimpleStorageFactory(signer) : undefined,
-            hasSigner: signer ? true : false,
-            hasInstance: SimpleStorageDeployment ? true : false
+            factory: _signer ? new SimpleStorageFactory(_signer) : undefined,
         }
         return contract
     }
@@ -149,7 +140,7 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) =
         <ProviderContext.Provider value={[provider, setProvider]}>
             <SignerContext.Provider value={[signer, setSigner]}>
                 <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
-                    <SimpleStorageContext.Provider value={[SimpleStorage, setSimpleStorage]}>
+                    <SimpleStorageContext.Provider value={SimpleStorage}>
                         {ready &&
                             (props.children)
                         }

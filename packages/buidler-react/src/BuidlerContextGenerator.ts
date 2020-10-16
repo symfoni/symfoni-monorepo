@@ -1,30 +1,11 @@
 import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
-import {
-  Expression,
-  ExpressionStatement,
-  SourceFile,
-  SyntaxKind,
-  VariableDeclarationKind,
-  VariableStatement
-} from "ts-morph";
-import { ArrowFunction } from "typescript";
+import { SourceFile, SyntaxKind, VariableDeclarationKind } from "ts-morph";
 import path from "path";
 import { readdirSync } from "fs-extra";
-import { read } from "fs";
-
-const contracts = [
-  {
-    name: "SimpleStorage",
-    hasDeployment: true
-  },
-  {
-    name: "Erc20",
-    hasDeployment: false
-  }
-];
 
 interface Contract {
   name: string;
+  typechainName: string;
   deploymentFile?: string;
   artifactFile: string;
   typechainInstance: string;
@@ -132,6 +113,7 @@ export class BuidlerContextGenerator {
 
       contracts.push({
         name: artifactName,
+        typechainName: `${path.basename(typechainInstanceFile, ".d.ts")}`,
         deploymentFile: deploymentFile
           ? `${relativeDeploymentsPath}/${deploymentFile}`
           : undefined,
@@ -145,7 +127,7 @@ export class BuidlerContextGenerator {
   }
 
   private imports() {
-    const importDeclaration = this.sourceFile.addImportDeclarations([
+    this.sourceFile.addImportDeclarations([
       {
         namedImports: ["providers", "Signer", "ethers"],
         moduleSpecifier: "ethers"
@@ -165,9 +147,48 @@ export class BuidlerContextGenerator {
         moduleSpecifier: "web3modal"
       }
     ]);
+
+    this.contracts.forEach(contract => {
+      if (contract.deploymentFile) {
+        this.sourceFile.addImportDeclaration({
+          defaultImport: `${contract.name}Deployment`,
+          moduleSpecifier: "./" + contract.deploymentFile
+        });
+      }
+      this.sourceFile.addImportDeclarations([
+        {
+          namedImports: [`${contract.typechainName}`],
+          moduleSpecifier:
+            "./" + contract.typechainInstance.replace(".d.ts", "")
+        },
+        {
+          namedImports: [`${contract.typechainName}Factory`],
+          moduleSpecifier: "./" + contract.typechainFactory.replace(".ts", "")
+        }
+        // REVIEW : Maybe import artifact files
+        // {
+        //   namedImports: [`${contract.name}Artifact`],
+        //   moduleSpecifier: contract.artifactFile
+        // }
+      ]);
+    });
   }
   private statements() {
-    const providerStatement = this.sourceFile.addVariableStatements([
+    this.sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: true,
+      declarations: [
+        {
+          name: "emptyContract",
+          // type: "Contract",
+          initializer: `{
+            instance: undefined,
+            factory: undefined
+          }`
+        }
+      ]
+    });
+    this.sourceFile.addVariableStatements([
       {
         declarationKind: VariableDeclarationKind.Const,
         isExported: true,
@@ -186,7 +207,7 @@ export class BuidlerContextGenerator {
       }
     ]);
 
-    const currentAddressStatement = this.sourceFile.addVariableStatements([
+    this.sourceFile.addVariableStatements([
       {
         declarationKind: VariableDeclarationKind.Const,
         isExported: true,
@@ -205,7 +226,7 @@ export class BuidlerContextGenerator {
       }
     ]);
 
-    const defaultSignerStatement = this.sourceFile.addVariableStatements([
+    this.sourceFile.addVariableStatements([
       {
         declarationKind: VariableDeclarationKind.Const,
         isExported: true,
@@ -225,14 +246,32 @@ export class BuidlerContextGenerator {
     ]);
   }
   private interfaces() {
-    const interfaceDeclaration = this.sourceFile.addInterface({
+    this.sourceFile.addInterface({
       name: "BuidlerSymfoniReactProps",
       isExported: true,
       properties: []
     });
+    this.contracts.forEach(contract => {
+      this.sourceFile.addInterface({
+        name: `I${contract.name}`,
+        isExported: true,
+        properties: [
+          {
+            name: "instance",
+            type: `${contract.typechainName}`,
+            hasQuestionToken: contract.deploymentFile ? false : true
+          },
+          {
+            name: "factory",
+            type: `${contract.typechainName}Factory`,
+            hasQuestionToken: true
+          }
+        ]
+      });
+    });
   }
   private functions() {
-    const functionDeclaration = this.sourceFile.addVariableStatement({
+    this.sourceFile.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,
       isExported: true,
       declarations: [
@@ -421,19 +460,20 @@ export class BuidlerContextGenerator {
           let subscribed = true
           const doAsync = async () => {
               setMessages(old => [...old, "Initiating Buidler React"])
-              const provider = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
-              if (subscribed && provider) {
-                  setProvider(provider)
-                  setProviderName(provider.constructor.name)
-                  setMessages(old => [...old, "Useing provider: " + provider.constructor.name])
+              const _provider = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
+              if (subscribed && _provider) {
+                  setProvider(_provider)
+                  setProviderName(_provider.constructor.name)
+                  setMessages(old => [...old, "Useing provider: " + _provider.constructor.name])
                   // Web3Provider
-                  let signer;
-                  if (provider.constructor.name === "Web3Provider") {
-                      const web3provider = provider as ethers.providers.Web3Provider
-                      signer = await web3provider.getSigner()
-                      if (subscribed && signer) {
-                          setSigner(signer)
-                          const address = await signer.getAddress()
+                  let _signer;
+                  if (_provider.constructor.name === "Web3Provider") {
+                      const web3provider = _provider as ethers.providers.Web3Provider
+                      _signer = await web3provider.getSigner()
+                      console.log("signer", _signer)
+                      if (subscribed && _signer) {
+                          setSigner(_signer)
+                          const address = await _signer.getAddress()
                           if (subscribed && address) {
                               setCurrentAddress(address)
                           }
@@ -442,8 +482,8 @@ export class BuidlerContextGenerator {
                   `
       );
 
-      contracts.forEach(contract => {
-        writer.writeLine(`set${contract.name}(get${contract.name})`);
+      this.contracts.forEach(contract => {
+        writer.writeLine(`set${contract.name}(get${contract.name}(_signer))`);
       });
 
       writer.write(
@@ -458,14 +498,14 @@ export class BuidlerContextGenerator {
       );
     });
 
-    contracts.forEach(contract => {
+    this.contracts.forEach(contract => {
       reactComponent.addVariableStatement({
         declarationKind: VariableDeclarationKind.Const,
         declarations: [
           {
             name: `get${contract.name}`,
 
-            initializer: "() => {}"
+            initializer: "(_signer?: Signer ) => {}"
           }
         ]
       });
@@ -478,16 +518,16 @@ export class BuidlerContextGenerator {
       );
       getContractNameBody.addStatements(writer => {
         writer.write(
-          `let contractAddress = null
+          `
           let instance = undefined
           `
         );
         // ${contract}
-        if (contract.hasDeployment) {
+        if (contract.deploymentFile) {
           writer.write(`
           if (${contract.name}Deployment) {
             contractAddress = ${contract.name}Deployment.receipt.contractAddress
-            instance = signer ? ${contract.name}Factory.connect(contractAddress, signer) : ${contract.name}Factory.connect(contractAddress, provider)
+            instance = _signer ? ${contract.typechainName}Factory.connect(contractAddress, _signer) : ${contract.typechainName}Factory.connect(contractAddress, provider)
           }
           `);
         } else {
@@ -496,15 +536,12 @@ export class BuidlerContextGenerator {
 
         writer.write(
           `
-          const contract: ${contract.name}Buidler = {
-            storage: null,
+          const contract: I${contract.typechainName} = {
             instance: instance,
-            factory: signer ? new ${contract.name}Factory(signer) : undefined,
-            hasSigner: signer ? true : false,
-            hasInstance: ${contract.name}Deployment ? true : false
+            factory: _signer ? new ${contract.typechainName}Factory(_signer) : undefined,
           }
   
-          set${contract.name}(contract)
+          return contract
         `
         );
       });

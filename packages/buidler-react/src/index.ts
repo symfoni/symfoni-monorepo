@@ -52,6 +52,7 @@ export default function() {
     .setAction(async (args, bre) => {
       const context = new ContextGenerator(args, bre);
       await context.generate();
+      await context.save();
       // await bre.run("react:run", args); // TODO Put in internal task for reuseability
     });
 
