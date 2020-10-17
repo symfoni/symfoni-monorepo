@@ -2,6 +2,7 @@ import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 import { SourceFile, SyntaxKind, VariableDeclarationKind } from "ts-morph";
 import path from "path";
 import { readdirSync } from "fs-extra";
+import { readArtifact } from "@nomiclabs/buidler/plugins";
 
 interface Contract {
   name: string;
@@ -36,6 +37,27 @@ export class BuidlerContextGenerator {
     this.statements();
     this.interfaces();
     this.functions();
+  }
+
+  private async getArtifact(contractName: string) {
+    let artifact;
+    try {
+      artifact = await readArtifact(
+        this.bre.config.paths.artifacts,
+        contractName
+      );
+    } catch (e) {
+      try {
+        artifact = await readArtifact(
+          this.bre.config.paths.imports ||
+            path.join(this.bre.config.paths.root, "imports"),
+          contractName
+        );
+      } catch (ee) {
+        throw e;
+      }
+    }
+    return artifact;
   }
 
   private async get_contracts() {
@@ -83,45 +105,52 @@ export class BuidlerContextGenerator {
     // console.log("typechainFiles", typechainFiles);
 
     let contracts: Contract[] = [];
-    artifactFiles.forEach(artifactFile => {
-      const artifactName = path.basename(artifactFile, ".json");
+    await Promise.all(
+      artifactFiles.map(async artifactFile => {
+        const artifactName = path.basename(artifactFile, ".json");
+        const artifactJson = await this.getArtifact(artifactName);
+        if (artifactJson.bytecode.length < 3) {
+          // TODO handle interface contracts
+          return;
+        }
 
-      const deploymentFile = deploymentFiles.find(deploymentFile => {
-        return path.basename(deploymentFile, ".json") === artifactName;
-      });
+        const deploymentFile = deploymentFiles.find(deploymentFile => {
+          return path.basename(deploymentFile, ".json") === artifactName;
+        });
 
-      const typechainInstanceFile = typechainFiles.find(typechainFile => {
-        // Because typechain modifies name to other caseing we need to match on casing
-        const hasInstanceFile =
-          path.basename(typechainFile, ".d.ts").toLowerCase() ===
-          artifactName.toLowerCase();
-        return hasInstanceFile;
-      });
+        const typechainInstanceFile = typechainFiles.find(typechainFile => {
+          // Because typechain modifies name to other caseing we need to match on casing
+          const hasInstanceFile =
+            path.basename(typechainFile, ".d.ts").toLowerCase() ===
+            artifactName.toLowerCase();
+          return hasInstanceFile;
+        });
 
-      const typechainFactoryFile = typechainFiles.find(typechainFile => {
-        // Because typechain modifies name to other caseing we need to match on casing
-        const hasFactoryFile =
-          path.basename(typechainFile, ".ts").toLowerCase() ===
-          artifactName.toLowerCase() + "factory";
-        return hasFactoryFile;
-      });
+        const typechainFactoryFile = typechainFiles.find(typechainFile => {
+          // Because typechain modifies name to other caseing we need to match on casing
+          const hasFactoryFile =
+            path.basename(typechainFile, ".ts").toLowerCase() ===
+            artifactName.toLowerCase() + "factory";
+          return hasFactoryFile;
+        });
 
-      if (!typechainInstanceFile || !typechainFactoryFile) {
-        return;
-        // throw Error("Could not find typechain file for " + artifactName);
-      }
+        if (!typechainInstanceFile || !typechainFactoryFile) {
+          return;
+          // throw Error("Could not find typechain file for " + artifactName);
+        }
 
-      contracts.push({
-        name: artifactName,
-        typechainName: `${path.basename(typechainInstanceFile, ".d.ts")}`,
-        deploymentFile: deploymentFile
-          ? `${relativeDeploymentsPath}/${deploymentFile}`
-          : undefined,
-        artifactFile: `${relativeArtifactsPath}/${artifactFile}`,
-        typechainInstance: `${relativeTypechainsPath}/${typechainInstanceFile}`,
-        typechainFactory: `${relativeTypechainsPath}/${typechainFactoryFile}`
-      });
-    });
+        contracts.push({
+          name: artifactName,
+          typechainName: `${path.basename(typechainInstanceFile, ".d.ts")}`,
+          deploymentFile: deploymentFile
+            ? `${relativeDeploymentsPath}/${deploymentFile}`
+            : undefined,
+          artifactFile: `${relativeArtifactsPath}/${artifactFile}`,
+          typechainInstance: `${relativeTypechainsPath}/${typechainInstanceFile}`,
+          typechainFactory: `${relativeTypechainsPath}/${typechainFactoryFile}`
+        });
+      })
+    );
 
     return contracts;
   }
@@ -254,7 +283,7 @@ export class BuidlerContextGenerator {
     });
     this.contracts.forEach(contract => {
       this.sourceFile.addInterface({
-        name: `I${contract.name}`,
+        name: this.contractInterfaceName(contract),
         isExported: true,
         properties: [
           {
@@ -537,9 +566,11 @@ export class BuidlerContextGenerator {
 
         writer.write(
           `
-          const contract: I${contract.typechainName} = {
+          const contract: ${this.contractInterfaceName(contract)} = {
             instance: instance,
-            factory: _signer ? new ${contract.typechainName}Factory(_signer) : undefined,
+            factory: _signer ? new ${
+              contract.typechainName
+            }Factory(_signer) : undefined,
           }
   
           return contract
@@ -568,7 +599,11 @@ export class BuidlerContextGenerator {
     //   }
     // ]);
   }
-  toArrayString(arr: string[]) {
+  private toArrayString(arr: string[]) {
     return "[" + arr.map(i => `"` + i + `"`).join(",") + "]";
+  }
+
+  private contractInterfaceName(contract: Contract) {
+    return `Symfoni${contract.typechainName}`;
   }
 }
