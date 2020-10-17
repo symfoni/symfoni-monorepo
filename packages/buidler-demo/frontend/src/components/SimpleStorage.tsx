@@ -42,7 +42,7 @@ export const SimpleStorage: React.FC<Props> = () => {
             }
         };
         doAsync();
-    }, [SimpleStorage])
+    }, [SimpleStorage.instance])
 
     // useEffect(() => {
     //     const doAsync = async () => {

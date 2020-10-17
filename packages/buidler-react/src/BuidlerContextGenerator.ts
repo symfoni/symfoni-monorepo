@@ -1,8 +1,16 @@
 import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
-import { SourceFile, SyntaxKind, VariableDeclarationKind } from "ts-morph";
+import {
+  ArrowFunction,
+  CodeBlockWriter,
+  SourceFile,
+  SyntaxKind,
+  VariableDeclarationKind
+} from "ts-morph";
 import path from "path";
 import { readdirSync } from "fs-extra";
 import { readArtifact } from "@nomiclabs/buidler/plugins";
+import { MorphReactComponent } from "./MorphReactComponent";
+import { write } from "fs";
 
 interface Contract {
   name: string;
@@ -18,6 +26,7 @@ export class BuidlerContextGenerator {
   private args: any;
   private bre: BuidlerRuntimeEnvironment;
   private contracts: Contract[];
+  private reactComponent?: MorphReactComponent;
   constructor(
     sourceFile: SourceFile,
     args: any,
@@ -38,28 +47,6 @@ export class BuidlerContextGenerator {
     this.interfaces();
     this.functions();
   }
-
-  private async getArtifact(contractName: string) {
-    let artifact;
-    try {
-      artifact = await readArtifact(
-        this.bre.config.paths.artifacts,
-        contractName
-      );
-    } catch (e) {
-      try {
-        artifact = await readArtifact(
-          this.bre.config.paths.imports ||
-            path.join(this.bre.config.paths.root, "imports"),
-          contractName
-        );
-      } catch (ee) {
-        throw e;
-      }
-    }
-    return artifact;
-  }
-
   private async get_contracts() {
     const currentNetwork = this.bre.buidlerArguments.network;
     if (!currentNetwork) {
@@ -154,7 +141,6 @@ export class BuidlerContextGenerator {
 
     return contracts;
   }
-
   private imports() {
     this.sourceFile.addImportDeclarations([
       {
@@ -202,7 +188,6 @@ export class BuidlerContextGenerator {
       ]);
     });
   }
-
   private statements() {
     this.sourceFile.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,
@@ -210,7 +195,6 @@ export class BuidlerContextGenerator {
       declarations: [
         {
           name: "emptyContract",
-          // type: "Contract",
           initializer: `{
             instance: undefined,
             factory: undefined
@@ -218,63 +202,95 @@ export class BuidlerContextGenerator {
         }
       ]
     });
-    this.sourceFile.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        isExported: true,
-        declarations: [
-          {
-            name: "defaultProvider",
-            type: "providers.Provider",
-            initializer: "ethers.providers.getDefaultProvider()"
-          },
-          {
-            name: "ProviderContext",
-            initializer:
-              "React.createContext<[providers.Provider, React.Dispatch<React.SetStateAction<providers.Provider>>]>([defaultProvider, () => { }])"
-          }
-        ]
-      }
-    ]);
 
-    this.sourceFile.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        isExported: true,
-        declarations: [
-          {
-            name: "defaultCurrentAddress",
-            type: "string",
-            initializer: `""`
-          },
-          {
-            name: "CurrentAddressContext",
-            initializer:
-              "React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }])"
-          }
-        ]
-      }
-    ]);
+    this.sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: true,
+      declarations: [
+        {
+          name: "defaultProvider",
+          type: "providers.Provider",
+          initializer: "ethers.providers.getDefaultProvider()"
+        }
+      ]
+    });
 
-    this.sourceFile.addVariableStatements([
-      {
+    this.sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: true,
+      declarations: [
+        {
+          name: "ProviderContext",
+          initializer:
+            "React.createContext<[providers.Provider, React.Dispatch<React.SetStateAction<providers.Provider>>]>([defaultProvider, () => { }])"
+        }
+      ]
+    });
+
+    this.sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: false,
+      declarations: [
+        {
+          name: "defaultCurrentAddress",
+          type: "string",
+          initializer: `""`
+        }
+      ]
+    });
+
+    this.sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: true,
+      declarations: [
+        {
+          name: "CurrentAddressContext",
+          initializer:
+            "React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }])"
+        }
+      ]
+    });
+
+    this.sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: false,
+      declarations: [
+        {
+          name: "defaultSigner",
+          type: "Signer | undefined",
+          initializer: "undefined"
+        }
+      ]
+    });
+
+    this.sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: true,
+      declarations: [
+        {
+          name: "SignerContext",
+          initializer:
+            "React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }])"
+        }
+      ]
+    });
+
+    this.contracts.forEach(contract => {
+      this.sourceFile.addVariableStatement({
         declarationKind: VariableDeclarationKind.Const,
         isExported: true,
         declarations: [
           {
-            name: "defaultSigner",
-            type: "Signer | undefined",
-            initializer: "undefined"
-          },
-          {
-            name: "SignerContext",
-            initializer:
-              "React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }])"
+            name: `${contract.name}Context`,
+            initializer: `React.createContext<${this.contractInterfaceName(
+              contract
+            )}>(emptyContract)`
           }
         ]
-      }
-    ]);
+      });
+    });
   }
+
   private interfaces() {
     this.sourceFile.addInterface({
       name: "BuidlerSymfoniReactProps",
@@ -289,7 +305,7 @@ export class BuidlerContextGenerator {
           {
             name: "instance",
             type: `${contract.typechainName}`,
-            hasQuestionToken: contract.deploymentFile ? false : true
+            hasQuestionToken: contract.deploymentFile ? true : true // REVIEW If we can instantiate provider before componentn is generate we can maybe remove this
           },
           {
             name: "factory",
@@ -319,88 +335,42 @@ export class BuidlerContextGenerator {
       SyntaxKind.ArrowFunction
     );
 
+    this.reactComponent = new MorphReactComponent(reactComponent);
     // Start geneting react componen body
-    reactComponent.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            name: "[ready, setReady]",
-            initializer: "useState(false)"
-          }
-        ]
-      }
-    ]);
+    this.reactComponent.insertUseState("[ready, setReady]", "useState(false)");
+    this.reactComponent.insertUseState(
+      "[messages, setMessages]",
+      "useState<string[]>([])"
+    );
+    this.reactComponent.insertUseState(
+      "[/* providerName */, setProviderName]",
+      "useState<string>()"
+    );
+    this.reactComponent.insertUseState(
+      "[signer, setSigner]",
+      "useState<Signer | undefined>(defaultSigner)"
+    );
+    this.reactComponent.insertUseState(
+      "[provider, setProvider]",
+      "useState<providers.Provider>(defaultProvider)"
+    );
+    this.reactComponent.insertUseState(
+      "[currentAddress, setCurrentAddress]",
+      "useState<string>(defaultCurrentAddress)"
+    );
+    this.reactComponent.insertUseState(
+      "getProvider",
+      "async (): Promise<providers.Provider | undefined> => {}"
+    );
 
-    reactComponent.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            name: "[messages, setMessages]",
-            initializer: "useState<string[]>([])"
-          }
-        ]
-      }
-    ]);
-    reactComponent.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            name: "[/* providerName */, setProviderName]",
-            initializer: "useState<string>()"
-          }
-        ]
-      }
-    ]);
-
-    reactComponent.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            name: "[signer, setSigner]",
-            initializer: "useState<Signer | undefined>(defaultSigner)"
-          }
-        ]
-      }
-    ]);
-    reactComponent.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            name: "[provider, setProvider]",
-            initializer: "useState<providers.Provider>(defaultProvider)"
-          }
-        ]
-      }
-    ]);
-    reactComponent.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            name: "[currentAddress, setCurrentAddress]",
-            initializer: "useState<string>(defaultCurrentAddress)"
-          }
-        ]
-      }
-    ]);
-
-    /* get Provider */
-    reactComponent.addVariableStatement({
-      declarationKind: VariableDeclarationKind.Const,
-      declarations: [
-        {
-          name: "getProvider",
-          initializer: "async (): Promise<providers.Provider | undefined> => {}"
-        }
-      ]
+    this.contracts.forEach(contract => {
+      this.reactComponent?.insertUseState(
+        `[${contract.name}, set${contract.name}]`,
+        `useState<${this.contractInterfaceName(contract)}>(emptyContract)`
+      );
     });
 
-    const getProvider = reactComponent.getVariableDeclarationOrThrow(
+    const getProvider = this.reactComponent.component.getVariableDeclarationOrThrow(
       "getProvider"
     );
     const getProviderFunction = getProvider.getInitializerIfKindOrThrow(
@@ -411,17 +381,10 @@ export class BuidlerContextGenerator {
       ? this.bre.config.react.providerPriority
       : ["web3modal"];
 
-    getProviderFunction.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            name: "providerPriority",
-            initializer: this.toArrayString(providerPriority)
-          }
-        ]
-      }
-    ]);
+    this.reactComponent.insertUseState(
+      "providerPriority",
+      this.toArrayString(providerPriority)
+    );
 
     getProviderFunction.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,
@@ -456,7 +419,7 @@ export class BuidlerContextGenerator {
       ]
     });
 
-    reactComponent.addVariableStatement({
+    this.reactComponent.component.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,
       declarations: [
         {
@@ -478,13 +441,13 @@ export class BuidlerContextGenerator {
       ]
     });
 
-    reactComponent.addStatements(
+    this.reactComponent.component.addStatements(
       `useEffect(() => {
         console.log(messages.pop())
     }, [messages])`
     );
 
-    reactComponent.addStatements(writer => {
+    this.reactComponent.component.addStatements(writer => {
       writer.write(
         `useEffect(() => {
           let subscribed = true
@@ -534,7 +497,6 @@ export class BuidlerContextGenerator {
         declarations: [
           {
             name: `get${contract.name}`,
-
             initializer: "(_signer?: Signer ) => {}"
           }
         ]
@@ -547,63 +509,104 @@ export class BuidlerContextGenerator {
         SyntaxKind.ArrowFunction
       );
       getContractNameBody.addStatements(writer => {
-        writer.write(
-          `
-          let instance = undefined
-          `
-        );
         // ${contract}
         if (contract.deploymentFile) {
           writer.write(`
-          if (${contract.name}Deployment) {
-            contractAddress = ${contract.name}Deployment.receipt.contractAddress
-            instance = _signer ? ${contract.typechainName}Factory.connect(contractAddress, _signer) : ${contract.typechainName}Factory.connect(contractAddress, provider)
-          }
+            const contractAddress = ${contract.name}Deployment.receipt.contractAddress
+            const instance = _signer ? ${contract.typechainName}Factory.connect(contractAddress, _signer) : ${contract.typechainName}Factory.connect(contractAddress, provider)
           `);
         } else {
-          writer.write(`const ${contract.name}Deployment = false`);
+          writer.writeLine(`let instance = undefined`);
         }
 
         writer.write(
-          `
-          const contract: ${this.contractInterfaceName(contract)} = {
-            instance: instance,
+          `const contract: ${this.contractInterfaceName(contract)} = {
+            instance: instance  ,
             factory: _signer ? new ${
               contract.typechainName
             }Factory(_signer) : undefined,
-          }
-  
-          return contract
-        `
+          } 
+          return contract`
         );
       });
+    }); // end this.contracts.foreach
+
+    const body = (writer: CodeBlockWriter) => {
+      writer.writeLine(
+        `{ready &&
+          (props.children)
+      }
+      {!ready &&
+          <div>
+              <SpinnerCircular></SpinnerCircular>
+              {messages.map((msg, i) => (
+                  <p key={i}>{msg}</p>
+              ))}
+          </div>
+      }`
+      );
+    };
+
+    const openContext = (writer: CodeBlockWriter) => {
+      this.contracts.forEach(contract => {
+        writer.writeLine(
+          `<${contract.name}Context.Provider value={${contract.name}}>`
+        );
+      });
+    };
+    const closeContext = (writer: CodeBlockWriter) => {
+      this.contracts.reverse().forEach(contract => {
+        writer.writeLine(`</${contract.name}Context.Provider >`);
+      });
+    };
+
+    // this.reactComponent.component.addStatements(writer => {
+    //   writer.writeLine("return (<p></p>)");
+    // });
+
+    this.reactComponent.component.addStatements(writer => {
+      writer.write(
+        `return (
+            <ProviderContext.Provider value={[provider, setProvider]}>
+                <SignerContext.Provider value={[signer, setSigner]}>
+                    <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
+                    `
+      );
+      openContext(writer);
+      body(writer);
+      closeContext(writer);
+      writer.write(
+        `           </CurrentAddressContext.Provider>
+                </SignerContext.Provider>
+            </ProviderContext.Provider>
+        )`
+      );
     });
-
-    // const providerFunctionInsideGetProvider = getProviderFunction.getVariableDeclarationOrThrow(
-    //   "provider"
-    // );
-    // const providerFunctionBody = providerFunctionInsideGetProvider.getInitializerIfKindOrThrow(
-    //   SyntaxKind.ArrowFunction
-    // );
-
-    // Must be handled by contract later
-    // reactComponent.addVariableStatements([
-    //   {
-    //     declarationKind: VariableDeclarationKind.Const,
-    //     declarations: [
-    //       // {
-    //       //   name: "const [SimpleStorage, setSimpleStorage]",
-    //       //   initializer: "useState<SimpleStorageBuidler>(SimpleStorageDefault);"
-    //       // },
-    //     ]
-    //   }
-    // ]);
   }
   private toArrayString(arr: string[]) {
     return "[" + arr.map(i => `"` + i + `"`).join(",") + "]";
   }
-
   private contractInterfaceName(contract: Contract) {
     return `Symfoni${contract.typechainName}`;
+  }
+  private async getArtifact(contractName: string) {
+    let artifact;
+    try {
+      artifact = await readArtifact(
+        this.bre.config.paths.artifacts,
+        contractName
+      );
+    } catch (e) {
+      try {
+        artifact = await readArtifact(
+          this.bre.config.paths.imports ||
+            path.join(this.bre.config.paths.root, "imports"),
+          contractName
+        );
+      } catch (ee) {
+        throw e;
+      }
+    }
+    return artifact;
   }
 }

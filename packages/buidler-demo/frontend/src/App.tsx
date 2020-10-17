@@ -2,7 +2,7 @@ import { Box, Footer, Grommet, Main, Text } from "grommet";
 import React from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 // import { BuidlerSymfoniReact } from "./BuidlerSymfoniReact";
-import { BuidlerSymfoniReact, } from "./buidler/BuidlerSymfoniReact";
+import { BuidlerContext } from "./buidler/BuidlerContext";
 import { SimpleStorage } from './components/SimpleStorage';
 import { Navigation } from './ui/Navigation';
 
@@ -27,7 +27,7 @@ function App() {
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Grommet>
-        <BuidlerSymfoniReact>
+        <BuidlerContext>
           <Box>
             {/* Navigation */}
             <Navigation></Navigation>
@@ -45,7 +45,7 @@ function App() {
             </Footer>
 
           </Box>
-        </BuidlerSymfoniReact>
+        </BuidlerContext>
       </Grommet>
     </BrowserRouter >
   );

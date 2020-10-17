@@ -121,11 +121,11 @@ export const BuidlerSymfoniReact: React.FC<BuidlerSymfoniReactProps> = (props) =
 
 
     const getSimpleStorage = (_signer?: Signer) => {
-        let contractAddress = null
+
         let instance = undefined
-        console.log("signer in get", _signer)
+
         if (SimpleStorageDeployment) {
-            contractAddress = SimpleStorageDeployment.receipt.contractAddress
+            const contractAddress = SimpleStorageDeployment.receipt.contractAddress
             instance = _signer ? SimpleStorageFactory.connect(contractAddress, _signer) : SimpleStorageFactory.connect(contractAddress, provider)
         }
 
