@@ -455,28 +455,32 @@ export class BuidlerContextGenerator {
               setMessages(old => [...old, "Initiating Buidler React"])
               const _provider = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
               if (subscribed && _provider) {
-                  setProvider(_provider)
-                  setProviderName(_provider.constructor.name)
-                  setMessages(old => [...old, "Useing provider: " + _provider.constructor.name])
-                  // Web3Provider
-                  let _signer;
-                  if (_provider.constructor.name === "Web3Provider") {
-                      const web3provider = _provider as ethers.providers.Web3Provider
-                      _signer = await web3provider.getSigner()
-                      console.log("signer", _signer)
-                      if (subscribed && _signer) {
-                          setSigner(_signer)
-                          const address = await _signer.getAddress()
-                          if (subscribed && address) {
-                              setCurrentAddress(address)
-                          }
-                      }
-                  }
-                  `
+                const _providerName = _provider.constructor.name;
+                console.debug("_providerName", _providerName)
+                setProvider(_provider)
+                setProviderName(_providerName)
+                setMessages(old => [...old, "Useing provider: " + _providerName])
+                let _signer;
+                if (_providerName === "Web3Provider") {
+                    const web3provider = _provider as ethers.providers.Web3Provider
+                    _signer = await web3provider.getSigner()
+                    console.debug("_signer", _signer)
+                    if (subscribed && _signer) {
+                        setSigner(_signer)
+                        const address = await _signer.getAddress()
+                        if (subscribed && address) {
+                            console.debug("address", address)
+                            setCurrentAddress(address)
+                        }
+                    }
+                }
+                `
       );
 
       this.contracts.forEach(contract => {
-        writer.writeLine(`set${contract.name}(get${contract.name}(_signer))`);
+        writer.writeLine(
+          `set${contract.name}(get${contract.name}(_provider, _signer))`
+        );
       });
 
       writer.write(
@@ -497,7 +501,8 @@ export class BuidlerContextGenerator {
         declarations: [
           {
             name: `get${contract.name}`,
-            initializer: "(_signer?: Signer ) => {}"
+            initializer:
+              "(_provider: providers.Provider, _signer?: Signer ) => {}"
           }
         ]
       });
@@ -513,7 +518,7 @@ export class BuidlerContextGenerator {
         if (contract.deploymentFile) {
           writer.write(`
             const contractAddress = ${contract.name}Deployment.receipt.contractAddress
-            const instance = _signer ? ${contract.typechainName}Factory.connect(contractAddress, _signer) : ${contract.typechainName}Factory.connect(contractAddress, provider)
+            const instance = _signer ? ${contract.typechainName}Factory.connect(contractAddress, _signer) : ${contract.typechainName}Factory.connect(contractAddress, _provider)
           `);
         } else {
           writer.writeLine(`let instance = undefined`);

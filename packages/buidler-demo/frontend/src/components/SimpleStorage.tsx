@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { CurrentAddressContext, ProviderContext, SignerContext, SimpleStorageContext } from './../buidler/BuidlerSymfoniReact';
+import { CurrentAddressContext, ProviderContext, SignerContext, SimpleStorageContext } from './../buidler/BuidlerContext';
 import { Client, Identity, KeyInfo, Buckets, PublicKey, PrivateKey, bucketsArchive } from '@textile/hub'
 
 
