@@ -1,8 +1,8 @@
 {
-  "name": "@symfoni/buidler-react",
+  "name": "@symfoni/buidler-storage",
   "version": "0.0.1",
-  "description": "Create a react component from buidler output.",
-  "repository": "github:symfoni/buidler-react",
+  "description": "Connect buidler output to storage",
+  "repository": "github:symfoni/buidler-storage",
   "author": "Symfoni",
   "license": "MIT",
   "main": "dist/src/index.js",
@@ -52,6 +52,7 @@
   },
   "peerDependencies": {
     "@blockchangers/buidler-typechain": "^0.1.6",
+    "@symfoni/buidler-react": "^0.0.1",
     "@nomiclabs/buidler": "^1.0.1",
     "buidler-deploy": "^0.6.0-beta.16"
   }

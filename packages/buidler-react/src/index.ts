@@ -26,20 +26,12 @@ export default function() {
   /* extend config */
   extendConfig((config, userConfig) => {
     if (userConfig.react == undefined) {
-      config.react = {};
+      config.react = {
+        providerPriority: ["web3modal"]
+      };
     }
     if (userConfig.paths?.react === undefined) {
       config.paths = { ...config.paths, react: "./frontend/src/buidler" };
-    }
-    if (userConfig.storage == undefined) {
-      config.storage = {
-        patterns: {},
-        providers: {}
-      };
-    } else {
-      if (userConfig.storage.patterns) {
-        // TODO Create default configrations
-      }
     }
   });
 
@@ -75,11 +67,4 @@ export default function() {
     .setAction(async (args, bre) => {
       await bre.run("react:run", args); // TODO Put in internal task for reuseability
     });
-
-  // task("storage", "Create React component")
-  //   .addParam("provider", "Choose what storage provider to use options: hub")
-  //   .setAction(async (args, bre) => {
-  //     // const user = new Client()
-  //     // user.create()
-  //   });
 }

@@ -49,56 +49,18 @@ const config: BuidlerConfig = {
   react: {
     providerPriority: ["web3modal", "dev", "HTTP://127.0.0.1:8545"],
   },
-  storage: {
-    patterns: {
-      SimpleStorage: {
-        type: "document",
-      },
-    },
-    providers: {
-      localhost: {
-        type: "hub",
-        key: "bdsmrirkgb3n5qndmntxuy4w6jq",
-      },
-    },
-  },
+  // storage: {
+  //   patterns: {
+  //     SimpleStorage: {
+  //       type: "document",
+  //     },
+  //   },
+  //   providers: {
+  //     localhost: {
+  //       type: "hub",
+  //       key: "bdsmrirkgb3n5qndmntxuy4w6jq",
+  //     },
+  //   },
+  // },
 };
 export default config;
-
-const react = {
-  providerPriority: ["web3modal", "dev", "HTTP://127.0.0.1:8545"],
-};
-
-// const storage = {
-//   dev: {
-//     SimpleStorage: [
-//       {
-//         pattern: "document", // can be document / data or any other patterns we create
-//         name: "dealAgreement",
-//         save: "saveDocument",
-//         get: "getDocument",
-//         list: "listDocument",
-//         check: "checkDocument",
-//       },
-//     ],
-//   },
-// };
-
-// const react = {
-//   dev: {
-//     provider: ["web3modal", "metamask", "@dev", "HTTP://127.0.0.1:8545"],
-//   },
-// };
-
-// type Storage = {
-//   [network: string]: {
-//     [contractName: string]: {
-//       pattern: "document" | "data";
-//       name?: string;
-//       save?: string;
-//       get?: string;
-//       list?: string;
-//       check?: string;
-//     }[];
-//   };
-// };
