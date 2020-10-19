@@ -77,7 +77,7 @@ export class ContextGenerator {
 
   async save() {
     this.project.save();
-    console.log("Files saved to disk");
+    console.log("React component generated");
     // const sourceFile = this.project.getSourceFile(
     //   this.BUIDLER_CONTEXT_FILE_NAME
     // );

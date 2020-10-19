@@ -76,7 +76,7 @@ export const SimpleStorage: React.FC<Props> = () => {
 
     const getDocument = async (name: string) => {
         if (SimpleStorage.instance) {
-            const document = await SimpleStorage.instance.getDocument(ethers.utils.formatBytes32String(name))
+            const document = await SimpleStorage.instance.getDocument2(ethers.utils.formatBytes32String(name))
             setDocuments(old => {
                 return old.map(x => {
                     if (x.name === name) {

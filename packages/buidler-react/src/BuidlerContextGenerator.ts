@@ -41,14 +41,17 @@ export class BuidlerContextGenerator {
   async generate() {
     const contracts = await this.get_contracts();
     this.contracts = contracts;
-    console.log("contracts", contracts);
     this.imports();
     this.statements();
     this.interfaces();
     this.functions();
+    this.sourceFile.formatText();
   }
   private async get_contracts() {
-    const currentNetwork = this.bre.buidlerArguments.network;
+    const currentNetwork =
+      this.bre.buidlerArguments.network === "buidlerevm"
+        ? "localhost"
+        : this.bre.buidlerArguments.network; // TODO : Find a better solution here. But i think this will probably change in Hardhat
     if (!currentNetwork) {
       throw Error("Could not determine current network");
     }
@@ -443,7 +446,7 @@ export class BuidlerContextGenerator {
 
     this.reactComponent.component.addStatements(
       `useEffect(() => {
-        console.log(messages.pop())
+        console.debug(messages.pop())
     }, [messages])`
     );
 
@@ -574,8 +577,7 @@ export class BuidlerContextGenerator {
         `return (
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
-                    <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
-                    `
+                    <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>`
       );
       openContext(writer);
       body(writer);

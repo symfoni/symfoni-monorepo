@@ -2,7 +2,7 @@
 
 import { Box, Text } from 'grommet';
 import React, { useContext, useEffect } from 'react';
-import { CurrentAddressContext, ProviderContext } from './../buidler/BuidlerSymfoniReact';
+import { CurrentAddressContext, ProviderContext } from './../buidler/BuidlerContext';
 
 interface Props { }
 
