@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/buidler-storage",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Connect buidler output to storage",
   "repository": "github:symfoni/buidler-storage",
   "author": "Symfoni",
