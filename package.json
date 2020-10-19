@@ -14,6 +14,6 @@
     "watch": "npx lerna run watch --parallel",
     "test": "npx lerna run test",
     "frontend": "cd packages/buidler-demo/frontend&& yarn start",
-    "publish" : "npx lerna run build && npx lerna run publish"
+    "publish" : "npx lerna run build && npx lerna publish"
   }
 }
