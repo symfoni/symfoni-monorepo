@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/buidler-react",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Create a react component from buidler output.",
   "access": "public",
   "repository": "github:symfoni/buidler-react",
