@@ -29,7 +29,8 @@ export default function() {
   /* Add task */
   internalTask("react:run", "Run react component generation").setAction(
     async (args, bre) => {
-      console.log(chalk.red(`Running React`));
+      await bre.run("typechain")
+      console.log(chalk.green(`Running React`));
       const context = new ContextGenerator(args, bre);
       await context.generate();
       await context.save();
