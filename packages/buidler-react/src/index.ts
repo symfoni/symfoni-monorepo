@@ -9,19 +9,6 @@ import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 import chalk from "chalk";
 import { ContextGenerator } from "./ContextGenerator";
 
-function isBuidlerEVM(bre: BuidlerRuntimeEnvironment): boolean {
-  const { network, buidlerArguments, config } = bre;
-  return !(
-    network.name !== BUIDLEREVM_NETWORK_NAME &&
-    // We normally set the default network as buidlerArguments.network,
-    // so this check isn't enough, and we add the next one. This has the
-    // effect of `--network <defaultNetwork>` being a false negative, but
-    // not a big deal.
-    buidlerArguments.network !== undefined &&
-    buidlerArguments.network !== config.defaultNetwork
-  );
-}
-
 export default function() {
   /* extend config */
   extendConfig((config, userConfig) => {
