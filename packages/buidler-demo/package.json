@@ -1,14 +1,14 @@
 {
-  "name": "@robertosnap/buidler-demo",
-  "version": "0.0.3",
-  "private": true,
+  "name": "@symfoni/buidler-demo",
+  "version": "0.0.2",
+  "private": false,
   "main": "./lib/BuidlerSymfoniReact.tsx",
   "devDependencies": {
     "@blockchangers/buidler-typechain": "^0.1.6",
     "@nomiclabs/buidler": "^1.4.7",
     "@nomiclabs/buidler-waffle": "^2.1.0",
     "@openzeppelin/contracts": "^2.5.1",
-    "@symfoni/buidler-react": "^0.0.3",
+    "@symfoni/buidler-react": "^0.0.2",
     "@typechain/ethers-v5": "^1.0.0",
     "@types/chai": "^4.2.12",
     "@types/mocha": "^8.0.3",

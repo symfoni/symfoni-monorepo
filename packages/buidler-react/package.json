@@ -55,5 +55,5 @@
     "@nomiclabs/buidler": "^1.0.1",
     "buidler-deploy": "^0.6.0-beta.16"
   },
-  "gitHead": "229568b046330b5fb0297e7aa347ba673f95540c"
+  "gitHead": "fe1ccf13a4d3b869db660d48535ea6ef94347a32"
 }
