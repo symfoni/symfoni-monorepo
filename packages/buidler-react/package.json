@@ -54,5 +54,6 @@
     "@blockchangers/buidler-typechain": "^0.1.6",
     "@nomiclabs/buidler": "^1.0.1",
     "buidler-deploy": "^0.6.0-beta.16"
-  }
+  },
+  "gitHead": "e451cec0039dd2ed564e21575c8c8f216232389d"
 }
