@@ -1,6 +1,6 @@
 {
   "name": "@robertosnap/buidler-demo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "main": "./lib/BuidlerSymfoniReact.tsx",
   "devDependencies": {
@@ -8,7 +8,7 @@
     "@nomiclabs/buidler": "^1.4.7",
     "@nomiclabs/buidler-waffle": "^2.1.0",
     "@openzeppelin/contracts": "^2.5.1",
-    "@symfoni/buidler-react": "^0.0.2",
+    "@symfoni/buidler-react": "^0.0.3",
     "@typechain/ethers-v5": "^1.0.0",
     "@types/chai": "^4.2.12",
     "@types/mocha": "^8.0.3",
