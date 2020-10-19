@@ -3,7 +3,7 @@ import { BuidlerConfig, usePlugin } from "@nomiclabs/buidler/config";
 
 usePlugin("buidler-ethers-v5");
 usePlugin("buidler-deploy");
-usePlugin("@blockchangers/buidler-typechain");
+usePlugin("@symfoni/buidler-typechain");
 usePlugin("@symfoni/buidler-react"); // TODO ANCHOR USE our plugin ./plugins/buidler-symfoni-react
 
 const config: BuidlerConfig = {

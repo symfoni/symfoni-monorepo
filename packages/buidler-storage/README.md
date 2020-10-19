@@ -8,7 +8,7 @@ This plugin relies on peer
 
 ### NPM
 
-`npm install @nomiclabs/buidler @blockchangers/buidler-typechain buidler-deploy`
+`npm install @nomiclabs/buidler @symfoni/buidler-typechain buidler-deploy`
 
 ## Installation
 

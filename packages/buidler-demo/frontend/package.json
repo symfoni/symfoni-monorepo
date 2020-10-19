@@ -5,6 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "license": "MIT",
   "main": "index.js",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
