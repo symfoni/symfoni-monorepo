@@ -16,12 +16,12 @@ This plugin makes an assumption that you are building your frontend inside a bui
 
 ### Configuration
 
-This project applies some opinions on your frontend project. It must use react, typescript, ethers v5, web3modal and react spinners (can be removed later).
+This project applies some opinions on your frontend project. It must use react, typescript, ethers v5 and web3modal (can be removed later).
 
 Run this command in your frontend project root to install those dependencies:
 
-`npm install --save spinners-react ethers web3modal`
-`yarn add spinners-react ethers web3modal`
+`npm install --save ethers web3modal`
+`yarn add ethers web3modal`
 
 There are two buidler configrations
 

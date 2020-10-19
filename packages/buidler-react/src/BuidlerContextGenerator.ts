@@ -1,16 +1,14 @@
+import { readArtifact } from "@nomiclabs/buidler/plugins";
 import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
+import { readdirSync } from "fs-extra";
+import path from "path";
 import {
-  ArrowFunction,
   CodeBlockWriter,
   SourceFile,
   SyntaxKind,
   VariableDeclarationKind
 } from "ts-morph";
-import path from "path";
-import { readdirSync } from "fs-extra";
-import { readArtifact } from "@nomiclabs/buidler/plugins";
 import { MorphReactComponent } from "./MorphReactComponent";
-import { write } from "fs";
 
 interface Contract {
   name: string;
@@ -154,10 +152,6 @@ export class BuidlerContextGenerator {
         namedImports: ["useEffect", "useState"],
         defaultImport: "React",
         moduleSpecifier: "react"
-      },
-      {
-        namedImports: ["SpinnerCircular"],
-        moduleSpecifier: "spinners-react"
       },
       {
         namedImports: ["IProviderOptions"],
@@ -546,7 +540,6 @@ export class BuidlerContextGenerator {
       }
       {!ready &&
           <div>
-              <SpinnerCircular></SpinnerCircular>
               {messages.map((msg, i) => (
                   <p key={i}>{msg}</p>
               ))}
