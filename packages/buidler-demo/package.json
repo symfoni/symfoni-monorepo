@@ -2,7 +2,6 @@
   "name": "@symfoni/buidler-demo",
   "version": "0.0.5",
   "private": true,
-  "access": "public",
   "main": "./lib/BuidlerSymfoniReact.tsx",
   "devDependencies": {
     "@blockchangers/buidler-typechain": "^0.1.6",
