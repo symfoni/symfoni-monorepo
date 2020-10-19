@@ -1,7 +1,8 @@
 {
   "name": "@symfoni/buidler-demo",
   "version": "0.0.4",
-  "private": false,
+  "private": true,
+  "access": "public",
   "main": "./lib/BuidlerSymfoniReact.tsx",
   "devDependencies": {
     "@blockchangers/buidler-typechain": "^0.1.6",
@@ -41,5 +42,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "gitHead": "33bf928b8e1aef7ad4eb8dcc6bf6d4e8e444c587"
 }

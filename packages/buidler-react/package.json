@@ -2,6 +2,7 @@
   "name": "@symfoni/buidler-react",
   "version": "0.0.4",
   "description": "Create a react component from buidler output.",
+  "access": "public",
   "repository": "github:symfoni/buidler-react",
   "author": "Symfoni",
   "license": "MIT",
@@ -55,5 +56,5 @@
     "@nomiclabs/buidler": "^1.0.1",
     "buidler-deploy": "^0.6.0-beta.16"
   },
-  "gitHead": "fe1ccf13a4d3b869db660d48535ea6ef94347a32"
+  "gitHead": "33bf928b8e1aef7ad4eb8dcc6bf6d4e8e444c587"
 }
