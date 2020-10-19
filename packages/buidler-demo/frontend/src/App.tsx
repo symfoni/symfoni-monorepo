@@ -1,7 +1,6 @@
 import { Box, Footer, Grommet, Main, Text } from "grommet";
 import React from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-// import { BuidlerSymfoniReact } from "./BuidlerSymfoniReact";
 import { BuidlerContext } from "./buidler/BuidlerContext";
 import { SimpleStorage } from './components/SimpleStorage';
 import { Navigation } from './ui/Navigation';
