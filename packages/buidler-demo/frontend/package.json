@@ -2,6 +2,9 @@
   "name": "@symfoni/react-demo",
   "version": "0.1.0",
   "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "index.js",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",

@@ -4,6 +4,9 @@
   "devDependencies": {
     "lerna": "^3.22.1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "bootstrap": "cd packages/buidler-demo/frontend && yarn && cd ../../.. && npx lerna bootstrap && yarn run build",
     "build": "npx lerna run build --stream",

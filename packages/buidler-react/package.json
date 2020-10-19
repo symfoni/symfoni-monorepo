@@ -7,6 +7,9 @@
   "license": "MIT",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "react",
     "ethereum",
@@ -55,5 +58,5 @@
     "@nomiclabs/buidler": "^1.0.1",
     "buidler-deploy": "^0.6.0-beta.16"
   },
-  "gitHead": "324099b3e798c81aa25b7dff0304642d1a82511c"
+  "gitHead": "70fb57a5aa55af70dfc0fe9cad90129c2091e097"
 }
