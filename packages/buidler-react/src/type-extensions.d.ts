@@ -12,7 +12,7 @@ interface TypechainConfig {
 declare module "@nomiclabs/buidler/types" {
   export interface BuidlerConfig {
     react?: React;
-    typechain: TypechainConfig; // TODO : // Fix for typechain config
+    typechain?: TypechainConfig; // TODO : // Fix for typechain config
   }
 
   export interface ResolvedBuidlerConfig {
