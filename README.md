@@ -4,6 +4,21 @@ This is just a part of our contribution to the Ethonline hackathon.
 
 * [🕶 Check out this repo for an introduction](https://github.com/symfoni/buidler-react-boilerplate)
 
+## Packages
+
+### [@symfoni/buidler-demo](https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-demo)
+
+This is a demo project that includes buidler-react as a plugin to generate the react component that is used to display some example content.
+
+### [@symfoni/buidler-react](https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-react)
+
+Here is the code for the buidler react plugin. Lerna will symlink this package to @symfoni/buidler-demo so we can use it there.
+
+### [@symfoni/buidler-storage](https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-storage)
+
+Here is the code for the buidler storage plugin. Lerna will symlink this package to @symfoni/buidler-demo so we can use it there.
+
+
 ## Developing
 
 1. Install lerna globally `npm i -g lerna`
@@ -27,16 +42,3 @@ You need three processes running for the full development enviroment
 
 Demo should be working!
 
-# Packages
-
-## [@symfoni/buidler-demo](https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-demo)
-
-This is a demo project that includes buidler-react as a plugin to generate the react component that is used to display some example content.
-
-## [@symfoni/buidler-react](https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-react)
-
-Here is the code for the buidler react plugin. Lerna will symlink this package to @symfoni/buidler-demo so we can use it there.
-
-## [@symfoni/buidler-storage](https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-storage)
-
-Here is the code for the buidler storage plugin. Lerna will symlink this package to @symfoni/buidler-demo so we can use it there.
