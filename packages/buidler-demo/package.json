@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/buidler-demo",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "private": true,
   "publishConfig": {
     "access": "public"
@@ -11,7 +11,7 @@
     "@nomiclabs/buidler": "^1.4.8",
     "@nomiclabs/buidler-waffle": "^2.1.0",
     "@openzeppelin/contracts": "^2.5.1",
-    "@symfoni/buidler-react": "^0.0.14",
+    "@symfoni/buidler-react": "^0.0.15",
     "@symfoni/buidler-typechain": "^0.2.1",
     "@typechain/ethers-v5": "^2.0.0",
     "@types/chai": "^4.2.14",
