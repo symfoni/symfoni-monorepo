@@ -60,6 +60,11 @@ paths: {
 
 # Cavats
 
+## Can i only use Metemask? 
+Web3modal supports many wallets. We will soon provide configuration for each of them. 
+
+We will also provide you the possiblity to inject your "whatever" buidler development node you are useing as a fallback provider when developing. We think this is a nice tool for new Ethereum developers also as then they dont need to wrap their head around a provider while building smart-contract and a provider in the frontend.
+
 ## Why does not react component get generated when i run `npx buidler node``
 
 We need to hook into buidler-deploy watch process. An issue is filed wiht buidler to open the possiblity for buidler-deploy plugin to do this. https://github.com/nomiclabs/buidler/issues/899

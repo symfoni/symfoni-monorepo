@@ -29,7 +29,8 @@
     "dist/src/",
     "src/",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "defaults"
   ],
   "dependencies": {
     "@nomiclabs/buidler": "^1.4.8",
