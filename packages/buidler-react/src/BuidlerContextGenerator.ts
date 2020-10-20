@@ -63,7 +63,7 @@ export class BuidlerContextGenerator {
       throw Error("You need to configure 'react' in buidler config paths.");
     }
 
-    if (!this.bre.config.typechain.outDir) {
+    if (!this.bre.config.typechain?.outDir) {
       throw Error(
         "You need to configure the typechain output directory in buidler config."
       );
