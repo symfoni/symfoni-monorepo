@@ -6,10 +6,6 @@ There are three Github repositories as part of our project. They are all part of
 - [buidler-react](https://github.com/symfoni/buidler-react)
 - buidler-plugins (this project)
 
-## Devloping
-
-=======
-
 ## Developing
 
 1. Install lerna globally `npm i -g lerna`
