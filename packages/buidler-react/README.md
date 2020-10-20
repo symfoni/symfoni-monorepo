@@ -1,6 +1,19 @@
+Part of contribution to the ETHOnline hackathon
+=========================================
+
+# Projects
+
+* [buidler-plugins](https://github.com/symfoni/buidler-plugins) - Lerna repo containing a demo project, buidler-react plugin and buidler-storage plugin. 
+* [buidler-react-boilerplate](https://github.com/symfoni/buidler-react-boilerplate) - A boilerplate which contains barebones for a smart-contract and react app project. Where all smart contracts are compiled, deployed and typed out to the react app.
+* [fork of buidler-typechain](https://github.com/symfoni/buidler-typechain) - usees latest release of typechain (v3) and removed peer dependencies on web3 packages.
+
 # Buidler-react
 
-Aplha release, interfaces will change.
+Aplha release, interfaces will change. 
+
+A buidler plugin to use in buidler projects.
+
+If you want to quikly get started with with a new buidler project and a react application. Try this [boilerplate](https://github.com/symfoni/buidler-react-boilerplate).
 
 ## Install
 
@@ -10,11 +23,11 @@ Aplha release, interfaces will change.
 
 ### NPM
 
-`npm install @symfoni/buidler-react --save`
+`npm install --save @symfoni/buidler-react `
 
 ### Frontend
 
-This plugin makes an assumption that you are building your frontend inside a buidler project (we later want to go away from this assumption). So we recommed you can a `frontend` folder inside your buidler project where all your frontend code and packages reside. Take a look at https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-demo for demonstration.
+This plugin makes an assumption that you are building your frontend inside a buidler project (we later want to go away from this assumption). So we recommed you to create a `frontend` folder inside your buidler project where all your frontend code and packages reside. Take a look at https://github.com/symfoni/buidler-plugins/tree/master/packages/buidler-demo for demonstration.
 
 ### Configuration
 
@@ -25,7 +38,7 @@ Run this command in your frontend project root to install those dependencies:
 `npm install --save ethers web3modal`
 `yarn add ethers web3modal`
 
-There are two buidler configrations
+There are two buidler configrations.
 
 #### React
 
@@ -45,15 +58,6 @@ paths: {
   },
 ```
 
-## Installation
-
-We recommend developing Buidler plugins using yarn. To start working on your
-project, just run
-
-```bash
-yarn install
-```
-
 # Cavats
 
 ## Why does not react component get generated when i run `npx buidler node``
@@ -64,37 +68,6 @@ We need to hook into buidler-deploy watch process. An issue is filed wiht buidle
 
 We dont know enough of the react build process to effeciently create a typescript react component which can be consumed by any other React build process. This is something we deffinitiy want to achive!
 
-## Plugin development
+# Development
 
-Make sure to read our [Plugin Development Guide](https://buidler.dev/guides/create-plugin.html)
-to learn how to build a plugin, and our
-[best practices to create high-quality plugins](https://buidler.dev/documentation/#plugin-development-best-practices).
-
-## Testing
-
-Running `npm run test` will run every test located in the `test/` folder. They
-use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/),
-but you can customize them.
-
-We recommend creating unit tests for your own modules, and integration tests for
-the interaction of the plugin with Buidler and its dependencies.
-
-## Linting and autoformat
-
-All all of Buidler projects use [prettier](https://prettier.io/) and
-[tslint](https://palantir.github.io/tslint/).
-
-You can check if your code style is correct by running `npm run lint`, and fix
-it with `npm run lint:fix`.
-
-## Building the project
-
-Just run `npm run buidl` ️👷‍
-
-## README file
-
-This README describes this boilerplate project, but won't be very useful to your
-plugin users.
-
-Take a look at `README-TEMPLATE.md` for an example of what a Buidler plugin's
-README should look like.
+If you want to develop in this plugin in any way, we suggest you fork this lerna repo; [buidler-plugins](https://github.com/symfoni/buidler-plugins). There are instructions inside that readme.
