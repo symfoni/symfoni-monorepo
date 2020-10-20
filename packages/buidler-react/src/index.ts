@@ -9,13 +9,39 @@ import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 import chalk from "chalk";
 import { ContextGenerator } from "./ContextGenerator";
 
-export default function() {
+export default function () {
   /* extend config */
   extendConfig((config, userConfig) => {
     if (userConfig.react == undefined) {
       config.react = {
-        providerPriority: ["web3modal"]
+        ...config.react, ...{
+          providerPriority: ["web3modal"]
+        }
       };
+    }
+    if (userConfig.paths == undefined) {
+      config.paths = {
+        ...config.paths, ...{
+          artifacts: "./frontend/src/buidler/artifacts",
+          deployments: "./frontend/src/buidler/deployments",
+          react: "./frontend/src/buidler",
+        }
+      }
+    }
+    if (userConfig.typechain == undefined) {
+      config.typechain = {
+        ...config.typechain, ...{
+          outDir: "./frontend/src/buidler/typechain",
+          target: "ethers-v5"
+        }
+      }
+    }
+    if(userConfig.namedAccounts == undefined){
+      config.namedAccounts = {...config.namedAccounts, ...{
+        deployer: {
+          default: 0,
+        },
+      }}
     }
     if (userConfig.paths?.react === undefined) {
       config.paths = { ...config.paths, react: "./frontend/src/buidler" };
