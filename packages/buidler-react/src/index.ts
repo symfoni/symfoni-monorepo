@@ -2,7 +2,7 @@ import {
   extendConfig,
   extendEnvironment,
   internalTask,
-  task
+  task,
 } from "@nomiclabs/buidler/config";
 import { BUIDLEREVM_NETWORK_NAME } from "@nomiclabs/buidler/plugins";
 import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
@@ -14,34 +14,40 @@ export default function () {
   extendConfig((config, userConfig) => {
     if (userConfig.react == undefined) {
       config.react = {
-        ...config.react, ...{
-          providerPriority: ["web3modal"]
-        }
+        ...config.react,
+        ...{
+          providerPriority: ["web3modal"],
+        },
       };
     }
     if (userConfig.paths == undefined) {
       config.paths = {
-        ...config.paths, ...{
+        ...config.paths,
+        ...{
           artifacts: "./frontend/src/buidler/artifacts",
           deployments: "./frontend/src/buidler/deployments",
           react: "./frontend/src/buidler",
-        }
-      }
+        },
+      };
     }
     if (userConfig.typechain == undefined) {
       config.typechain = {
-        ...config.typechain, ...{
+        ...config.typechain,
+        ...{
           outDir: "./frontend/src/buidler/typechain",
-          target: "ethers-v5"
-        }
-      }
-    }
-    if(userConfig.namedAccounts == undefined){
-      config.namedAccounts = {...config.namedAccounts, ...{
-        deployer: {
-          default: 0,
+          target: "ethers-v5",
         },
-      }}
+      };
+    }
+    if (userConfig.namedAccounts == undefined) {
+      config.namedAccounts = {
+        ...config.namedAccounts,
+        ...{
+          deployer: {
+            default: 0,
+          },
+        },
+      };
     }
     if (userConfig.paths?.react === undefined) {
       config.paths = { ...config.paths, react: "./frontend/src/buidler" };
@@ -55,15 +61,28 @@ export default function () {
   /* Add task */
   internalTask("react:run", "Run react component generation").setAction(
     async (args, bre) => {
-      await bre.run("typechain")
+      await bre.run("typechain");
       console.log(chalk.green(`Running React`));
+      await bre.run("react:run:before", args);
       const context = new ContextGenerator(args, bre);
       await context.generate();
       await context.save();
+      await bre.run("react:run:after", args);
     }
   );
 
-  internalTask("deploy:run", "deploy ").setAction(
+  internalTask("deploy:watch:after", "").setAction(
+    async (args, bre, runSuper) => {
+      try {
+        await runSuper(args);
+        await bre.run("react:run", args);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  );
+
+  internalTask("deploy:run", "Generate react component after deploy").setAction(
     async (args, bre, runSuper) => {
       try {
         await runSuper(args);
@@ -81,4 +100,26 @@ export default function () {
     .setAction(async (args, bre) => {
       await bre.run("react:run", args); // TODO Put in internal task for reuseability
     });
+
+  internalTask("react:run:before", "deploy ").setAction(
+    async (args, bre, runSuper) => {
+      try {
+        console.log(chalk.green(`Running react:run:before`));
+        return true;
+      } catch (e) {
+        throw Error(e);
+      }
+    }
+  );
+
+  internalTask("react:run:after", "deploy ").setAction(
+    async (args, bre, runSuper) => {
+      try {
+        console.log(chalk.green(`Running react:run:after`));
+        return true;
+      } catch (e) {
+        throw Error(e);
+      }
+    }
+  );
 }

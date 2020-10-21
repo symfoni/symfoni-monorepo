@@ -12,6 +12,7 @@
     "@nomiclabs/buidler-waffle": "^2.1.0",
     "@openzeppelin/contracts": "^2.5.1",
     "@symfoni/buidler-react": "^0.0.17",
+    "@symfoni/buidler-storage": "^0.0.17",
     "@symfoni/buidler-typechain": "^0.2.1",
     "@typechain/ethers-v5": "^2.0.0",
     "@types/chai": "^4.2.14",

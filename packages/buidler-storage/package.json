@@ -55,7 +55,7 @@
   },
   "peerDependencies": {
     "@nomiclabs/buidler": "^1.4.8",
-    "@symfoni/buidler-react": "^0.0.9",
+    "@symfoni/buidler-react": "^0.0.17",
     "@symfoni/buidler-typechain": "^0.2.1",
     "buidler-deploy": "^0.6.0-beta.34"
   },

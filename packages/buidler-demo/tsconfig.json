@@ -22,6 +22,7 @@
     "./node_modules/buidler-ethers-v5/src/type-extensions.d.ts",
     "./node_modules/@symfoni/buidler-typechain/src/type-extensions.d.ts",
     "./node_modules/@symfoni/buidler-react/src/type-extensions.d.ts",
+    "./node_modules/@symfoni/buidler-storage/src/type-extensions.d.ts",
     "./node_modules/buidler-deploy/src/type-extensions.d.ts",
     "./node_modules/@nomiclabs/buidler-waffle/src/type-extensions.d.ts"
   ]
