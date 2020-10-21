@@ -6,6 +6,7 @@ import {
 } from "@nomiclabs/buidler/config";
 import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 import chalk from "chalk";
+import { StorageGenerator } from "./StorageGenerator";
 
 export default function () {
   /* extend config */
@@ -35,12 +36,16 @@ export default function () {
   internalTask("storage:run", "Run react component generation").setAction(
     async (args, bre) => {
       console.log(chalk.blue("Running storage"));
+      const context = new StorageGenerator(args, bre);
+      await context.generate();
     }
   );
 
   internalTask("react:run:after", "Run react component generation").setAction(
     async (args, bre, runSuper) => {
+      await runSuper(args);
       await bre.run("storage:run");
+      return;
     }
   );
 }

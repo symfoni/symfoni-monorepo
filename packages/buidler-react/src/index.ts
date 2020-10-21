@@ -68,6 +68,7 @@ export default function () {
       await context.generate();
       await context.save();
       await bre.run("react:run:after", args);
+      return;
     }
   );
 
@@ -76,22 +77,25 @@ export default function () {
       try {
         await runSuper(args);
         await bre.run("react:run", args);
+        return;
       } catch (e) {
         console.error(e);
       }
     }
   );
 
-  internalTask("deploy:run", "Generate react component after deploy").setAction(
-    async (args, bre, runSuper) => {
-      try {
-        await runSuper(args);
-        await bre.run("react:run", args);
-      } catch (e) {
-        console.error(e);
-      }
+  internalTask(
+    "deploy:runDeploy",
+    "Generate react component after deploy"
+  ).setAction(async (args, bre, runSuper) => {
+    try {
+      await runSuper(args);
+      await bre.run("react:run", args);
+      return;
+    } catch (e) {
+      console.error(e);
     }
-  );
+  });
 
   task("react", "Create React component")
     .addFlag("reset", "whether to delete deployments files first")
@@ -101,25 +105,27 @@ export default function () {
       await bre.run("react:run", args); // TODO Put in internal task for reuseability
     });
 
-  internalTask("react:run:before", "deploy ").setAction(
-    async (args, bre, runSuper) => {
-      try {
-        console.log(chalk.green(`Running react:run:before`));
-        return true;
-      } catch (e) {
-        throw Error(e);
-      }
+  internalTask(
+    "react:run:before",
+    "Run tasks before react generation has started."
+  ).setAction(async (args, bre, runSuper) => {
+    try {
+      console.log(chalk.green(`Running react:run:before`));
+      return;
+    } catch (e) {
+      throw Error(e);
     }
-  );
+  });
 
-  internalTask("react:run:after", "deploy ").setAction(
-    async (args, bre, runSuper) => {
-      try {
-        console.log(chalk.green(`Running react:run:after`));
-        return true;
-      } catch (e) {
-        throw Error(e);
-      }
+  internalTask(
+    "react:run:after",
+    "Run tasks after react generation is complete."
+  ).setAction(async (args, bre, runSuper) => {
+    try {
+      console.log(chalk.green(`Running react:run:after`));
+      return;
+    } catch (e) {
+      throw Error(e);
     }
-  );
+  });
 }

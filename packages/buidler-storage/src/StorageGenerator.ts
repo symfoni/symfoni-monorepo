@@ -4,13 +4,11 @@ import {
   ScriptTarget,
   ModuleKind,
   ModuleResolutionKind,
-  SourceFile,
-  ThisExpression,
 } from "ts-morph";
 import { JsxEmit } from "typescript";
-import { BuidlerContextGenerator } from "./BuidlerContextGenerator";
+import { BuidlerContextGenerator } from "@symfoni/buidler-react/dist/src/BuidlerContextGenerator";
 
-export class ContextGenerator {
+export class StorageGenerator {
   private project: Project;
   private BUIDLER_CONTEXT_FILE_NAME: string;
   private bre: BuidlerRuntimeEnvironment;
@@ -48,16 +46,9 @@ export class ContextGenerator {
   }
 
   private ensure_buidler_context_file() {
-    const exist = this.project
-      .getSourceFiles()
-      .find((file) => file.getBaseName() === this.BUIDLER_CONTEXT_FILE_NAME);
-    if (!exist) {
-      const newFile = this.project.createSourceFile(
-        this.outdir + "/" + this.BUIDLER_CONTEXT_FILE_NAME,
-        undefined,
-        { overwrite: true }
-      );
-    }
+    this.project.addSourceFileAtPath(
+      this.outdir + "/" + this.BUIDLER_CONTEXT_FILE_NAME
+    );
   }
 
   async generate() {
@@ -65,14 +56,16 @@ export class ContextGenerator {
       this.BUIDLER_CONTEXT_FILE_NAME
     );
     if (!buidler_context_file) {
-      throw Error("No buidler context file");
+      throw Error(
+        "Buidler storage could not find a BuidlerContext.tsx file in your react output path."
+      );
     }
     const buidler_context_generator = new BuidlerContextGenerator(
       buidler_context_file,
       this.args,
       this.bre
     );
-    return buidler_context_generator.generate();
+    await buidler_context_generator.addStorage();
   }
 
   async save() {
