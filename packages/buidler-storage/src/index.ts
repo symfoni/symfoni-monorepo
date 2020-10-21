@@ -1,9 +1,9 @@
 import {
   extendConfig,
   extendEnvironment,
+  internalTask,
   task,
 } from "@nomiclabs/buidler/config";
-import { BUIDLEREVM_NETWORK_NAME } from "@nomiclabs/buidler/plugins";
 import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
 import chalk from "chalk";
 
@@ -29,6 +29,18 @@ export default function () {
   task("storage", "Create React storage component")
     .addParam("provider", "Choose what storage provider to use options: hub")
     .setAction(async (args, bre) => {
-      console.log(chalk.blue("Running storage"));
+      await bre.run("storage:run");
     });
+
+  internalTask("storage:run", "Run react component generation").setAction(
+    async (args, bre) => {
+      console.log(chalk.blue("Running storage"));
+    }
+  );
+
+  internalTask("react:run:after", "Run react component generation").setAction(
+    async (args, bre, runSuper) => {
+      await bre.run("storage:run");
+    }
+  );
 }

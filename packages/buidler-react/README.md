@@ -85,6 +85,10 @@ It will do so by default, but we will later provide an option to be explicitt ab
 
 Not planned atm.
 
+## Users get Metamask up in their face right after they enter the webpage. BAD UX!
+
+Yea, we know. We have some patterns with a fallback provider that solves this. But for the hackathon we have not that had time to implement that. Coming
+
 # Development
 
 If you want to develop in this plugin in any way, we suggest you fork this lerna repo; [buidler-plugins](https://github.com/symfoni/buidler-plugins). There are instructions inside that readme.
