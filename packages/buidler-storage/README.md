@@ -1,3 +1,5 @@
+[![buidler](https://buidler.dev/buidler-plugin-badge.svg?1)](https://buidler.dev)
+
 # Buidler-storage
 
 This plugin relies on peer

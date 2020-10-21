@@ -1,7 +1,8 @@
 {
   "packages": [
     "packages/buidler-react",
-    "packages/buidler-storage"
+    "packages/buidler-storage",
+    "packages/buidler-demo"
   ],
   "version": "0.0.20",
   "npmClient": "yarn"
