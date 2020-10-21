@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/buidler-storage",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Connect buidler output to storage",
   "repository": "github:symfoni/buidler-storage",
   "author": "Symfoni",
@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "@nomiclabs/buidler": "^1.4.8",
-    "@symfoni/buidler-react": "^0.0.20",
+    "@symfoni/buidler-react": "^0.0.21",
     "@symfoni/buidler-typechain": "^0.2.1",
     "@types/chai": "^4.2.14",
     "@types/fs-extra": "^9.0.2",
