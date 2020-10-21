@@ -1,8 +1,7 @@
 import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { CurrentAddressContext, ProviderContext, SignerContext, SimpleStorageContext } from './../buidler/BuidlerContext';
-import { Client, Identity, KeyInfo, Buckets, PublicKey, PrivateKey, bucketsArchive } from '@textile/hub'
+import { SimpleStorageContext } from './../buidler/BuidlerContext';
 
 
 
@@ -17,9 +16,9 @@ interface Document {
 
 export const SimpleStorage: React.FC<Props> = () => {
     const SimpleStorage = useContext(SimpleStorageContext)
-    const [provider] = useContext(ProviderContext)
-    const [currentAddress] = useContext(CurrentAddressContext)
-    const [signer] = useContext(SignerContext)
+    // const [provider] = useContext(ProviderContext)
+    // const [currentAddress] = useContext(CurrentAddressContext)
+    // const [signer] = useContext(SignerContext)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [documents, setDocuments] = useState<Document[]>([]);
 
@@ -42,41 +41,51 @@ export const SimpleStorage: React.FC<Props> = () => {
             }
         };
         doAsync();
+        // eslint-disable-next-line
     }, [SimpleStorage.instance])
 
-    // useEffect(() => {
-    //     const doAsync = async () => {
-    //         if (provider && signer) {
-    //             const identity = await PrivateKey.fromRandom()
-    //             console.log(identity)
-    //             const buckets = await Buckets.withKeyInfo({ key: "bdsmrirkgb3n5qndmntxuy4w6jq" })
-    //             await buckets.getToken(identity)
-    //             console.log("buckets ", buckets)
-    //             if (SimpleStorage.instance) {
-    //                 const bucketResult = await buckets.getOrCreate(SimpleStorage.instance.address)
-    //                 if (!bucketResult.root) {
-    //                     throw Error("Failed to open Bucket.")
-    //                 }
-    //                 console.log("Created bucket", bucketResult.root.key)
-    //                 console.log("Bucket is now", buckets)
-    //             }
-    //             // buckets
+    // const getBuckets = async (): Promise<[Buckets, string]> => {
+    //     if (!SimpleStorage.instance) {
+    //         throw Error("Need contract instance to know hich bucket to get.")
+    //     }
+    //     // TODO Create identiyy from web3modal
+    //     const identity = await PrivateKey.fromRandom()
+    //     const buckets = await Buckets.withKeyInfo({ key: "biepyo75p2zaavunhyj7ndeydkq" }) // TODO Set unsecure key user key from Hub
+    //     await buckets.getToken(identity)
+    //     const bucketResult = await buckets.getOrCreate(SimpleStorage.instance.address)
+    //     if (!bucketResult.root) {
+    //         throw Error("Failed to open Bucket.")
+    //     }
+    //     if (!bucketResult.root.key) {
+    //         throw Error("Failed to open Bucket root key.")
+    //     }
 
-    //         }
-    //     };
-    //     doAsync();
-    // }, [provider, signer])
+    //     return [buckets, bucketResult.root.key]
+    // }
 
-
-    async function authorize(key: KeyInfo, identity: Identity) {
-        const client = await Client.withKeyInfo(key)
-        await client.getToken(identity)
-        return client
-    }
+    // const uploadDocument = async (fileName: string, data: string): Promise<string> => {
+    //     if (provider && signer && SimpleStorage.instance) {
+    //         const [buckets, key] = await getBuckets()
+    //         const pathResult = await buckets.pushPath(key, fileName, data, {})
+    //         console.log("pathResult<", pathResult)
+    //         return pathResult.path.path
+    //     } else {
+    //         throw Error("Could not upload document.")
+    //     }
+    // }
 
     const getDocument = async (name: string) => {
         if (SimpleStorage.instance) {
-            const document = await SimpleStorage.instance.getDocument2(ethers.utils.formatBytes32String(name))
+            const document = await SimpleStorage.instance.getDocument(ethers.utils.formatBytes32String(name))
+            //Textile stuff
+            // const [buckets, key] = await getBuckets()
+            // const display = (num?: number) => {
+            //     console.log('Progress:', num)
+            // }
+            // console.log("document.docURI", document.docURI.split("/").pop())
+            // const res = await buckets.pullPath(key, document.docURI, { progress: display })
+            // console.log("res", await res.next())
+
             setDocuments(old => {
                 return old.map(x => {
                     if (x.name === name) {
@@ -92,12 +101,13 @@ export const SimpleStorage: React.FC<Props> = () => {
         }
     }
 
-    const setDocument = async (file: { name: string, type: string, data: string }) => {
+    const saveDocument = async (file: { name: string, type: string, data: string }) => {
         if (SimpleStorage.instance) {
-            const urlToDoc = "https://somestorage.com"
             const nameBytes32 = ethers.utils.formatBytes32String(file.name.substr(0, 31))
+            // const url = await uploadDocument(file.name, file.data)
+            const url = "https://somestorage.com"
             const hashOfDocument = ethers.utils.sha256(ethers.utils.toUtf8Bytes(file.data))
-            /* const tx =  */await SimpleStorage.instance.setDocument(nameBytes32, urlToDoc, hashOfDocument)
+            /* const tx =  */await SimpleStorage.instance.setDocument(nameBytes32, url, hashOfDocument)
         }
     }
 
@@ -112,7 +122,7 @@ export const SimpleStorage: React.FC<Props> = () => {
                 console.log("Onload ", e.target)
                 if (e.target) {
                     if (typeof e.target.result === "string") {
-                        setDocument({
+                        saveDocument({
                             name: file.name,
                             type: file.type,
                             data: e.target.result
@@ -120,9 +130,7 @@ export const SimpleStorage: React.FC<Props> = () => {
                     }
                 };
             }
-            setTimeout(() => {
-                reader.readAsDataURL(file)
-            }, 500)
+            reader.readAsDataURL(file)
         }
     }
 
@@ -166,12 +174,10 @@ export const SimpleStorage: React.FC<Props> = () => {
                                 )
                             },
                             {
-                                property: "url",
+                                property: "URL",
                                 header: "Url",
                                 render: ({ url }) => (
-                                    url ?
-                                        url :
-                                        "Click to update"
+                                    url ? url : ""
                                 )
                             }
                         ]}
