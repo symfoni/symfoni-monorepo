@@ -26,7 +26,7 @@ If you want to quikly get started with with a new buidler project and a react ap
 
 `npm install --save @symfoni/buidler-react `
 
-The plugin will hook into `npx buidler node` when you run that. Untill this [issue](https://github.com/nomiclabs/buidler/issues/899) is resolved it will only run when you start the node. After that issue is resolved it will run each time you make a change to your smart contracts and react will hot-reload it.
+The plugin will hook into buidler-deploy which hooks into `npx buidler node` when you run that. After that issue is resolved it will run each time you make a change to your smart contracts and react will hot-reload it.
 
 You can mnaully trigger it by running `npx buidler react --network localhost`. You probably need to run `npx buidler typechain` and `npx buidler deploy`first to have artifacts, deployments and typechain files ready.
 
