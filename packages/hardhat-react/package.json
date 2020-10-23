@@ -28,27 +28,31 @@
   ],
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/debug": "^4.1.5",
     "@types/fs-extra": "^5.0.4",
     "@types/mocha": "^5.2.6",
-    "@types/node": "^8.10.38",
+    "@types/node": "^14.14.2",
     "chai": "^4.2.0",
-    "hardhat": "^2.0.0",
-    "hardhat-deploy": "^0.7.0-beta.6",
+    "hardhat": "^2.0.1",
+    "hardhat-deploy": "^0.7.0-beta.8",
     "hardhat-deploy-ethers": "^0.3.0-beta.5",
-    "hardhat-typechain": "^0.2.2",
+    "hardhat-typechain": "^0.2.6",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",
     "ts-morph": "^8.1.2",
-    "ts-node": "^8.1.0",
+    "ts-node": "^9.0.0",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^4.0.3"
   },
   "peerDependencies": {
-    "hardhat": "2.0.0-rc.0",
-    "hardhat-deploy": "^0.7.0-beta.6",
+    "hardhat": "2.0.1",
+    "hardhat-deploy": "^0.7.0-beta.8",
     "hardhat-deploy-ethers": "^0.3.0-beta.5",
     "hardhat-typechain": "^0.2.2"
+  },
+  "dependencies": {
+    "debug": "^4.2.0"
   }
 }

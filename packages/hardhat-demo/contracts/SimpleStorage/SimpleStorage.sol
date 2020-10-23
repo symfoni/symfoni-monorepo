@@ -14,7 +14,7 @@ contract SimpleStorage {
     bytes32[] internal _documentList;
     event Document(bytes32 name, string uri, bytes32 docHash);
 
-    function getDocument(bytes32 name)
+    function getDocument2(bytes32 name)
         external
         view
         returns (string memory docURI, bytes32 docHash)

@@ -2,7 +2,7 @@
 
 import { Box, Text } from 'grommet';
 import React, { useContext, useEffect } from 'react';
-import { CurrentAddressContext, ProviderContext } from './../buidler/BuidlerContext';
+import { CurrentAddressContext, ProviderContext } from './../hardhat/HardhatContext';
 
 interface Props { }
 

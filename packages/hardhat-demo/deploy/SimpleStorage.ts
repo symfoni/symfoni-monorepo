@@ -1,11 +1,8 @@
-import {
-  BuidlerRuntimeEnvironment,
-  DeployFunction,
-} from "@nomiclabs/buidler/types";
+import { HardhatRuntimeEnvironment, DeployFunction } from "hardhat/types";
 
-const func: DeployFunction = async function(bre: BuidlerRuntimeEnvironment) {
-  const { deploy } = bre.deployments;
-  const { deployer } = await bre.getNamedAccounts();
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const { deploy } = hre.deployments;
+  const { deployer } = await hre.getNamedAccounts();
   await deploy("SimpleStorage", {
     from: deployer,
     // gas: 4000000,

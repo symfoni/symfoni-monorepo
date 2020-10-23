@@ -4,7 +4,8 @@ import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy-ethers";
 import "hardhat-deploy";
 import "@symfoni/hardhat-react";
-import "@symfoni/hardhat-typechain";
+// import "@symfoni/hardhat-typechain";
+import "hardhat-typechain";
 import "typechain-target-ethers-v5";
 
 const config: HardhatUserConfig = {
@@ -24,10 +25,17 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  networks: {
+    hardhat: {
+      accounts: {
+        mnemonic:
+          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
+      },
+    },
+  },
   paths: {
     artifacts: "./frontend/src/hardhat/artifacts",
     deployments: "./frontend/src/hardhat/deployments",
-    react: "",
   },
 };
 
