@@ -1,8 +1,7 @@
 {
   "packages": [
-    "packages/buidler-react",
-    "packages/buidler-storage",
-    "packages/buidler-demo"
+    "packages/hardhat-react",
+    "packages/hardhat-demo"
   ],
   "version": "0.0.21",
   "npmClient": "yarn"
