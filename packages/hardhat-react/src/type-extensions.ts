@@ -1,7 +1,7 @@
 import "hardhat/types/config";
 import "hardhat/types/runtime";
 
-interface React {
+export interface React {
   providerPriority?: string[];
 }
 

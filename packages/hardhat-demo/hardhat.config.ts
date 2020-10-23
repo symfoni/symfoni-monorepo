@@ -4,13 +4,30 @@ import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy-ethers";
 import "hardhat-deploy";
 import "@symfoni/hardhat-react";
+import "@symfoni/hardhat-typechain";
+import "typechain-target-ethers-v5";
 
 const config: HardhatUserConfig = {
-  solidity: "0.7.3",
+  solidity: {
+    compilers: [
+      {
+        version: "0.6.0",
+      },
+      {
+        version: "0.6.2",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 50,
+          },
+        },
+      },
+    ],
+  },
   paths: {
-    artifacts: "./frontend/src/buidler/artifacts",
-    deployments: "./frontend/src/buidler/deployments",
-    react: "./frontend/src/buidler",
+    artifacts: "./frontend/src/hardhat/artifacts",
+    deployments: "./frontend/src/hardhat/deployments",
+    react: "",
   },
 };
 
