@@ -4,5 +4,6 @@
     "packages/hardhat-demo"
   ],
   "version": "0.0.1",
-  "npmClient": "yarn"
+  "npmClient": "yarn",
+  "useWorkspaces": true
 }
