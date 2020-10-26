@@ -80,7 +80,6 @@ export class ReactContext {
 
     const artifactFiles = await this.hre.artifacts.getAllFullyQualifiedNames();
     log("artifactFiles => " + artifactFiles.join(","));
-    console.log(artifactFiles);
 
     const typechainFiles = readdirSync(this.hre.config.typechain.outDir);
     log("typechainFiles => " + typechainFiles.join(","));
@@ -93,7 +92,6 @@ export class ReactContext {
         const artifactJson = await this.hre.artifacts.readArtifact(
           artifactFile
         );
-        console.log("contractName", artifactJson.contractName);
         if (artifactJson.bytecode.length < 3) {
           // TODO handle interface contracts
           return;
