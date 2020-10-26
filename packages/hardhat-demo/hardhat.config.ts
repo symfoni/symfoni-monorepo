@@ -1,10 +1,9 @@
-import { task, HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy-ethers";
 import "hardhat-deploy";
 import "@symfoni/hardhat-react";
-// import "@symfoni/hardhat-typechain";
 import "hardhat-typechain";
 import "typechain-target-ethers-v5";
 

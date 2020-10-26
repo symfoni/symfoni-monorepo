@@ -1,9 +1,4 @@
-import {
-  extendConfig,
-  extendEnvironment,
-  task,
-  internalTask,
-} from "hardhat/config";
+import { extendConfig, extendEnvironment, task, subtask } from "hardhat/config";
 import { lazyObject } from "hardhat/plugins";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 import path from "path";
@@ -13,6 +8,10 @@ import { TsMorphProject } from "./TsMorhProject";
 import "hardhat-deploy/dist/src/type-extensions";
 import "hardhat-typechain/dist/src/type-extensions";
 import { debug } from "debug";
+
+export const TASK_REACT = "react";
+export const TASK_REACT_MAIN = "react:main";
+import { TASK_DEPLOY_RUN_DEPLOY } from "hardhat-deploy";
 
 const log = debug("hardhat:plugin:react");
 extendConfig(
@@ -92,11 +91,10 @@ extendEnvironment((hre) => {
   // hre.example = lazyObject(() => new ExampleHardhatRuntimeEnvironmentField());
 });
 
-internalTask("react:run", "Run React context component generation.").setAction(
+subtask(TASK_REACT_MAIN, "Run React context component generation.").setAction(
   async (args, hre) => {
     await hre.run("typechain");
     log("Running Hardhat React");
-    await hre.run("react:run:before", args);
     const context = new TsMorphProject(args, hre);
 
     log("START generate context");
@@ -107,48 +105,27 @@ internalTask("react:run", "Run React context component generation.").setAction(
     await context.save();
     log("END save context");
     console.info(chalk.green("Successfully generated React context!"));
-    await hre.run("react:run:after", args);
     return;
   }
 );
 
-internalTask(
-  "deploy:runDeploy",
+subtask(
+  TASK_DEPLOY_RUN_DEPLOY,
   "Generate react component after deploy"
 ).setAction(async (args, hre, runSuper) => {
   try {
+    if (!runSuper.isDefined)
+      throw Error("runSuper not defined for " + TASK_DEPLOY_RUN_DEPLOY);
     await runSuper(args);
-    await hre.run("react:run", args);
+    await hre.run(TASK_REACT_MAIN, args);
     return;
   } catch (e) {
     console.error(e);
   }
 });
 
-task("react", "Create React component")
+task(TASK_REACT, "Create React component")
   .addFlag("noReactOutput", "whether to save react context to disk") // TODO ADD more paramters (path, debug etc)
   .setAction(async (args, hre) => {
-    await hre.run("react:run", args);
+    await hre.run(TASK_REACT_MAIN, args);
   });
-
-internalTask(
-  "react:run:before",
-  "Run tasks before react generation has started."
-).setAction(async (args, hre, runSuper) => {
-  try {
-    return;
-  } catch (e) {
-    throw Error(e);
-  }
-});
-
-internalTask(
-  "react:run:after",
-  "Run tasks after react generation is complete."
-).setAction(async (args, bre, runSuper) => {
-  try {
-    return;
-  } catch (e) {
-    throw Error(e);
-  }
-});
