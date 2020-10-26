@@ -13,6 +13,7 @@ import { TsMorphProject } from "./TsMorhProject";
 import "hardhat-deploy/dist/src/type-extensions";
 import "hardhat-typechain/dist/src/type-extensions";
 import { debug } from "debug";
+
 const log = debug("hardhat:plugin:react");
 extendConfig(
   (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
@@ -58,8 +59,6 @@ extendConfig(
           "./frontend/src/hardhat/typechain"
         ),
         target: "ethers-v5",
-        onCompile: true,
-        onTest: true,
       };
     } else {
       const userTypechainOutdir = userConfig.typechain.outDir;

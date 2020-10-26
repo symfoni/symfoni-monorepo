@@ -1,6 +1,8 @@
 {
   "name": "@symfoni/hardhat-demo",
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.0",
+    "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.14.3",
     "buidler-ethers-v5": "^0.2.3",
@@ -12,9 +14,13 @@
     "ts-generator": "^0.1.1",
     "ts-node": "^9.0.0",
     "typechain": "^3.0.0",
+    "typechain-target-ethers-v5": "^1.2.2",
+    "@openzeppelin/contracts": "^3.2.0",
     "typescript": "^4.0.3"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@symfoni/hardhat-react": "^0.0.1"
+  },
   "scripts": {
     "node": "npx hardhat node --watch --reset"
   }
