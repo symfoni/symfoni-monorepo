@@ -14,7 +14,7 @@ contract SimpleStorage {
     bytes32[] internal _documentList;
     event Document(bytes32 name, string uri, bytes32 docHash);
 
-    function getDocument2(bytes32 name)
+    function getDocument(bytes32 name)
         external
         view
         returns (string memory docURI, bytes32 docHash)
@@ -24,6 +24,10 @@ contract SimpleStorage {
             "Document cannot be empty2."
         );
         return (_documents[name].docURI, _documents[name].docHash);
+    }
+
+    function get_number() public view returns (uint256) {
+        return _documentList.length;
     }
 
     function setDocument(

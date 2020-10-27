@@ -65,3 +65,6 @@ cache
 artifacts
 deployments
 typechain
+
+# local external packages
+packages/hardhat-deploy
