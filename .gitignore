@@ -68,3 +68,4 @@ typechain
 
 # local external packages
 packages/hardhat-deploy
+scratch.ts

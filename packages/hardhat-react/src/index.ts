@@ -19,8 +19,15 @@ extendConfig(
     // set default config
     if (!userConfig.react) {
       config.react = {
-        providerPriority: ["web3modal"],
+        providerPriority: ["hardhat", "web3modal"],
       };
+    } else {
+      // if (!userConfig.react.injectWallet) {
+      //   config.react.injectWallet = false;
+      // }
+      if (!userConfig.react.providerPriority) {
+        config.react.providerPriority = ["hardhat", "web3modal"];
+      }
     }
     // Set react path
     const userReactPath = userConfig.paths?.react;

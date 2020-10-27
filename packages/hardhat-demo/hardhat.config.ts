@@ -8,6 +8,9 @@ import "hardhat-typechain";
 import "typechain-target-ethers-v5";
 
 const config: HardhatUserConfig = {
+  react: {
+    providerPriority: ["web3modal", "hardhat"],
+  },
   solidity: {
     compilers: [
       {

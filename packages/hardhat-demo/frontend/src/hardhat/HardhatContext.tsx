@@ -22,9 +22,9 @@ export const emptyContract = {
 };
 export const defaultProvider: providers.Provider = ethers.providers.getDefaultProvider();
 export const ProviderContext = React.createContext<[providers.Provider, React.Dispatch<React.SetStateAction<providers.Provider>>]>([defaultProvider, () => { }]);
-const defaultCurrentAddress: string = "";
+export const defaultCurrentAddress: string = "";
 export const CurrentAddressContext = React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }]);
-const defaultSigner: Signer | undefined = undefined;
+export const defaultSigner: Signer | undefined = undefined;
 export const SignerContext = React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }]);
 export const TestingContext = React.createContext<SymfoniTesting>(emptyContract);
 export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
@@ -32,7 +32,7 @@ export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(
 export const TokenContext = React.createContext<SymfoniToken>(emptyContract);
 export const ERC20Context = React.createContext<SymfoniErc20>(emptyContract);
 
-export interface HardhatSymfoniReactProps {
+export interface HardhatContextProps {
 }
 
 export interface SymfoniTesting {
@@ -60,13 +60,23 @@ export interface SymfoniErc20 {
     factory?: Erc20Factory;
 }
 
-export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
+export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
     const [ready, setReady] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
     const [/* providerName */, setProviderName] = useState<string>();
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
     const [provider, setProvider] = useState<providers.Provider>(defaultProvider);
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
+    const providerPriority = ["web3modal", "hardhat"];
+    const [Testing, setTesting] = useState<SymfoniTesting>(emptyContract);
+    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
+    const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
+    const [Token, setToken] = useState<SymfoniToken>(emptyContract);
+    const [ERC20, setERC20] = useState<SymfoniErc20>(emptyContract);
+    useEffect(() => {
+        console.debug(messages.pop())
+    }, [messages])
+
     const getProvider = async (): Promise<providers.Provider | undefined> => {
         const provider = await providerPriority.reduce(async (maybeProvider: Promise<providers.Provider | undefined>, providerIdentification) => {
             let foundProvider = await maybeProvider
@@ -83,20 +93,34 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
                         } catch (error) {
                             return Promise.resolve(undefined)
                         }
+                    case "hardhat":
+                        try {
+                            const provider = new ethers.providers.JsonRpcProvider({ // TODO make this param
+                                url: "http://localhost:8545"
+                            });
+                            return Promise.resolve(provider)
+                        } catch (error) {
+                            return Promise.resolve(undefined)
+                        }
                     default:
                         return Promise.resolve(undefined)
                 }
             }
         }, Promise.resolve(undefined)) // end reduce
-
         return provider;
     };
-    const [Testing, setTesting] = useState<SymfoniTesting>(emptyContract);
-    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
-    const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
-    const [Token, setToken] = useState<SymfoniToken>(emptyContract);
-    const [ERC20, setERC20] = useState<SymfoniErc20>(emptyContract);
-    const providerPriority = ["web3modal"];
+    const getSigner = async (_provider: providers.Provider): Promise<Signer | undefined> => {
+        switch (_provider.constructor.name) {
+            case "Web3Provider":
+                const web3provider = _provider as ethers.providers.Web3Provider
+                return await web3provider.getSigner()
+            case "JsonRpcProvider":
+                return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+
+            default:
+                return undefined
+        }
+    };
     const getWeb3ModalProvider = async (): Promise<any> => {
         const providerOptions: IProviderOptions = {};
         const web3Modal = new Web3Modal({
@@ -106,9 +130,6 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
         });
         return await web3Modal.connect();
     };
-    useEffect(() => {
-        console.debug(messages.pop())
-    }, [messages])
     useEffect(() => {
         let subscribed = true
         const doAsync = async () => {
@@ -120,18 +141,13 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
                 setProvider(_provider)
                 setProviderName(_providerName)
                 setMessages(old => [...old, "Useing provider: " + _providerName])
-                let _signer;
-                if (_providerName === "Web3Provider") {
-                    const web3provider = _provider as ethers.providers.Web3Provider
-                    _signer = await web3provider.getSigner()
-                    console.debug("_signer", _signer)
-                    if (subscribed && _signer) {
-                        setSigner(_signer)
-                        const address = await _signer.getAddress()
-                        if (subscribed && address) {
-                            console.debug("address", address)
-                            setCurrentAddress(address)
-                        }
+                const _signer = await getSigner(_provider);
+                if (subscribed && _signer) {
+                    setSigner(_signer)
+                    const address = await _signer.getAddress()
+                    if (subscribed && address) {
+                        console.debug("address", address)
+                        setCurrentAddress(address)
                     }
                 }
 
@@ -140,7 +156,6 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
                 setSimpleStorage2(getSimpleStorage2(_provider, _signer))
                 setToken(getToken(_provider, _signer))
                 setERC20(getERC20(_provider, _signer))
-
                 setReady(true)
             }
         };
@@ -149,6 +164,9 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
     }, [])
 
     const getTesting = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
         let instance = undefined
         const contract: SymfoniTesting = {
             instance: instance,
@@ -157,6 +175,8 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
         return contract
     };
     const getSimpleStorage = (_provider: providers.Provider, _signer?: Signer) => {
+
+
 
         const contractAddress = SimpleStorageDeployment.receipt.contractAddress
         const instance = _signer ? SimpleStorageFactory.connect(contractAddress, _signer) : SimpleStorageFactory.connect(contractAddress, _provider)
@@ -167,6 +187,9 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
         return contract
     };
     const getSimpleStorage2 = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
         let instance = undefined
         const contract: SymfoniSimpleStorage2 = {
             instance: instance,
@@ -175,6 +198,9 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
         return contract
     };
     const getToken = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
         let instance = undefined
         const contract: SymfoniToken = {
             instance: instance,
@@ -183,6 +209,9 @@ export const HardhatContext: React.FC<HardhatSymfoniReactProps> = (props) => {
         return contract
     };
     const getERC20 = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
         let instance = undefined
         const contract: SymfoniErc20 = {
             instance: instance,
