@@ -1,17 +1,17 @@
-import {extendConfig, extendEnvironment, task, subtask} from "hardhat/config";
-import {lazyObject} from "hardhat/plugins";
-import {HardhatConfig, HardhatUserConfig} from "hardhat/types";
+import { extendConfig, extendEnvironment, task, subtask } from "hardhat/config";
+import { lazyObject } from "hardhat/plugins";
+import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 import path from "path";
 import chalk from "chalk";
-import {TsMorphProject} from "./TsMorhProject";
+import { TsMorphProject } from "./TsMorhProject";
 import "hardhat-deploy/dist/src/type-extensions";
 import "hardhat-typechain/dist/src/type-extensions";
 import "./type-extensions";
-import {debug} from "debug";
+import { debug } from "debug";
 
 export const TASK_REACT = "react";
 export const TASK_REACT_MAIN = "react:main";
-import {TASK_DEPLOY_RUN_DEPLOY} from "hardhat-deploy";
+import { TASK_DEPLOY_RUN_DEPLOY } from "hardhat-deploy";
 
 const log = debug("hardhat:plugin:react");
 extendConfig(
@@ -44,6 +44,16 @@ extendConfig(
       }
     }
     config.paths.react = newReactPath;
+
+    // Set deployments path default
+    const userDeploymentPath = userConfig.paths?.deployments;
+    if (userDeploymentPath === undefined) {
+      const newDeploymentPath = path.join(
+        config.paths.root,
+        "./frontend/src/hardhat"
+      );
+      config.paths.deployments = newDeploymentPath;
+    }
 
     // Set some defaults for other plugins to get fast going.
     // deployer

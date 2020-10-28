@@ -53,7 +53,8 @@
     "hardhat": "^2.0.2",
     "hardhat-deploy": "^0.7.0-beta.18",
     "hardhat-deploy-ethers": "^0.3.0-beta.5",
-    "hardhat-typechain": "^0.3.3"
+    "hardhat-typechain": "^0.3.3",
+    "ts-morph": "^8.1.2"
   },
   "dependencies": {
     "debug": "^4.2.0"
