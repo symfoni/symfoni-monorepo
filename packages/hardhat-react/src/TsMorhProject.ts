@@ -1,5 +1,5 @@
-import {readdirSync} from "fs-extra";
-import {HardhatRuntimeEnvironment} from "hardhat/types";
+import { readdirSync } from "fs-extra";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 import path from "path";
 import {
   Project,
@@ -7,9 +7,9 @@ import {
   ModuleKind,
   ModuleResolutionKind,
 } from "ts-morph";
-import {JsxEmit} from "typescript";
-import {ReactContext} from "./ReactContext";
-import {debug} from "debug";
+import { JsxEmit } from "typescript";
+import { ReactContext } from "./ReactContext";
+import { debug } from "debug";
 const log = debug("hardhat:plugin:react");
 
 const TS_CONFIG = {
@@ -105,10 +105,15 @@ export class TsMorphProject {
       this.hre.config.paths.artifacts
     );
 
-    const deploymentFiles = readdirSync(
-      this.hre.config.paths.deployments + "/" + currentNetwork
-    );
-    log("deploymentFiles => " + deploymentFiles.join(","));
+    let deploymentFiles: string[] = [];
+    try {
+      deploymentFiles = readdirSync(
+        this.hre.config.paths.deployments + "/" + currentNetwork
+      );
+      log("deploymentFiles => " + deploymentFiles.join(","));
+    } catch (error) {
+      log("No deployment folder or files found.");
+    }
     // TODO : Hardhat maybe rewrite later
     // const deploymentFiles = await this.hre.deployments.all();
 
@@ -198,7 +203,7 @@ export class TsMorphProject {
           this.HARDHAT_CONTEXT_FILE_NAME
         ),
         undefined,
-        {overwrite: true}
+        { overwrite: true }
       );
     }
   }
