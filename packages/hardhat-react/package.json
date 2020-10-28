@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/hardhat-react",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "description": "Hardhat plugin to generate a react context component based on solidity input.",
   "repository": "github:symfoni/hardhat-react",
   "author": "Robertosnap",
