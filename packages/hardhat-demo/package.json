@@ -2,7 +2,7 @@
   "name": "@symfoni/hardhat-demo",
   "version": "0.0.32",
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.0",
@@ -28,5 +28,5 @@
   "scripts": {
     "node": "npx hardhat node --watch --reset"
   },
-  "gitHead": "a7f6e8afb5f1651b7a2dd82b7a41bbc84d0763d3"
+  "gitHead": "007e9409cd7016676b4a1120663514aa208fcb3d"
 }
