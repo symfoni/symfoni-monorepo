@@ -1,5 +1,5 @@
-import {HardhatRuntimeEnvironment, HDAccountsUserConfig} from "hardhat/types";
-import {writer} from "repl";
+import { HardhatRuntimeEnvironment, HDAccountsUserConfig } from "hardhat/types";
+import { writer } from "repl";
 import {
   ArrowFunction,
   CodeBlockWriter,
@@ -7,8 +7,8 @@ import {
   SyntaxKind,
   VariableDeclarationKind,
 } from "ts-morph";
-import {ContractContext, contractInterfaceName} from "./TsMorhProject";
-import {debug} from "debug";
+import { ContractContext, contractInterfaceName } from "./TsMorhProject";
+import { debug } from "debug";
 const log = debug("hardhat:plugin:react");
 
 export class ReactComponent {
@@ -124,6 +124,7 @@ export class ReactComponent {
   }
 
   private getSigner() {
+    // TODO - This could lead to users publishing a mnemonic or private key. Will make it explicit on hardhat account config.
     const signers = this.hre.config.react.providerPriority.reduce(
       (acu: string[], provider) => {
         if (provider.toLowerCase() === "web3modal") {
@@ -134,29 +135,37 @@ export class ReactComponent {
           return await web3provider.getSigner()`,
           ];
         }
-        const isProviderConfigured =
-          this.hre.config.networks !== undefined &&
-          Object.keys(this.hre.config.networks).includes(provider);
-        if (isProviderConfigured) {
-          const isAccountsConfigured =
-            this.hre.config.networks[provider].accounts !== undefined;
-          if (isAccountsConfigured) {
-            const isHD = Object.keys(
-              this.hre.config.networks[provider].accounts
-            ).includes("mnemonic");
-            if (isHD) {
-              log("Injecting mnemonic into React context.");
-              const account = this.hre.config.networks[provider]
-                .accounts as HDAccountsUserConfig;
+        const providerIsAllowedInject = ["hardhat", "localhost"].find(
+          (allowed) => {
+            return provider.toLowerCase().includes(allowed);
+          }
+        );
+        if (providerIsAllowedInject) {
+          const isProviderConfigured =
+            this.hre.config.networks !== undefined &&
+            Object.keys(this.hre.config.networks).includes(provider);
+          if (isProviderConfigured) {
+            const isAccountsConfigured =
+              this.hre.config.networks[provider].accounts !== undefined;
+            if (isAccountsConfigured) {
+              const isHD = Object.keys(
+                this.hre.config.networks[provider].accounts
+              ).includes("mnemonic");
+              if (isHD) {
+                log("Injecting mnemonic into React context.");
+                const account = this.hre.config.networks[provider]
+                  .accounts as HDAccountsUserConfig;
 
-              return [
-                ...acu,
-                `case "JsonRpcProvider":
-                  return ethers.Wallet.fromMnemonic("${account.mnemonic}").connect(_provider)`,
-              ];
+                return [
+                  ...acu,
+                  `case "JsonRpcProvider":
+                    return ethers.Wallet.fromMnemonic("${account.mnemonic}").connect(_provider)`,
+                ];
+              }
             }
           }
         }
+
         return acu;
       },
       []
