@@ -6,11 +6,11 @@ import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
 import { Testing } from "./typechain/Testing";
 import { TestingFactory } from "./typechain/TestingFactory";
+import { Token } from "./typechain/Token";
+import { TokenFactory } from "./typechain/TokenFactory";
 import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json";
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorageFactory } from "./typechain/SimpleStorageFactory";
-import { Token } from "./typechain/Token";
-import { TokenFactory } from "./typechain/TokenFactory";
 import { SimpleStorage2 } from "./typechain/SimpleStorage2";
 import { SimpleStorage2Factory } from "./typechain/SimpleStorage2Factory";
 import { Erc20 } from "./typechain/Erc20";
@@ -27,8 +27,8 @@ export const CurrentAddressContext = React.createContext<[string, React.Dispatch
 export const defaultSigner: Signer | undefined = undefined;
 export const SignerContext = React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }]);
 export const TestingContext = React.createContext<SymfoniTesting>(emptyContract);
-export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 export const TokenContext = React.createContext<SymfoniToken>(emptyContract);
+export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
 export const ERC20Context = React.createContext<SymfoniErc20>(emptyContract);
 
@@ -40,14 +40,14 @@ export interface SymfoniTesting {
     factory?: TestingFactory;
 }
 
-export interface SymfoniSimpleStorage {
-    instance?: SimpleStorage;
-    factory?: SimpleStorageFactory;
-}
-
 export interface SymfoniToken {
     instance?: Token;
     factory?: TokenFactory;
+}
+
+export interface SymfoniSimpleStorage {
+    instance?: SimpleStorage;
+    factory?: SimpleStorageFactory;
 }
 
 export interface SymfoniSimpleStorage2 {
@@ -69,8 +69,8 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
     const providerPriority = ["web3modal", "hardhat"];
     const [Testing, setTesting] = useState<SymfoniTesting>(emptyContract);
-    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
     const [Token, setToken] = useState<SymfoniToken>(emptyContract);
+    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
     const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
     const [ERC20, setERC20] = useState<SymfoniErc20>(emptyContract);
     useEffect(() => {
@@ -152,8 +152,8 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
                 }
 
                 setTesting(getTesting(_provider, _signer))
-                setSimpleStorage(getSimpleStorage(_provider, _signer))
                 setToken(getToken(_provider, _signer))
+                setSimpleStorage(getSimpleStorage(_provider, _signer))
                 setSimpleStorage2(getSimpleStorage2(_provider, _signer))
                 setERC20(getERC20(_provider, _signer))
                 setReady(true)
@@ -174,6 +174,17 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
         }
         return contract
     };
+    const getToken = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniToken = {
+            instance: instance,
+            factory: _signer ? new TokenFactory(_signer) : undefined,
+        }
+        return contract
+    };
     const getSimpleStorage = (_provider: providers.Provider, _signer?: Signer) => {
 
 
@@ -183,17 +194,6 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
         const contract: SymfoniSimpleStorage = {
             instance: instance,
             factory: _signer ? new SimpleStorageFactory(_signer) : undefined,
-        }
-        return contract
-    };
-    const getToken = (_provider: providers.Provider, _signer?: Signer) => {
-
-
-
-        let instance = undefined
-        const contract: SymfoniToken = {
-            instance: instance,
-            factory: _signer ? new TokenFactory(_signer) : undefined,
         }
         return contract
     };
@@ -224,8 +224,8 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
             <SignerContext.Provider value={[signer, setSigner]}>
                 <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
                     <TestingContext.Provider value={Testing}>
-                        <SimpleStorageContext.Provider value={SimpleStorage}>
-                            <TokenContext.Provider value={Token}>
+                        <TokenContext.Provider value={Token}>
+                            <SimpleStorageContext.Provider value={SimpleStorage}>
                                 <SimpleStorage2Context.Provider value={SimpleStorage2}>
                                     <ERC20Context.Provider value={ERC20}>
                                         {ready &&
@@ -240,8 +240,8 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
                                         }
                                     </ERC20Context.Provider >
                                 </SimpleStorage2Context.Provider >
-                            </TokenContext.Provider >
-                        </SimpleStorageContext.Provider >
+                            </SimpleStorageContext.Provider >
+                        </TokenContext.Provider >
                     </TestingContext.Provider >
                 </CurrentAddressContext.Provider>
             </SignerContext.Provider>

@@ -35,10 +35,6 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  paths: {
-    artifacts: "./frontend/src/hardhat/artifacts",
-    deployments: "./frontend/src/hardhat/deployments",
-  },
 };
 
 export default config;
