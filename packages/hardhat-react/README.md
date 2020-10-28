@@ -4,7 +4,9 @@
 
 **Alpha release, interfaces will change.**
 
-![HardhatReactGif](https://github.com/symfoni/hardhat-plugins/blob/hardhat/packages/hardhat-react/SymfoniHardhatReact.gif)
+<img src="https://github.com/symfoni/hardhat-plugins/blob/hardhat/packages/hardhat-react/SymfoniHardhatReact.gif" width="100">
+
+![](https://github.com/symfoni/hardhat-plugins/blob/hardhat/packages/hardhat-react/SymfoniHardhatReact.gif | width=100)
 
 # Hardhat React
 
