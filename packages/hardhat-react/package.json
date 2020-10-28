@@ -1,8 +1,8 @@
 {
   "name": "@symfoni/hardhat-react",
   "version": "0.0.42",
-  "description": "Hardhat plugin to generate a react context component based on solidity input.",
-  "repository": "github:symfoni/hardhat-react",
+  "description": "A Hardhat plugin that generates a React hook component from your smart contracts. Hot reloaded into your React app. Deployed or not deployed. And everything typed and initialized.",
+  "repository": "https://github.com/symfoni/hardhat-plugins",
   "author": "Robertosnap",
   "license": "MIT",
   "main": "dist/src/index.js",
