@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/hardhat-react",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "description": "Hardhat plugin to generate a react context component based on solidity input.",
   "repository": "github:symfoni/hardhat-react",
   "author": "Robertosnap",
@@ -36,6 +36,7 @@
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.14.3",
     "chai": "^4.2.0",
+    "debug": "^4.2.0",
     "hardhat": "^2.0.2",
     "hardhat-deploy": "^0.7.0-beta.19",
     "hardhat-deploy-ethers": "^0.3.0-beta.5",
@@ -48,8 +49,7 @@
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.3.0",
-    "typescript": "^4.0.3",
-    "debug": "^4.2.0"
+    "typescript": "^4.0.3"
   },
   "peerDependencies": {
     "hardhat": "^2.0.2",

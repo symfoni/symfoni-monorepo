@@ -3,7 +3,7 @@
     "packages/hardhat-react",
     "packages/hardhat-demo"
   ],
-  "version": "0.0.37",
+  "version": "0.0.38",
   "npmClient": "yarn",
   "useWorkspaces": true
 }
