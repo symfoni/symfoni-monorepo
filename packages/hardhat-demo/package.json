@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/hardhat-demo",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "publishConfig": {
     "access": "public"
   },
@@ -23,7 +23,7 @@
     "typescript": "^4.0.3"
   },
   "dependencies": {
-    "@symfoni/hardhat-react": "^0.0.33"
+    "@symfoni/hardhat-react": "^0.0.34"
   },
   "scripts": {
     "node": "npx hardhat node --watch --reset"
