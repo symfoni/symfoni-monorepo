@@ -1,17 +1,17 @@
-import { extendConfig, extendEnvironment, task, subtask } from "hardhat/config";
-import { lazyObject } from "hardhat/plugins";
-import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
+import {extendConfig, extendEnvironment, task, subtask} from "hardhat/config";
+import {lazyObject} from "hardhat/plugins";
+import {HardhatConfig, HardhatUserConfig} from "hardhat/types";
 import path from "path";
-import "./type-extensions";
 import chalk from "chalk";
-import { TsMorphProject } from "./TsMorhProject";
+import {TsMorphProject} from "./TsMorhProject";
 import "hardhat-deploy/dist/src/type-extensions";
 import "hardhat-typechain/dist/src/type-extensions";
-import { debug } from "debug";
+import "./type-extensions";
+import {debug} from "debug";
 
 export const TASK_REACT = "react";
 export const TASK_REACT_MAIN = "react:main";
-import { TASK_DEPLOY_RUN_DEPLOY } from "hardhat-deploy";
+import {TASK_DEPLOY_RUN_DEPLOY} from "hardhat-deploy";
 
 const log = debug("hardhat:plugin:react");
 extendConfig(
@@ -46,7 +46,6 @@ extendConfig(
     config.paths.react = newReactPath;
 
     // Set some defaults for other plugins to get fast going.
-
     // deployer
     if (userConfig.namedAccounts == undefined) {
       config.namedAccounts = {

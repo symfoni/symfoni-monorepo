@@ -4,7 +4,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "npx buidler node",
+      "name": "npx hardhat",
       // "preLaunchTask": "npm: lerna-tsc",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "${workspaceFolder}/packages/hardhat-demo/node_modules/.bin/hardhat",

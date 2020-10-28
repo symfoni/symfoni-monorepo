@@ -19,6 +19,19 @@ declare module "hardhat/types/config" {
   export interface HardhatConfig {
     react: React;
   }
+
+  export interface HardhatNetworkHDAccountsUserConfig {
+    inject?: boolean;
+  }
+  export interface HardhatNetworkAccountUserConfig {
+    inject?: boolean;
+  }
+  export interface HardhatNetworkHDAccountsConfig {
+    inject?: boolean;
+  }
+  export interface HardhatNetworkAccountConfig {
+    inject?: boolean;
+  }
 }
 
 declare module "hardhat/types/runtime" {
