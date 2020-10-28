@@ -50,7 +50,7 @@ extendConfig(
     if (userDeploymentPath === undefined) {
       const newDeploymentPath = path.join(
         config.paths.root,
-        "./frontend/src/hardhat/deployments/"
+        "./frontend/src/hardhat/deployments"
       );
       config.paths.deployments = newDeploymentPath;
     }
