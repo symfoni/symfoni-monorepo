@@ -30,6 +30,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       accounts: {
+        inject: true,
         mnemonic:
           "shrug antique orange tragic direct drop abstract ring carry price anchor train",
       },

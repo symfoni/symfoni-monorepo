@@ -1,60 +1,133 @@
-# Hardhat TypeScript plugin boilerplate
+[![hardhat](https://hardhat.org/assets/img/Hardhat-logo.652a7049.svg?1)](https://hardhat.org)
 
-This is a sample Hardhat plugin written in TypeScript. Creating a Hardhat plugin
-can be as easy as extracting a part of your config into a different file and
-publishing it to npm.
+**Aplha release, interfaces will change.**
 
-This sample project contains an example on how to do that, but also comes with
-many more features:
+#### Part of contribution to the ETHOnline hackathon
 
-- A mocha test suite ready to use
-- TravisCI already setup
-- A package.json with scripts and publishing info
-- Examples on how to do different things
+# Quik start
 
-## Installation
+If you want to quikly get started with with a new hardhat project and a react application. Try this [boilerplate](https://github.com/symfoni/hardhat-react-boilerplate).
 
-To start working on your project, just run
+# Get started
 
-```bash
-npm install
+## Install plugin
+
+**Yarn:** `yarn add --dev @symfoni/hardhat-react`
+
+**NPM:** `npm install --save-dev @symfoni/hardhat-react `
+
+## Install peer dependencies
+
+**Yarn:** `yarn add --dev hardhat hardhat-deploy hardhat-deploy-ethers hardhat-typechain hardhat-typechain ts-morph ts-node typescript ts-generator`
+
+**NPM:** `npm install --save-dev hardhat hardhat-deploy hardhat-deploy-ethers hardhat-typechain hardhat-typechain ts-morph ts-node typescript ts-generator`
+
+# Runtime
+
+The plugin will hooks into hardhat-deploy which hooks into `npx hardhat node --watch`. The plugin will therefor run when you are starting up a node or making changes to a solidity file or deploy file.
+
+You can run it manually with `npx hardhat react`. You probably need to run `npx hardhat typechain` and `npx hardhat deploy`first to have artifacts, deployments and typechain files ready.
+
+The React context uses output from typechain and deployments. It generates a react context component as a typescript react file (HardhatContext.tsx) which imports both typechain and deployment files. It then uses these files alongside Ethers and Web3Modal to setup a context for your connection and each smart contract (deployed or not deployed).
+
+# Frontend
+
+This plugin makes an assumption that you are building your frontend inside a hardhat project (we later want to go away from this assumption). So we recommed you to create a `frontend` folder inside your hardhat project where all your frontend code and packages reside. Take a look at https://github.com/symfoni/hardhat-react-boilerplate for demonstration.
+
+# Configuration
+
+Our goal with this plugin was to make it easier for new developers to try out smart-contract development. Therefore we default most needed configuration.
+
+## Provider priority
+
+The React context tries to connect the frontend up with a ethereum provider. Here you can set that priority. In this scenario, the react context will try to connect with web3modal(Metamask) first, then if that fails. Try to connect with your Hardhat node.
+
+```json
+{
+  "react": {
+    "providerPriority": ["web3modal", "hardhat"]
+  }
+}
 ```
 
-## Plugin development
+`Later we will add possibility to set all config.networks providers, urls etc. as provider priority.`
+We stole this concept from [Embark](https://framework.embarklabs.io/docs/overview.html). Props to them.
 
-Make sure to read our [Plugin Development Guide](https://hardhat.org/guides/create-plugin.html)
-to learn how to build a plugin, and our
-[best practices to create high-quality plugins](https://hardhat.org/advanced/building-plugins.html).
+## Paths React
 
-## Testing
+Where to write the HardhatContext.tsx file.
 
-Running `npm run test` will run every test located in the `test/` folder. They
-use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/),
-but you can customize them.
+```json
+{
+  "paths": {
+    "react": "./frontend/src/hardhat"
+  }
+}
+```
 
-We recommend creating unit tests for your own modules, and integration tests for
-the interaction of the plugin with Hardhat and its dependencies.
+## Defaults
 
-## Linting and autoformat
+If you dont set these configurations yourself, hardhat-react plugin will default to this.
 
-All of Hardhat projects use [prettier](https://prettier.io/) and
-[tslint](https://palantir.github.io/tslint/).
+```json
+{
+  "react": {
+    "providerPriority": ["web3modal", "hardhat"]
+  },
+  "paths": {
+    "react": "./frontend/src/hardhat",
+    "deployments": "./frontend/src/hardhat/deployments/"
+  },
+  "namedAccounts": {
+    "deployer": {
+      "default": 0
+    }
+  },
+  "typechain": {
+    "outDir": "./frontend/src/hardhat/typechain",
+    "target": "ethers-v5"
+  }
+}
+```
 
-You can check if your code style is correct by running `npm run lint`, and fix
-it with `npm run lint:fix`.
+# Projects
 
-## Building the project
+- [hardhat-plugins](https://github.com/symfoni/hardhat-plugins) - Lerna repo containing a demo project and hardhat-react plugin.
+- [hardhat-react-boilerplate](https://github.com/symfoni/hardhat-react-boilerplate) - A boilerplate which contains barebones for a smart-contract and react app project. Where all smart contracts are compiled, deployed and typed out to the react app.
 
-Just run `npm run build` ️👷
+# Cavats
 
-## README file
+## Users get Metamask up in their face right after they enter the webpage. BAD UX!
 
-This README describes this boilerplate project, but won't be very useful to your
-plugin users.
+Yea, we know. We have some patterns with a fallback provider that solves this. But for the hackathon we have not that had time to implement that. Coming
 
-Take a look at `README-TEMPLATE.md` for an example of what a Hardhat plugin's
-README should look like.
+## Can i only use Metemask?
 
-## Migrating from Buidler?
+Web3modal supports many wallets. We will soon provide configuration for each of them.
 
-Take a look at [the migration guide](MIGRATION.md)!
+We will also provide you the possiblity to inject your "whatever" hardhat development node you are useing as a fallback provider when developing. We think this is a nice tool for new Ethereum developers also as then they dont need to wrap their head around a provider while building smart-contract and a provider in the frontend.
+
+## Invalid nonce.
+
+```bash
+eth_sendRawTransaction
+  Invalid nonce. Expected X but got X.
+```
+
+Reset your account in Metamask.
+
+## Why cant the react component be buildt as a package which i can import.
+
+We dont know enough of the react build process to effeciently create a typescript react component which can be consumed by any other React build process. This is something we deffinitiy want to achive!
+
+## Do i have to create context of all contracts?
+
+It will do so by default, but we will later provide an option to be explicit about which contracts to create context of.
+
+## Will you support other frontend framworks?
+
+Not planned atm.
+
+# Development
+
+If you want to develop in this plugin in any way, we suggest you fork this lerna repo; [hardhat-plugins](https://github.com/symfoni/hardhat-plugins).
