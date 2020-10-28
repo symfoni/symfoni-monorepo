@@ -7,6 +7,9 @@
   "license": "MIT",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "ethereum",
     "smart-contracts",
@@ -54,5 +57,6 @@
   },
   "dependencies": {
     "debug": "^4.2.0"
-  }
+  },
+  "gitHead": "a7f6e8afb5f1651b7a2dd82b7a41bbc84d0763d3"
 }
