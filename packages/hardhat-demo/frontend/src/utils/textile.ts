@@ -1,5 +1,5 @@
-import { PrivateKey } from "@textile/hub";
-import { providers, Signer, ethers } from "ethers";
+import { Buckets, PrivateKey } from "@textile/hub";
+import { Signer, ethers } from "ethers";
 import { hashSync } from "bcryptjs";
 export const generatePrivateKey = async (
   signer: Signer
@@ -35,6 +35,30 @@ export const generatePrivateKey = async (
   const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(array));
 
   return identity;
+};
+export const getBuckets = async (
+  bucketName: string,
+  signer?: Signer
+): Promise<[Buckets, string]> => {
+  // TODO Create identiyy from web3modal
+  console.log("Useing random storage identity", !signer);
+  const identity = signer
+    ? await generatePrivateKey(signer)
+    : await PrivateKey.fromRandom();
+  console.log("Identity => ", identity);
+  const buckets = await Buckets.withKeyInfo({
+    key: "biepyo75p2zaavunhyj7ndeydkq",
+  }); // TODO Set unsecure key user key from Hub
+  await buckets.getToken(identity);
+  const bucketResult = await buckets.getOrCreate(bucketName);
+  if (!bucketResult.root) {
+    throw Error("Failed to open Bucket.");
+  }
+  if (!bucketResult.root.key) {
+    throw Error("Failed to open Bucket root key.");
+  }
+
+  return [buckets, bucketResult.root.key];
 };
 
 const getMessage = (
