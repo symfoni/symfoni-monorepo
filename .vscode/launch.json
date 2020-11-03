@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "npx hardhat",
+      // "preLaunchTask": "npm: lerna-tsc",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeExecutable": "${workspaceFolder}/packages/hardhat-demo/node_modules/.bin/hardhat",
+      "args": ["node", "--verbose", "--watch"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/packages/hardhat-demo",
+    },
+  ]
+}

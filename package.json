@@ -1,0 +1,22 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "bootstrap": "npx lerna bootstrap --nohoist=eslint* && yarn run build",
+    "build": "npx lerna run build --stream",
+    "node": "npx lerna run node --stream",
+    "watch": "npx lerna run watch --parallel",
+    "test": "npx lerna run test",
+    "frontend": "cd packages/hardhat-demo/frontend && yarn start",
+    "publish": "npx lerna run build && npx lerna publish -y"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

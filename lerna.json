@@ -1,0 +1,9 @@
+{
+  "packages": [
+    "packages/hardhat-react",
+    "packages/hardhat-demo"
+  ],
+  "version": "0.0.45",
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}
