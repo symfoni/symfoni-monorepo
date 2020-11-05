@@ -13,6 +13,7 @@ export const Navigation: React.FC<Props> = () => {
                 <Heading level="1" style={{ cursor: "pointer" }} onClick={() => history.push("/")}>Demo</Heading>
             </Box>
             <Box direction="row" gap="small">
+                <Link to="/storage">Storage</Link>
                 <Link to="/contracts/SimpleStorage">SimpleStorage</Link>
                 <Account></Account>
             </Box>

@@ -11,7 +11,7 @@ export const Account: React.FC<Props> = () => {
     const [address] = useContext(CurrentAddressContext)
 
     useEffect(() => {
-        console.log("Provider in comp", provider)
+        // console.log("Provider in account=> ", provider)
     }, [provider])
     return (
         <Box>

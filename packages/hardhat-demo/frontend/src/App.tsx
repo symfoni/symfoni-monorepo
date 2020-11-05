@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { HardhatContext } from "./hardhat/HardhatContext";
 import { SimpleStorage } from './components/SimpleStorage';
 import { Navigation } from './ui/Navigation';
+import { Storage } from "./components/Storage";
 
 function App() {
 
@@ -25,7 +26,7 @@ function App() {
 
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
-      <Grommet>
+      <Grommet >
         <HardhatContext>
           <Box>
             {/* Navigation */}
@@ -33,6 +34,9 @@ function App() {
             {/* Content swtich */}
             <Main pad="large" height={{ min: "80vh" }} >
               <Switch>
+                <Route exact path="/storage">
+                  <Storage />
+                </Route>
                 <Route exact path="/contracts/SimpleStorage">
                   <SimpleStorage />
                 </Route>

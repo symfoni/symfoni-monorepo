@@ -1,6 +1,6 @@
 import { Buckets, PrivateKey } from "@textile/hub";
 import { Signer, ethers } from "ethers";
-import { hashSync } from "bcryptjs";
+// import { hashSync } from "bcryptjs";
 export const generatePrivateKey = async (
   signer: Signer
 ): Promise<PrivateKey> => {
@@ -36,7 +36,7 @@ export const generatePrivateKey = async (
 
   return identity;
 };
-export const getBuckets = async (
+export const getBucket = async (
   bucketName: string,
   signer?: Signer
 ): Promise<[Buckets, string]> => {

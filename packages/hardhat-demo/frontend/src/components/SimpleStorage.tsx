@@ -1,9 +1,8 @@
 import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { CurrentAddressContext, ProviderContext, SignerContext, SimpleStorageContext } from './../hardhat/HardhatContext';
-import { PrivateKey, Buckets } from "@textile/hub";
-import { generatePrivateKey, getBuckets } from '../utils/textile';
+import { getBucket } from '../hardhat/textile';
+import { ProviderContext, SignerContext, SimpleStorageContext } from './../hardhat/HardhatContext';
 
 
 interface Props { }
@@ -18,7 +17,7 @@ interface Document {
 export const SimpleStorage: React.FC<Props> = () => {
     const SimpleStorage = useContext(SimpleStorageContext)
     const [provider] = useContext(ProviderContext)
-    const [currentAddress] = useContext(CurrentAddressContext)
+    // const [currentAddress] = useContext(CurrentAddressContext)
     const [signer] = useContext(SignerContext)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [documents, setDocuments] = useState<Document[]>([]);
@@ -69,7 +68,7 @@ export const SimpleStorage: React.FC<Props> = () => {
 
     const uploadDocument = async (fileName: string, data: string): Promise<string> => {
         if (provider && signer && SimpleStorage.instance) {
-            const [buckets, key] = await getBuckets(SimpleStorage.instance.address, signer)
+            const [buckets, key] = await getBucket(SimpleStorage.instance.address, signer)
             const pathResult = await buckets.pushPath(key, fileName, data, {})
             console.log("pathResult<", pathResult)
             console.log("key set", key)
@@ -93,7 +92,7 @@ export const SimpleStorage: React.FC<Props> = () => {
         if (SimpleStorage.instance) {
             const document = await SimpleStorage.instance.getDocument(ethers.utils.formatBytes32String(name))
             //Textile stuff
-            const [buckets, key] = await getBuckets(SimpleStorage.instance.address, signer)
+            const [buckets, key] = await getBucket(SimpleStorage.instance.address, signer)
             const display = (num?: number) => {
                 console.log('Progress:', num)
             }
@@ -119,11 +118,8 @@ export const SimpleStorage: React.FC<Props> = () => {
     const saveDocument = async (name: string, type: string, data: string) => {
         if (SimpleStorage.instance) {
             const nameBytes32 = ethers.utils.formatBytes32String(name.substr(0, 31))
-            const buffer = Buffer.from(data)
-            const hash = ethers.utils.keccak256(buffer)
-            const url = await uploadDocument(hash, data)
-            // const url = "https://somestorage.com"
-            const hashOfDocument = ethers.utils.sha256(ethers.utils.toUtf8Bytes(data))
+            const hashOfDocument = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(data))
+            const url = await uploadDocument(hashOfDocument, data)
             /* const tx =  */await SimpleStorage.instance.setDocument(nameBytes32, url, hashOfDocument)
         }
     }
