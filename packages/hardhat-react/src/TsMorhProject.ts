@@ -94,7 +94,7 @@ export class TsMorphProject {
 
     const relativeDeploymentsPath = path.relative(
       this.hre.config.paths.react,
-      this.hre.config.paths.deployments + "/" + currentNetwork
+      this.hre.config.paths.deployments + "/" + currentNetwork + "/"
     );
     const relativeTypechainsPath = path.relative(
       this.hre.config.paths.react,
