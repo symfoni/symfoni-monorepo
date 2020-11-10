@@ -5,6 +5,7 @@ import { HardhatContext } from "./hardhat/HardhatContext";
 import { SimpleStorage } from './components/SimpleStorage';
 import { Navigation } from './ui/Navigation';
 import { Storage } from "./components/Storage";
+import { Database } from "./components/Database";
 
 function App() {
 
@@ -36,6 +37,9 @@ function App() {
               <Switch>
                 <Route exact path="/storage">
                   <Storage />
+                </Route>
+                <Route exact path="/database">
+                  <Database />
                 </Route>
                 <Route exact path="/contracts/SimpleStorage">
                   <SimpleStorage />

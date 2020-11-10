@@ -1,4 +1,4 @@
-import { Buckets, PrivateKey } from '@textile/hub';
+import { Buckets, Client, PrivateKey, ThreadID } from '@textile/hub';
 import { ethers, Signer } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
@@ -10,10 +10,12 @@ interface TextileContextProps {
 }
 
 export const IdentityContext = React.createContext<PrivateKey | undefined>(undefined);
-export const BucketContext = React.createContext<Buckets | undefined>(undefined);
+export const BucketContext = React.createContext<[Buckets | undefined, boolean, string[]]>([undefined, false, []]);
+export const ClientContext = React.createContext<[Client | undefined, boolean, string[]]>([undefined, false, []]);
 export const KeysContext = React.createContext<{ [name: string]: string }>({});
 export const FallbackContext = React.createContext<[boolean, React.Dispatch<React.SetStateAction<boolean>>]>([true, () => { }]);
-export const InitializedContext = React.createContext<[boolean, () => void]>([false, () => { }]);
+export const InitializedBucketsContext = React.createContext<[boolean, () => void]>([false, () => { }]);
+export const InitializedClientContext = React.createContext<[boolean, () => void]>([false, () => { }]);
 
 export const TextileContext: React.FC<TextileContextProps> = ({
     useFallback = true,
@@ -23,27 +25,82 @@ export const TextileContext: React.FC<TextileContextProps> = ({
 }) => {
     const [identity, setIdentity] = useState<PrivateKey>();
     const [buckets, setBuckets] = useState<Buckets>();
+    const [bucketsLoading, setBucketsLoading] = useState(false);
+    const [bucketsMessages, setBucketsMessages] = useState<string[]>([]);
+    const [client, setClient] = useState<Client>();
+    const [clientLoading, setClientLoading] = useState(false);
+    const [clientMessages, setClientMessages] = useState([]);
     const [keys, setKeys] = useState<{ [name: string]: string }>({});
-    const [initialized, setInitialized] = useState(false);
+    const [initializedBuckets, setInitializedBuckets] = useState(false);
+    const [initializedClient, setInitializedClient] = useState(false);
     const [fallback, setFallback] = useState(useFallback);
 
 
-    const init = async (_fallback: boolean, signer?: Signer,) => {
-        console.log("Running storage init")
+    const initClient = async (_fallback: boolean, signer?: Signer,) => {
+        console.log("Running Thread init")
+        setClientLoading(true)
+        const identity = !_fallback && signer ? await getIdentiyFromSigner(signer) : await PrivateKey.fromRandom();
+        setIdentity(identity);
+        const threadId = undefined
+        console.log("threadId", threadId)
+        const client = await Client.withKeyInfo({
+            key: 'biepyo75p2zaavunhyj7ndeydkq',
+        });
+        /* const _token =  */await client.getToken(identity);
+        // await client.open(threadId, "app-db")
+        await getDb(client, threadId)
+
+        setInitializedBuckets(true);
+        setClientLoading(false)
+    }
+
+    const getDb = async (_client: Client, threadId?: ThreadID) => {
+
+        if (!threadId) {
+            threadId = await _client.newDB(undefined, "hardhat-storage");
+        }
+        const test = { name: "LOL", _id: "" }
+        await _client.newCollectionFromObject(threadId, test, { name: "LAL" })
+        const collections = await _client.listCollections(threadId)
+        const dbInfo = await _client.getDBInfo(threadId)
+        console.log("dbInfo", dbInfo)
+        console.log("collections", collections)
+        await _client.save(threadId, "LAL", [{ name: "Yo" }])
+        const dbInfo2 = await _client.getDBInfo(threadId)
+        console.log("dbInfo2", dbInfo2)
+    }
+
+    const initBucket = async (_fallback: boolean, signer?: Signer,) => {
+        console.log("Running Bucket init")
+        setBucketsLoading(true)
         const identity = !_fallback && signer ? await getIdentiyFromSigner(signer) : await PrivateKey.fromRandom();
         setIdentity(identity);
         const buckets = await Buckets.withKeyInfo({
             key: 'biepyo75p2zaavunhyj7ndeydkq',
         });
         /* const _token =  */await buckets.getToken(identity);
-        const key = await getBucketKey(buckets, 'app');
+        const appPathKey = await getBucketKey(buckets, "app");
+        // const roles = new Map()
+        // // NA = 0, Reader = 1, Writer = 2, Admin = 3
+        // roles.set('*', 3)
+        // buckets.pushPathAccessRoles(appPathKey, "", roles)
+
+
+        console.log("appPathKey", appPathKey)
+        const path1 = await buckets.pushPath(appPathKey, "user-" + identity.public.toString(), "Something")
+        console.log("path1", path1)
+        // const path2 = await buckets.pushPath(appPathKey, "/user-" + identity.public.toString() + "/nested", "SomethingNested")
+        // console.log("path2", path2)
+
+        // buckets.pushPathAccessRoles(appPathKey, "user-" + identity.public.toString(), roles)
+        // setKeys((old) => ({ ...old, app: key }));
         setBuckets(buckets);
-        setKeys((old) => ({ ...old, app: key }));
-        setInitialized(true);
+        setInitializedBuckets(true);
+        setBucketsLoading(false)
     }
 
     const getBucketKey = async (buckets: Buckets, bucketName: string) => {
-        const bucketResult = await buckets.getOrCreate(bucketName);
+        const bucketResult = await buckets.getOrCreate(bucketName, "app");
         if (!bucketResult.root) {
             throw Error('Failed to open Bucket.');
         }
@@ -83,35 +140,41 @@ export const TextileContext: React.FC<TextileContextProps> = ({
         }
         return PrivateKey.fromRawEd25519Seed(Uint8Array.from(array));
     };
+
+
     useEffect(() => {
         const doAsync = async () => {
             // run init if autoInit is true and its not intilized
-            if (autoInit && !initialized) {
+            if (autoInit && !initializedBuckets) {
                 console.log("Auto initializing storage because its not initialized")
-                return init(fallback, props.signer)
+                return initClient(fallback, props.signer)
             }
             // run init if autoinit is true, signer is something and we dont want to use fallback
             if (autoInit && props.signer && !fallback) {
                 console.log("Auto initializing because signer changed and not useing fallback")
-                init(fallback, props.signer)
+                initClient(fallback, props.signer)
             }
         };
         doAsync();
         // eslint-disable-next-line
-    }, [props.signer, fallback, initialized, autoInit]);
+    }, [props.signer, fallback, initializedBuckets, autoInit]);
 
-    if (deferRender && !initialized) {
+    if (deferRender && !initializedBuckets) {
         return <p>Loading Textile</p>;
     }
     return (
-        <InitializedContext.Provider value={[initialized, () => init(fallback, props.signer)]}>
-            <FallbackContext.Provider value={[fallback, setFallback]}>
-                <BucketContext.Provider value={buckets}>
+        <InitializedBucketsContext.Provider value={[initializedBuckets, () => initBucket(fallback, props.signer)]}>
+            <InitializedClientContext.Provider value={[initializedClient, () => initClient(fallback, props.signer)]}>
+                <FallbackContext.Provider value={[fallback, setFallback]}>
                     <IdentityContext.Provider value={identity}>
-                        <KeysContext.Provider value={keys}>{props.children}</KeysContext.Provider>
+                        <ClientContext.Provider value={[client, clientLoading, clientMessages]}>
+                            <BucketContext.Provider value={[buckets, bucketsLoading, bucketsMessages]}>
+                                <KeysContext.Provider value={keys}>{props.children}</KeysContext.Provider>
+                            </BucketContext.Provider>
+                        </ClientContext.Provider>
                     </IdentityContext.Provider>
-                </BucketContext.Provider>
-            </FallbackContext.Provider>
-        </InitializedContext.Provider>
+                </FallbackContext.Provider>
+            </InitializedClientContext.Provider>
+        </InitializedBucketsContext.Provider>
     );
 };

@@ -14,6 +14,7 @@ export const Navigation: React.FC<Props> = () => {
             </Box>
             <Box direction="row" gap="small">
                 <Link to="/storage">Storage</Link>
+                <Link to="/database">DB</Link>
                 <Link to="/contracts/SimpleStorage">SimpleStorage</Link>
                 <Account></Account>
             </Box>
