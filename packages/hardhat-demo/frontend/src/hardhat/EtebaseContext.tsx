@@ -78,26 +78,17 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
     const [useingFallback, setUseingFallback] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
 
-    // useEffect(() => {
-    //     const doAsync = async () => {
-    //         console.log("etebaseAccount in contexrt!", etebaseAccount)
-    //     };
-    //     doAsync();
-    // }, [etebaseAccount])
 
-    const persistEtebaseAccount = async (etebaseAccount?: Etebase.Account, fallback = false): Promise<void> => {
+    const persistEtebaseAccount = async (etebaseAccount?: Etebase.Account): Promise<void> => {
         if (useLocalstorage && etebaseAccount) {
-            const key = fallback ? "etebase-account-fallback" : "etebase-account";
             const session = await etebaseAccount.save()
-            localStorage.setItem(key, session)
+            localStorage.setItem("etebase-account", session)
         }
         setEtebaseAccount(etebaseAccount)
-        setUseingFallback(fallback)
     }
     const restoreEtebaseAccount = async (fallback = false): Promise<Etebase.Account | undefined> => {
         let etebase = undefined
-        const key = fallback ? "etebase-account-fallback" : "etebase-account";
-        const cached = localStorage.getItem(key);
+        const cached = localStorage.getItem("etebase-account");
         if (cached) {
             etebase = await Etebase.Account.restore(cached);
         }
@@ -115,18 +106,12 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
             await etebaseAccount.logout()
     }
 
-    const getEtebaseAccount = async (): Promise<[Etebase.Account | undefined, boolean]> => {
+    const getEtebaseAccount = async (): Promise<Etebase.Account | undefined> => {
         if (useLocalstorage) {
             const fromLocalstorage = await restoreEtebaseAccount()
             if (fromLocalstorage) {
                 console.debug("Got Etebase account from localstorage")
-                return [fromLocalstorage, false]
-            } else if (useFallback) {
-                const fromLocalstorage = await restoreEtebaseAccount(true)
-                if (fromLocalstorage) {
-                    console.debug("Got Etebase fallback account from localstorage")
-                    return [fromLocalstorage, true]
-                }
+                return fromLocalstorage
             }
         }
         if (props.signer) {
@@ -141,28 +126,17 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
             })
             if (personalEtebaseAccount) {
                 console.debug("Got Etebase account from signer")
-                return [personalEtebaseAccount, false]
-            }
-        } else if (useFallback) {
-            const fallbackAccount = await Etebase.Account.login(FALLBACK_USERNAME, FALLBACK_PASSWORD).catch(err => {
-                return Etebase.Account.signup({ username: FALLBACK_USERNAME, email: FALLBACK_EMAIL }, FALLBACK_PASSWORD).catch((err: Error) => {
-                    console.debug(err.message)
-                    return undefined
-                })
-            })
-            if (fallbackAccount) {
-                console.debug("Got Etebase account from fallback")
-                return [fallbackAccount, true]
+                return personalEtebaseAccount
             }
         }
-        return [undefined, false]
+        return undefined
     }
 
     const init = async () => {
         setLoading(true)
-        const [etebaseAccount, fallback] = await getEtebaseAccount()
+        const etebaseAccount = await getEtebaseAccount()
         if (etebaseAccount) {
-            persistEtebaseAccount(etebaseAccount, fallback)
+            persistEtebaseAccount(etebaseAccount)
             setInitialized(true);
         }
         setLoading(false)
@@ -192,20 +166,14 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
 
     useEffect(() => {
         const doAsync = async () => {
-            // run init if autoInit is true and its not intilized
-            if (autoInit && !initialized) {
-                console.log("Auto initializing storage because its not initialized")
-                return init()
-            }
-            // run init if autoinit is true, signer is something and we dont want to use fallback
             if (autoInit && props.signer) {
-                console.log("Auto initializing because signer changed and not useing fallback")
+                console.debug("Auto initializing because signer changed")
                 return init()
             }
         };
         doAsync();
         // eslint-disable-next-line
-    }, [props.signer, useFallback, autoInit]);
+    }, [props.signer, autoInit]);
 
     if (requireEmail) {
         return (
