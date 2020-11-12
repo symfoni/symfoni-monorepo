@@ -12,6 +12,7 @@ interface EtebaseContextProps {
     signer?: Signer;
     useFallback?: boolean;
     deferRender?: boolean;
+    deferSigning?: boolean;
     autoInit?: boolean;
     useLocalstorage?: boolean
 }
@@ -58,8 +59,9 @@ export const EtebaseConnectionContext = React.createContext<EtebaseConnectionCon
 });
 
 export const EtebaseContext: React.FC<EtebaseContextProps> = ({
-    useFallback: _useFallback = false,
+    useFallback: _useFallback = true,
     deferRender = false,
+    deferSigning = true, // TODO: NOT DOING ANYTHING
     autoInit = true,
     useLocalstorage: _useLocalstorage = true,
     ...props
@@ -76,12 +78,12 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
     const [useingFallback, setUseingFallback] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
 
-    useEffect(() => {
-        const doAsync = async () => {
-            console.log("etebaseAccount in contexrt!", etebaseAccount)
-        };
-        doAsync();
-    }, [etebaseAccount])
+    // useEffect(() => {
+    //     const doAsync = async () => {
+    //         console.log("etebaseAccount in contexrt!", etebaseAccount)
+    //     };
+    //     doAsync();
+    // }, [etebaseAccount])
 
     const persistEtebaseAccount = async (etebaseAccount?: Etebase.Account, fallback = false): Promise<void> => {
         if (useLocalstorage && etebaseAccount) {

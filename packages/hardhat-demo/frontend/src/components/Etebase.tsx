@@ -11,10 +11,19 @@ export const Etebase: React.FC<Props> = () => {
     const [etebaseAccount, loading, messages] = useContext(EtebaseAccountContext)
     useEffect(() => {
         const doAsync = async () => {
-            console.log(etebaseAccount)
             if (etebaseAccount) {
-                console.log(etebaseAccount)
-                console.log(etebaseAccount.user)
+                // const collectionManager = etebaseAccount.getCollectionManager();
+                // const collection = await collectionManager.create("cyberdyne.calendar",
+                //     {
+                //         name: "Holidays",
+                //         description: "My holiday calendar",
+                //         color: "#23aabbff",
+                //     },
+                //     "" // Empty content
+                // );
+                // await collectionManager.upload(collection);
+                // const collections = await collectionManager.list("test");
+                // console.log(collections)
             }
         };
         doAsync();
