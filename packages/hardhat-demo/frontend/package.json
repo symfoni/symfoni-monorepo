@@ -19,6 +19,7 @@
     "@types/react-router-dom": "^5.1.5",
     "bcryptjs": "^2.4.3",
     "clipboard-copy": "^3.1.0",
+    "etebase": "^0.40.0",
     "firebase": "^7.21.0",
     "grommet": "^2.15.0",
     "grommet-icons": "^4.4.0",

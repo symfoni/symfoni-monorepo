@@ -1,7 +1,6 @@
 import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { getBucket } from '../hardhat/textile';
 import { ProviderContext, SignerContext, SimpleStorageContext } from './../hardhat/HardhatContext';
 
 
@@ -43,46 +42,12 @@ export const SimpleStorage: React.FC<Props> = () => {
         // eslint-disable-next-line
     }, [SimpleStorage.instance])
 
-    // const getBuckets = async (): Promise<[Buckets, string]> => {
-    //     if (!SimpleStorage.instance) {
-    //         throw Error("Need contract instance to know witch bucket to get.")
-    //     }
-    //     if (!signer) {
-    //         throw Error("Could not find Signer. Need signer to iniate Bucket.")
-    //     }
-    //     // TODO Create identiyy from web3modal
-    //     const identity = await generatePrivateKey(signer)
-    //     console.log("Identity => ", identity)
-    //     const buckets = await Buckets.withKeyInfo({ key: "biepyo75p2zaavunhyj7ndeydkq" }) // TODO Set unsecure key user key from Hub
-    //     await buckets.getToken(identity)
-    //     const bucketResult = await buckets.getOrCreate(SimpleStorage.instance.address)
-    //     if (!bucketResult.root) {
-    //         throw Error("Failed to open Bucket.")
-    //     }
-    //     if (!bucketResult.root.key) {
-    //         throw Error("Failed to open Bucket root key.")
-    //     }
 
-    //     return [buckets, bucketResult.root.key]
-    // }
 
     const uploadDocument = async (fileName: string, data: string): Promise<string> => {
         if (provider && signer && SimpleStorage.instance) {
-            const [buckets, key] = await getBucket(SimpleStorage.instance.address, signer)
-            const pathResult = await buckets.pushPath(key, fileName, data, {})
-            console.log("pathResult<", pathResult)
-            console.log("key set", key)
-            // console.log("==== START GEtting the document")
-            // const display = (num?: number) => {
-            //     console.log('Progress:', num)
-            // }
-            // // const res = await buckets.listPath(key, fileName)
-            // const res = await buckets.pullPath(key, fileName, { progress: display })
-            // console.log("res", await res.next())
-            // console.log("==== END GEtting the document")
 
-
-            return pathResult.path.path
+            return "pathResult.path.path"
         } else {
             throw Error("Could not upload document.")
         }
@@ -91,14 +56,6 @@ export const SimpleStorage: React.FC<Props> = () => {
     const getDocument = async (name: string) => {
         if (SimpleStorage.instance) {
             const document = await SimpleStorage.instance.getDocument(ethers.utils.formatBytes32String(name))
-            //Textile stuff
-            const [buckets, key] = await getBucket(SimpleStorage.instance.address, signer)
-            const display = (num?: number) => {
-                console.log('Progress:', num)
-            }
-            console.log("key get", key)
-            const res = await buckets.pullPath(key, name, { progress: display })
-            console.log("res", await res.next())
 
             setDocuments(old => {
                 return old.map(x => {

@@ -1,11 +1,10 @@
 import { Box, Footer, Grommet, Main, Text } from "grommet";
 import React from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { HardhatContext } from "./hardhat/HardhatContext";
+import { Etebase } from "./components/Etebase";
 import { SimpleStorage } from './components/SimpleStorage';
+import { HardhatContext } from "./hardhat/HardhatContext";
 import { Navigation } from './ui/Navigation';
-import { Storage } from "./components/Storage";
-import { Database } from "./components/Database";
 
 function App() {
 
@@ -36,11 +35,9 @@ function App() {
             <Main pad="large" height={{ min: "80vh" }} >
               <Switch>
                 <Route exact path="/storage">
-                  <Storage />
+                  <Etebase></Etebase>
                 </Route>
-                <Route exact path="/database">
-                  <Database />
-                </Route>
+
                 <Route exact path="/contracts/SimpleStorage">
                   <SimpleStorage />
                 </Route>
