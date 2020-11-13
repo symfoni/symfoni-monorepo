@@ -7,12 +7,12 @@ import { EtebaseAccountContext, EtebaseConnectionContext } from '../hardhat/Eteb
 interface Props { }
 
 export const Etebase: React.FC<Props> = () => {
-    const { initialized, init, setUseFallback, logout, useFallback, useingFallback, setUseLocalstorage, useLocalstorage } = useContext(EtebaseConnectionContext)
+    const { initialized, init, logout, setUseLocalstorage, useLocalstorage } = useContext(EtebaseConnectionContext)
     const [etebaseAccount, loading, messages] = useContext(EtebaseAccountContext)
     useEffect(() => {
         const doAsync = async () => {
             if (etebaseAccount) {
-                // const collectionManager = etebaseAccount.getCollectionManager();
+                const collectionManager = etebaseAccount.getCollectionManager();
                 // const collection = await collectionManager.create("cyberdyne.calendar",
                 //     {
                 //         name: "Holidays",
@@ -22,8 +22,8 @@ export const Etebase: React.FC<Props> = () => {
                 //     "" // Empty content
                 // );
                 // await collectionManager.upload(collection);
-                // const collections = await collectionManager.list("test");
-                // console.log(collections)
+                const collections = await collectionManager.list("cyberdyne.calendar");
+                console.log(collections)
             }
         };
         doAsync();
@@ -35,15 +35,6 @@ export const Etebase: React.FC<Props> = () => {
                     <Text>Initialized </Text>
                     <Text weight="bold">{initialized ? "Initialized" : "Not initialized"}</Text>
                     <Button label="Init" icon={loading ? <SpinnerCircular size="20px"></SpinnerCircular> : <></>} disabled={loading} reverse={true} onClick={(e) => init()}></Button>
-                </Grid>
-                <Grid columns={["auto", "flex", "small"]} gap="small" margin="small" align="center">
-                    <Text>Useing fallback</Text>
-                    <Text weight="bold">{useingFallback ? "True" : "False"}</Text>
-                </Grid>
-                <Grid columns={["auto", "flex", "small"]} gap="small" margin="small" align="center">
-                    <Text>Use fallback account</Text>
-                    <Text weight="bold">{useFallback ? "True" : "False"}</Text>
-                    <Button label="Toggle" onClick={(e) => setUseFallback(!useFallback)}></Button>
                 </Grid>
                 <Grid columns={["auto", "flex", "small"]} gap="small" margin="small" align="center">
                     <Text>Use localstorage</Text>
