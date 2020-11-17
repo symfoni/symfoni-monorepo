@@ -5,7 +5,7 @@ import "hardhat-deploy-ethers";
 import "hardhat-deploy";
 import "@symfoni/hardhat-react";
 import "hardhat-typechain";
-import "typechain-target-ethers-v5";
+import "@typechain/ethers-v5";
 
 const config: HardhatUserConfig = {
   react: {

@@ -158,7 +158,7 @@ export class TsMorphProject {
           // Because typechain modifies name to other caseing we need to match on casing
           const hasFactoryFile =
             path.basename(typechainFile, ".ts").toLowerCase() ===
-            artifactJson.contractName.toLowerCase() + "factory";
+            artifactJson.contractName.toLowerCase() + "__factory";
           return hasFactoryFile;
         });
 
