@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
 import { Box, Button, Grid, Heading, Text } from 'grommet';
+import React, { useContext, useEffect } from 'react';
 import { SpinnerCircular } from 'spinners-react';
 import { EtebaseAccountContext, EtebaseConnectionContext } from '../hardhat/EtebaseContext';
 
@@ -8,7 +8,7 @@ interface Props { }
 
 export const Etebase: React.FC<Props> = () => {
     const { initialized, init, logout, setUseLocalstorage, useLocalstorage } = useContext(EtebaseConnectionContext)
-    const [etebaseAccount, loading, messages] = useContext(EtebaseAccountContext)
+    const [etebaseAccount, loading] = useContext(EtebaseAccountContext)
     useEffect(() => {
         const doAsync = async () => {
             if (etebaseAccount) {

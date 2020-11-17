@@ -1,14 +1,9 @@
+import * as Etebase from 'etebase';
 import { ethers, Signer } from 'ethers';
 import React, { useEffect, useState } from 'react';
-import * as Etebase from 'etebase';
-import { Box, Button, TextInput } from 'grommet';
-import { Logout } from 'grommet-icons';
 import { RegisterEmail } from '../components/etebase/RegisterEmail';
 
 const ETEBASE_URL = "https://api.etebase.com/developer/robertosnap/"
-const FALLBACK_USERNAME = "PUBLIC_ACCOUNT"
-const FALLBACK_PASSWORD = "PASSWORD"
-const FALLBACK_EMAIL = "noreply@blockchangers.com"
 
 export interface RegisterEmailProps {
     setEmail: (email: string) => void,
@@ -40,14 +35,6 @@ export type EtebaseConnectionContext = {
     logout: () => void
 }
 
-
-// export const IdentityContext = React.createContext<PrivateKey | undefined>(undefined);
-// export const BucketContext = React.createContext<[Buckets | undefined, boolean, string[]]>([undefined, false, []]);
-// export const ClientContext = React.createContext<[Client | undefined, boolean, string[]]>([undefined, false, []]);
-// export const KeysContext = React.createContext<{ [name: string]: string }>({});
-// export const FallbackContext = React.createContext<[boolean, React.Dispatch<React.SetStateAction<boolean>>]>([true, () => { }]);
-// export const InitializedBucketsContext = React.createContext<[boolean, () => void]>([false, () => { }]);
-// export const InitializedClientContext = React.createContext<[boolean, () => void]>([false, () => { }]);
 export const EtebaseAccountContext = React.createContext<EtebaseAccountContext>([undefined, false, []]);
 export const EtebaseConnectionContext = React.createContext<EtebaseConnectionContext>({
     setUseLocalstorage: (x: boolean) => { throw Error("Etebase not rendered") },
@@ -81,6 +68,7 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
         if (useLocalstorage && etebaseAccount) {
             const session = await etebaseAccount.save()
             localStorage.setItem("etebase-account", session)
+            setMessages(old => [...old, "Saved Etebase account to localstorage."])
         }
         setEtebaseAccount(etebaseAccount)
     }
@@ -128,7 +116,7 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
         }
         return undefined
     }
-
+    // eslint-disable-next-line
     const init = async () => {
         setLoading(true)
         const etebaseAccount = await getEtebaseAccount()
@@ -175,12 +163,17 @@ export const EtebaseContext: React.FC<EtebaseContextProps> = ({
 
     useEffect(() => {
         const doAsync = async () => {
-            if (autoInit && props.signer) {
+            if (autoInit && !initialized) {
                 console.debug("Auto initializing")
+                return init()
+            }
+            if (props.signer && initialized) {
+                console.debug("Signer changed, running initializing")
                 return init()
             }
         };
         doAsync();
+        // eslint-disable-next-line
     }, [props.signer, autoInit]);
 
     if (requireEmail) {

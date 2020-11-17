@@ -1,6 +1,8 @@
+import { Collection } from 'etebase';
 import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { EtebaseAccountContext, EtebaseContext } from '../hardhat/EtebaseContext';
 import { ProviderContext, SignerContext, SimpleStorageContext } from './../hardhat/HardhatContext';
 
 
@@ -20,6 +22,7 @@ export const SimpleStorage: React.FC<Props> = () => {
     const [signer] = useContext(SignerContext)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [documents, setDocuments] = useState<Document[]>([]);
+    const [etebaseAccount, loading] = useContext(EtebaseAccountContext)
 
     useEffect(() => {
         const doAsync = async () => {
@@ -42,17 +45,6 @@ export const SimpleStorage: React.FC<Props> = () => {
         // eslint-disable-next-line
     }, [SimpleStorage.instance])
 
-
-
-    const uploadDocument = async (fileName: string, data: string): Promise<string> => {
-        if (provider && signer && SimpleStorage.instance) {
-
-            return "pathResult.path.path"
-        } else {
-            throw Error("Could not upload document.")
-        }
-    }
-
     const getDocument = async (name: string) => {
         if (SimpleStorage.instance) {
             const document = await SimpleStorage.instance.getDocument(ethers.utils.formatBytes32String(name))
@@ -73,11 +65,47 @@ export const SimpleStorage: React.FC<Props> = () => {
     }
 
     const saveDocument = async (name: string, type: string, data: string) => {
-        if (SimpleStorage.instance) {
+        if (SimpleStorage.instance && etebaseAccount) {
             const nameBytes32 = ethers.utils.formatBytes32String(name.substr(0, 31))
             const hashOfDocument = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(data))
-            const url = await uploadDocument(hashOfDocument, data)
-            /* const tx =  */await SimpleStorage.instance.setDocument(nameBytes32, url, hashOfDocument)
+
+            const collectionManager = etebaseAccount.getCollectionManager();
+
+            let collection: Collection | undefined
+            try {
+                collection = await collectionManager.fetch("rKUf3jYqq2cINjW7JbmU8GhzQB1pAUmI")
+            } catch (error) {
+                try {
+                    collection = await collectionManager.create("rKUf3jYqq2cINjW7JbmU8GhzQB1pAUmI",
+                        {
+                            name: "Documents",
+                            description: "Documents for this contract"
+                        },
+                        ""
+                    );
+                    await collectionManager.upload(collection);
+                } catch (error) {
+                    throw Error("Could not get or create collection.")
+                }
+            }
+            console.log(await collection.getMeta())
+
+            const itemManager = collectionManager.getItemManager(collection);
+            const item = await itemManager.create(
+                {
+                    type: type,
+                    name: name,
+                    mtime: (new Date()).getTime(),
+                },
+                data
+            );
+            await itemManager.batch([item]);
+            console.log("Saved item")
+            console.log(item)
+            const items = await itemManager.list();
+            console.log("List", items)
+
+            // /* const tx =  */await SimpleStorage.instance.setDocument(nameBytes32, url, hashOfDocument)
         }
     }
 
