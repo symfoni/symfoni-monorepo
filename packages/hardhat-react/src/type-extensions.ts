@@ -5,6 +5,12 @@ export interface React {
   providerPriority: string[];
 }
 
+export interface SymfoniAccount {
+  inject?: boolean;
+  user?: string;
+  password?: string;
+}
+
 declare module "hardhat/types/config" {
   export interface ProjectPathsUserConfig {
     react?: string;
@@ -20,17 +26,82 @@ declare module "hardhat/types/config" {
     react: React;
   }
 
-  export interface HardhatNetworkHDAccountsUserConfig {
+  // HardhatNetwork
+
+  // export interface HardhatNetworkHDAccountsUserConfig {
+  //   inject?: boolean;
+  // }
+  // export interface HardhatNetworkAccountUserConfig {
+  //   inject?: boolean;
+  // }
+  // export interface HardhatNetworkHDAccountsConfig {
+  //   inject?: boolean;
+  // }
+  // export interface HardhatNetworkAccountConfig {
+  //   inject?: boolean;
+  // }
+
+  export interface HardhatNetworkUserConfig {
     inject?: boolean;
   }
-  export interface HardhatNetworkAccountUserConfig {
+  export interface HardhatNetworkConfig {
     inject?: boolean;
   }
-  export interface HardhatNetworkHDAccountsConfig {
+
+  // HTTP Network
+  export interface HttpNetworkHDAccountsConfigSymfoni {
     inject?: boolean;
+    user?: string;
+    password?: string;
   }
-  export interface HardhatNetworkAccountConfig {
+  export interface HDAccountsUserConfigSymfoni {
     inject?: boolean;
+    user?: string;
+    password?: string;
+  }
+  export interface HttpNetworkUserConfig {
+    inject?: boolean;
+    user?: string;
+    password?: string;
+    providerType?:
+      | "UrlJsonRpcProvider"
+      | "AlchemyProvider"
+      | "AlchemyWebSocketProvider"
+      | "CloudflareProvider"
+      | "EtherscanProvider"
+      | "InfuraProvider"
+      | "InfuraWebSocketProvider"
+      | "JsonRpcProvider"
+      | "NodesmithProvider"
+      | "PocketProvider"
+      | "StaticJsonRpcProvider"
+      | "Web3Provider"
+      | "WebSocketProvider"
+      | "IpcProvider"
+      | "JsonRpcSigner"
+      | "ExternalProvider";
+  }
+  export interface HttpNetworkConfig {
+    inject?: boolean;
+    user?: string;
+    password?: string;
+    providerType?:
+      | "UrlJsonRpcProvider"
+      | "AlchemyProvider"
+      | "AlchemyWebSocketProvider"
+      | "CloudflareProvider"
+      | "EtherscanProvider"
+      | "InfuraProvider"
+      | "InfuraWebSocketProvider"
+      | "JsonRpcProvider"
+      | "NodesmithProvider"
+      | "PocketProvider"
+      | "StaticJsonRpcProvider"
+      | "Web3Provider"
+      | "WebSocketProvider"
+      | "IpcProvider"
+      | "JsonRpcSigner"
+      | "ExternalProvider";
   }
 }
 

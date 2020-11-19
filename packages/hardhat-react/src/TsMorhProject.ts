@@ -31,7 +31,8 @@ const TS_CONFIG = {
 
 export interface ContractContext {
   name: string;
-  typechainName: string;
+  typechainInstanceName: string;
+  typechainFactoryName: string;
   deploymentFile?: string;
   artifactFile: string;
   typechainInstance: string;
@@ -39,7 +40,7 @@ export interface ContractContext {
 }
 
 export const contractInterfaceName = (contract: ContractContext) => {
-  return `Symfoni${contract.typechainName}`;
+  return `Symfoni${contract.typechainInstanceName}`;
 };
 
 export class TsMorphProject {
@@ -79,12 +80,13 @@ export class TsMorphProject {
   async save() {
     this.project.save();
     if (this.args.verbose) {
+      log("Verbode mode, get ready for Diagnostics");
       const sourceFile = this.project.getSourceFile(
         this.HARDHAT_CONTEXT_FILE_NAME
       );
       if (!sourceFile) throw Error("No Hardhat react context file");
       const emitOutput = sourceFile.getPreEmitDiagnostics();
-      console.debug(emitOutput);
+      log(emitOutput);
     }
     return true;
   }
@@ -92,13 +94,21 @@ export class TsMorphProject {
   private async getContractContexts() {
     const currentNetwork = this.hre.network.name;
 
+    const typechainFactoriesPath = path.resolve(
+      this.hre.config.typechain.outDir,
+      "factories"
+    );
     const relativeDeploymentsPath = path.relative(
       this.hre.config.paths.react,
       this.hre.config.paths.deployments + "/" + currentNetwork + "/"
     );
-    const relativeTypechainsPath = path.relative(
+    const relativeTypechainsInstancePath = path.relative(
       this.hre.config.paths.react,
       this.hre.config.typechain.outDir
+    );
+    const relativeTypechainsFactoriesPath = path.relative(
+      this.hre.config.paths.react,
+      typechainFactoriesPath
     );
     const relativeArtifactsPath = path.relative(
       this.hre.config.paths.react,
@@ -116,12 +126,15 @@ export class TsMorphProject {
     }
     // TODO : Hardhat maybe rewrite later
     // const deploymentFiles = await this.hre.deployments.all();
-
     const artifactFiles = await this.hre.artifacts.getAllFullyQualifiedNames();
     log("artifactFiles => " + artifactFiles.join(","));
 
-    const typechainFiles = readdirSync(this.hre.config.typechain.outDir);
-    log("typechainFiles => " + typechainFiles.join(","));
+    const typechainInstanceFiles = readdirSync(
+      this.hre.config.typechain.outDir
+    );
+    const typechainFactoriesFiles = readdirSync(typechainFactoriesPath);
+    log("typechainInstanceFiles => " + typechainInstanceFiles.join(","));
+    log("typechainFactoriesFiles => " + typechainFactoriesFiles.join(","));
 
     let contracts: ContractContext[] = [];
     await Promise.all(
@@ -146,42 +159,49 @@ export class TsMorphProject {
         // const hasDeploymentFile = Object.prototype.hasOwnProperty.call(deploymentFiles, artifactName)
         // const deploymentFile = hasDeploymentFile ? deploymentFiles[artifactName] : undefined
 
-        const typechainInstanceFile = typechainFiles.find((typechainFile) => {
-          // Because typechain modifies name to other caseing we need to match on casing
-          const hasInstanceFile =
-            path.basename(typechainFile, ".d.ts").toLowerCase() ===
-            artifactJson.contractName.toLowerCase();
-          return hasInstanceFile;
-        });
+        const typechainInstanceFile = typechainInstanceFiles.find(
+          (typechainFile) => {
+            const hasInstanceFile =
+              path.basename(typechainFile, ".d.ts") ===
+              artifactJson.contractName;
+            return hasInstanceFile;
+          }
+        );
 
-        const typechainFactoryFile = typechainFiles.find((typechainFile) => {
-          // Because typechain modifies name to other caseing we need to match on casing
-          const hasFactoryFile =
-            path.basename(typechainFile, ".ts").toLowerCase() ===
-            artifactJson.contractName.toLowerCase() + "__factory";
-          return hasFactoryFile;
-        });
+        const typechainFactoryFile = typechainFactoriesFiles.find(
+          (typechainFile) => {
+            const hasFactoryFile =
+              path.basename(typechainFile, ".ts") ===
+              artifactJson.contractName + "__factory";
+            return hasFactoryFile;
+          }
+        );
 
-        if (!typechainInstanceFile || !typechainFactoryFile) {
+        if (!typechainInstanceFile) {
           // if we dont a typechain file, we cant create anything. So lets just return
-          log(
-            "Skipping " +
-              artifactFile +
-              " because we could not find a typechain file for it."
-          );
+          log("No typechain instance for " + artifactJson.contractName);
           return;
-          // throw Error("Could not find typechain file for " + artifactName);
+        }
+        if (!typechainFactoryFile) {
+          // if we dont a typechain file, we cant create anything. So lets just return
+          log("No typechain factory for " + artifactJson.contractName);
+          return;
         }
 
+        log("Creating context for " + artifactJson.contractName);
         contracts.push({
           name: artifactJson.contractName,
-          typechainName: `${path.basename(typechainInstanceFile, ".d.ts")}`,
+          typechainInstanceName: `${path.basename(
+            typechainInstanceFile,
+            ".d.ts"
+          )}`,
+          typechainFactoryName: `${path.basename(typechainFactoryFile, ".ts")}`,
           deploymentFile: deploymentFile
             ? `${relativeDeploymentsPath}/${deploymentFile}`
             : undefined,
           artifactFile: `${relativeArtifactsPath}/${artifactJson.sourceName}`,
-          typechainInstance: `${relativeTypechainsPath}/${typechainInstanceFile}`,
-          typechainFactory: `${relativeTypechainsPath}/${typechainFactoryFile}`,
+          typechainInstance: `${relativeTypechainsInstancePath}/${typechainInstanceFile}`,
+          typechainFactory: `${relativeTypechainsFactoriesPath}/${typechainFactoryFile}`,
         });
       })
     );

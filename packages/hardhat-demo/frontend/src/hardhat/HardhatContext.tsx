@@ -4,19 +4,60 @@
 import { providers, Signer, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
+import { Testing } from "./typechain/Testing";
+import { Testing__factory } from "./typechain/factories/Testing__factory";
+import { SimpleStorage2 } from "./typechain/SimpleStorage2";
+import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
+import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json";
+import { SimpleStorage } from "./typechain/SimpleStorage";
+import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__factory";
+import { Token } from "./typechain/Token";
+import { Token__factory } from "./typechain/factories/Token__factory";
+import { ERC20 } from "./typechain/ERC20";
+import { ERC20__factory } from "./typechain/factories/ERC20__factory";
 
 export const emptyContract = {
     instance: undefined,
     factory: undefined
 };
-export const defaultProvider: providers.Provider = ethers.providers.getDefaultProvider();
-export const ProviderContext = React.createContext<[providers.Provider, React.Dispatch<React.SetStateAction<providers.Provider>>]>([defaultProvider, () => { }]);
+export const defaultProvider: providers.Provider | undefined = undefined;
+export const ProviderContext = React.createContext<[providers.Provider | undefined, React.Dispatch<React.SetStateAction<providers.Provider | undefined>>]>([defaultProvider, () => { }]);
 export const defaultCurrentAddress: string = "";
 export const CurrentAddressContext = React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }]);
 export const defaultSigner: Signer | undefined = undefined;
 export const SignerContext = React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }]);
+export const TestingContext = React.createContext<SymfoniTesting>(emptyContract);
+export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
+export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
+export const TokenContext = React.createContext<SymfoniToken>(emptyContract);
+export const ERC20Context = React.createContext<SymfoniERC20>(emptyContract);
 
 export interface HardhatContextProps {
+}
+
+export interface SymfoniTesting {
+    instance?: Testing;
+    factory?: Testing__factory;
+}
+
+export interface SymfoniSimpleStorage2 {
+    instance?: SimpleStorage2;
+    factory?: SimpleStorage2__factory;
+}
+
+export interface SymfoniSimpleStorage {
+    instance?: SimpleStorage;
+    factory?: SimpleStorage__factory;
+}
+
+export interface SymfoniToken {
+    instance?: Token;
+    factory?: Token__factory;
+}
+
+export interface SymfoniERC20 {
+    instance?: ERC20;
+    factory?: ERC20__factory;
 }
 
 export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
@@ -24,14 +65,20 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
     const [messages, setMessages] = useState<string[]>([]);
     const [/* providerName */, setProviderName] = useState<string>();
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
-    const [provider, setProvider] = useState<providers.Provider>(defaultProvider);
+    const [provider, setProvider] = useState<providers.Provider | undefined>(defaultProvider);
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
-    const providerPriority = ["web3modal", "hardhat"];
+    const providerPriority = ["brreg", "web3modal", "hardhat"];
+    const [Testing, setTesting] = useState<SymfoniTesting>(emptyContract);
+    const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
+    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
+    const [Token, setToken] = useState<SymfoniToken>(emptyContract);
+    const [ERC20, setERC20] = useState<SymfoniERC20>(emptyContract);
     useEffect(() => {
         console.debug(messages.pop())
     }, [messages])
 
-    const getProvider = async (): Promise<providers.Provider | undefined> => {
+    const getProvider = async (): Promise<{ provider: providers.Provider, hardhatProviderName: string } | undefined> => {
+        let hardhatProviderName = "Not set";
         const provider = await providerPriority.reduce(async (maybeProvider: Promise<providers.Provider | undefined>, providerIdentification) => {
             let foundProvider = await maybeProvider
             if (foundProvider) {
@@ -47,30 +94,72 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
                         } catch (error) {
                             return Promise.resolve(undefined)
                         }
-                    case "hardhat":
+                    case "localhost":
                         try {
                             const provider = new ethers.providers.JsonRpcProvider({ // TODO make this param
-                                url: "http://localhost:8545"
+                                url: "http://127.0.0.1:8545",
                             });
                             return Promise.resolve(provider)
                         } catch (error) {
                             return Promise.resolve(undefined)
-                        }
-                    default:
+                        } case "brreg":
+                        try {
+                            const provider = new ethers.providers.JsonRpcProvider({ // TODO make this param
+                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+                                user: "u1qdua80h5",
+                                password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
+                            });
+                            return Promise.resolve(provider)
+                        } catch (error) {
+                            return Promise.resolve(undefined)
+                        } case "brregStage":
+                        try {
+                            const provider = new ethers.providers.StaticJsonRpcProvider({ // TODO make this param
+                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+                                user: "u1qdua80h5",
+                                password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
+                            });
+                            return Promise.resolve(provider)
+                        } catch (error) {
+                            return Promise.resolve(undefined)
+                        } case "brregProd":
+                        try {
+                            const provider = new ethers.providers.JsonRpcProvider({ // TODO make this param
+                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+                                user: "u1qdua80h5",
+                                password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
+                            });
+                            return Promise.resolve(provider)
+                        } catch (error) {
+                            return Promise.resolve(undefined)
+                        } default:
                         return Promise.resolve(undefined)
                 }
             }
         }, Promise.resolve(undefined)) // end reduce
-        return provider;
+        return provider ? { provider, hardhatProviderName } : undefined
     };
-    const getSigner = async (_provider: providers.Provider): Promise<Signer | undefined> => {
+    const getSigner = async (_provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
         switch (_provider.constructor.name) {
             case "Web3Provider":
                 const web3provider = _provider as ethers.providers.Web3Provider
                 return await web3provider.getSigner()
             case "JsonRpcProvider":
-                return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
-
+                switch (hardhatProviderName) {
+                    case "hardhat":
+                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+                    case "brreg":
+                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+                    default:
+                        return undefined
+                }
+            case "StaticJsonRpcProvider":
+                switch (hardhatProviderName) {
+                    case "brregStage":
+                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+                    default:
+                        return undefined
+                }
             default:
                 return undefined
         }
@@ -88,14 +177,15 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
         let subscribed = true
         const doAsync = async () => {
             setMessages(old => [...old, "Initiating Hardhat React"])
-            const _provider = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
-            if (subscribed && _provider) {
+            const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
+            if (subscribed && providerObject) {
+                const _provider = providerObject.provider
                 const _providerName = _provider.constructor.name;
                 console.debug("_providerName", _providerName)
                 setProvider(_provider)
                 setProviderName(_providerName)
                 setMessages(old => [...old, "Useing provider: " + _providerName])
-                const _signer = await getSigner(_provider);
+                const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
                 if (subscribed && _signer) {
                     setSigner(_signer)
                     const address = await _signer.getAddress()
@@ -104,26 +194,99 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
                         setCurrentAddress(address)
                     }
                 }
+
+                setTesting(getTesting(_provider, _signer))
+                setSimpleStorage2(getSimpleStorage2(_provider, _signer))
+                setSimpleStorage(getSimpleStorage(_provider, _signer))
+                setToken(getToken(_provider, _signer))
+                setERC20(getERC20(_provider, _signer))
                 setReady(true)
             }
         };
         doAsync();
         return () => { subscribed = false }
     }, [])
+
+    const getTesting = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniTesting = {
+            instance: instance,
+            factory: _signer ? new Testing__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getSimpleStorage2 = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniSimpleStorage2 = {
+            instance: instance,
+            factory: _signer ? new SimpleStorage2__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getSimpleStorage = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        const contractAddress = SimpleStorageDeployment.receipt.contractAddress
+        const instance = _signer ? SimpleStorage__factory.connect(contractAddress, _signer) : SimpleStorage__factory.connect(contractAddress, _provider)
+        const contract: SymfoniSimpleStorage = {
+            instance: instance,
+            factory: _signer ? new SimpleStorage__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getToken = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniToken = {
+            instance: instance,
+            factory: _signer ? new Token__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getERC20 = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniERC20 = {
+            instance: instance,
+            factory: _signer ? new ERC20__factory(_signer) : undefined,
+        }
+        return contract
+    };
     return (
         <ProviderContext.Provider value={[provider, setProvider]}>
             <SignerContext.Provider value={[signer, setSigner]}>
                 <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
-                    {ready &&
-                        (props.children)
-                    }
-                    {!ready &&
-                        <div>
-                            {messages.map((msg, i) => (
-                                <p key={i}>{msg}</p>
-                            ))}
-                        </div>
-                    }
+                    <TestingContext.Provider value={Testing}>
+                        <SimpleStorage2Context.Provider value={SimpleStorage2}>
+                            <SimpleStorageContext.Provider value={SimpleStorage}>
+                                <TokenContext.Provider value={Token}>
+                                    <ERC20Context.Provider value={ERC20}>
+                                        {ready &&
+                                            (props.children)
+                                        }
+                                        {!ready &&
+                                            <div>
+                                                {messages.map((msg, i) => (
+                                                    <p key={i}>{msg}</p>
+                                                ))}
+                                            </div>
+                                        }
+                                    </ERC20Context.Provider >
+                                </TokenContext.Provider >
+                            </SimpleStorageContext.Provider >
+                        </SimpleStorage2Context.Provider >
+                    </TestingContext.Provider >
                 </CurrentAddressContext.Provider>
             </SignerContext.Provider>
         </ProviderContext.Provider>

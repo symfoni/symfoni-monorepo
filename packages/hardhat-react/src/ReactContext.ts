@@ -84,12 +84,12 @@ export class ReactContext {
       }
       this.sourceFile.addImportDeclarations([
         {
-          namedImports: [`${contract.typechainName}`],
+          namedImports: [`${contract.typechainInstanceName}`],
           moduleSpecifier:
             "./" + contract.typechainInstance.replace(".d.ts", ""),
         },
         {
-          namedImports: [`${contract.typechainName}Factory`],
+          namedImports: [`${contract.typechainFactoryName}`],
           moduleSpecifier: "./" + contract.typechainFactory.replace(".ts", ""),
         },
         // REVIEW : Maybe import artifact files
@@ -120,13 +120,13 @@ export class ReactContext {
     });
     this.addConstExportedStatment({
       name: "defaultProvider",
-      type: "providers.Provider",
-      initializer: "ethers.providers.getDefaultProvider()",
+      type: "providers.Provider | undefined",
+      initializer: "undefined",
     });
     this.addConstExportedStatment({
       name: "ProviderContext",
       initializer:
-        "React.createContext<[providers.Provider, React.Dispatch<React.SetStateAction<providers.Provider>>]>([defaultProvider, () => { }])",
+        "React.createContext<[providers.Provider | undefined, React.Dispatch<React.SetStateAction<providers.Provider | undefined>>]>([defaultProvider, () => { }])",
     });
     this.addConstExportedStatment({
       name: "defaultCurrentAddress",
@@ -172,12 +172,12 @@ export class ReactContext {
         properties: [
           {
             name: "instance",
-            type: `${contract.typechainName}`,
+            type: `${contract.typechainInstanceName}`,
             hasQuestionToken: contract.deploymentFile ? true : true, // REVIEW If we can instantiate provider before component is generate we can maybe remove this
           },
           {
             name: "factory",
-            type: `${contract.typechainName}Factory`,
+            type: `${contract.typechainFactoryName}`,
             hasQuestionToken: true,
           },
         ],

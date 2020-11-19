@@ -136,7 +136,7 @@ subtask(
     await hre.run(TASK_REACT_MAIN, args);
     return;
   } catch (e) {
-    console.error(e);
+    throw Error(e);
   }
 });
 

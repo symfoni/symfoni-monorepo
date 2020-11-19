@@ -1,15 +1,19 @@
-import { HardhatRuntimeEnvironment, HDAccountsUserConfig } from "hardhat/types";
-import { writer } from "repl";
+import { HardhatRuntimeEnvironment, NetworkConfig } from "hardhat/types";
+
 import {
   ArrowFunction,
   CodeBlockWriter,
   SourceFile,
   SyntaxKind,
   VariableDeclarationKind,
+  WriterFunction,
 } from "ts-morph";
 import { ContractContext, contractInterfaceName } from "./TsMorhProject";
 import { debug } from "debug";
+import { network } from "hardhat";
+import { writer } from "repl";
 const log = debug("hardhat:plugin:react");
+const providersDisallowedInject = ["mainnet"];
 
 export class ReactComponent {
   private sourceFile: SourceFile;
@@ -58,7 +62,7 @@ export class ReactComponent {
     );
     this.insertConstStatement(
       "[provider, setProvider]",
-      "useState<providers.Provider>(defaultProvider)"
+      "useState<providers.Provider | undefined>(defaultProvider)"
     );
     this.insertConstStatement(
       "[currentAddress, setCurrentAddress]",
@@ -84,8 +88,9 @@ export class ReactComponent {
           name: "getProvider",
           initializer: (writer) => {
             writer.write(
-              `async (): Promise<providers.Provider | undefined> => {
-                  const provider = await providerPriority.reduce(async (maybeProvider: Promise<providers.Provider | undefined>, providerIdentification) => {
+              `async (): Promise<{provider: providers.Provider, hardhatProviderName: string } | undefined> => {
+                let hardhatProviderName = "Not set";
+                  const provider = await providerPriority.reduce(async (maybeProvider: Promise<providers.Provider | undefined>, providerIdentification)=> {
                     let foundProvider = await maybeProvider
                     if (foundProvider) {
                         return Promise.resolve(foundProvider)
@@ -100,22 +105,67 @@ export class ReactComponent {
                                 } catch (error) {
                                     return Promise.resolve(undefined)
                                 }
-                            case "hardhat":
-                                try {
-                                    const provider = new ethers.providers.JsonRpcProvider({ // TODO make this param
-                                        url: "http://localhost:8545"
-                                    });
-                                    return Promise.resolve(provider)
-                                } catch (error) {
-                                    return Promise.resolve(undefined)
-                                }
-                            default:
+                            `
+            );
+
+            for (const [name, network] of Object.entries(
+              this.hre.config.networks
+            )) {
+              type ProviderConnection = {
+                url: string;
+                user?: string;
+                password?: string;
+                providerType?: string;
+              };
+              let providerConnection: ProviderConnection | undefined =
+                "url" in network ? { url: network.url } : undefined;
+
+              if (providerConnection) {
+                if ("user" in network) {
+                  providerConnection.user = network.user;
+                }
+                if ("user" in network) {
+                  providerConnection.password = network.password;
+                }
+                if ("providerType" in network) {
+                  providerConnection.providerType = network.providerType;
+                } else {
+                  log("Setting default providerType on " + name);
+                  providerConnection.providerType = "JsonRpcProvider";
+                }
+
+                writer.write(
+                  `case "${name}":
+                      try {
+                          const provider = new ethers.providers.${providerConnection.providerType}({ // TODO make this param
+                              url: "${providerConnection.url}",`
+                );
+                if (providerConnection.user) {
+                  writer.writeLine(`user: "${providerConnection.user}",`);
+                  if (providerConnection.password) {
+                    writer.writeLine(
+                      `password: "${providerConnection.password}"`
+                    );
+                  }
+                }
+
+                writer.write(
+                  `});
+                  return Promise.resolve(provider)
+              } catch (error) {
+                  return Promise.resolve(undefined)
+              }`
+                );
+              }
+            }
+            writer.write(
+              `default:
                                 return Promise.resolve(undefined)
                         }
                     }
                 }, Promise.resolve(undefined)) // end reduce
-                return provider;
-              }`
+                return provider ? { provider, hardhatProviderName } : undefined
+                }`
             );
           },
         },
@@ -134,34 +184,26 @@ export class ReactComponent {
           const web3provider = _provider as ethers.providers.Web3Provider
           return await web3provider.getSigner()`,
           ];
+        } else {
+          //   const switch = `switch (hardhatProviderName) {
+          //     case "brreg" :
+          //     return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+          // }`
         }
-        const providerIsAllowedInject = ["hardhat", "localhost"].find(
-          (allowed) => {
-            return provider.toLowerCase().includes(allowed);
-          }
-        );
-        if (providerIsAllowedInject) {
-          const isProviderConfigured =
-            this.hre.config.networks !== undefined &&
-            Object.keys(this.hre.config.networks).includes(provider);
-          if (isProviderConfigured) {
-            const isAccountsConfigured =
-              this.hre.config.networks[provider].accounts !== undefined;
-            if (isAccountsConfigured) {
-              const isHD = Object.keys(
-                this.hre.config.networks[provider].accounts
-              ).includes("mnemonic");
-              if (isHD) {
-                log("Injecting mnemonic into React context.");
-                const account = this.hre.config.networks[provider]
-                  .accounts as HDAccountsUserConfig;
 
-                return [
-                  ...acu,
-                  `case "JsonRpcProvider":
-                    return ethers.Wallet.fromMnemonic("${account.mnemonic}").connect(_provider)`,
-                ];
-              }
+        if (provider in this.hre.config.networks) {
+          if ("accounts" in this.hre.config.networks[provider]) {
+            // const isHD = Object.keys(
+            //   this.hre.config.networks[provider].accounts
+            // ).includes("mnemonic");
+            const accounts = this.hre.config.networks[provider].accounts;
+            if (typeof accounts !== "string" && "mnemonic" in accounts) {
+              log("Injecting mnemonic into React context.");
+              return [
+                ...acu,
+                `case "JsonRpcProvider":
+                    return ethers.Wallet.fromMnemonic("${accounts.mnemonic}").connect(_provider)`,
+              ];
             }
           }
         }
@@ -170,6 +212,93 @@ export class ReactComponent {
       },
       []
     );
+
+    const writeSigners = (writer: CodeBlockWriter) => {
+      writer.writeLine(
+        `case "Web3Provider":
+          const web3provider = _provider as ethers.providers.Web3Provider
+          return await web3provider.getSigner()`
+      );
+      log("before sort " + Object.keys(this.hre.config.networks).join(" | "));
+
+      const networksByProviderType = Object.entries(
+        this.hre.config.networks
+      ).reduce(
+        (
+          acu: { [providerType: string]: { [name: string]: NetworkConfig } },
+          [name, network]
+        ) => {
+          let providerType = "JsonRpcProvider";
+          if ("providerType" in network) {
+            if (network.providerType) {
+              providerType = network.providerType;
+            }
+          }
+          const prev = acu[providerType] ? acu[providerType] : {};
+          return { ...acu, [providerType]: { ...prev, [name]: network } };
+        },
+        {}
+      );
+
+      log("after sort ", Object.keys(networksByProviderType).join(" | "));
+
+      for (const [providerType, networks] of Object.entries(
+        networksByProviderType
+      )) {
+        writer.writeLine(`case "${providerType}":`);
+
+        writer.write(`switch(hardhatProviderName) {`);
+
+        for (const [name, network] of Object.entries(networks)) {
+          writeProviderSigner(writer, name, network);
+        }
+        writer.write(`default:
+                        return undefined
+                }`);
+      }
+    };
+
+    const writeProviderSigner = (
+      writer: CodeBlockWriter,
+      name: string,
+      network: NetworkConfig
+    ) => {
+      if (providersDisallowedInject.indexOf(name.toLowerCase()) !== -1) {
+        log("Provider " + name + " is hardcoded disallowed injected mnemonic.");
+        return;
+      }
+      if ("live" in network) {
+        if (network.live) {
+          log("Provider " + name + " is live and therefor disallowing inject.");
+          return;
+        }
+      }
+      if ("inject" in network) {
+        // TS makes us do it this way
+      } else {
+        log(
+          "Provider " +
+            name +
+            " does not have inject property. Disallowing inject."
+        );
+        return;
+      }
+      if (!network.inject) {
+        log(
+          "Provider " + name + " has inject property false. Disallowing inject."
+        );
+        return;
+      }
+      if (
+        typeof network.accounts !== "string" &&
+        "mnemonic" in network.accounts
+      ) {
+        const mnemonic = network.accounts.mnemonic;
+        writer.writeLine(`case "${name}":
+        return ethers.Wallet.fromMnemonic("${mnemonic}").connect(_provider)`);
+      }
+    };
+
     this.component.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,
       declarations: [
@@ -177,10 +306,11 @@ export class ReactComponent {
           name: "getSigner",
           initializer: (writer) => {
             writer.write(
-              `async ( _provider: providers.Provider): Promise<Signer | undefined> => {
+              `async ( _provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
                 switch (_provider.constructor.name) {`
             );
-            signers.forEach((walletCase) => writer.writeLine(walletCase));
+            writeSigners(writer);
+            // signers.forEach((walletCase) => writer.writeLine(walletCase));
             writer.write(`
                     default:
                         return undefined
@@ -223,14 +353,15 @@ export class ReactComponent {
           let subscribed = true
           const doAsync = async () => {
               setMessages(old => [...old, "Initiating Hardhat React"])
-              const _provider = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
-              if (subscribed && _provider) {
+              const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
+              if (subscribed && providerObject) {
+                const _provider = providerObject.provider
                 const _providerName = _provider.constructor.name;
                 console.debug("_providerName", _providerName)
                 setProvider(_provider)
                 setProviderName(_providerName)
                 setMessages(old => [...old, "Useing provider: " + _providerName])
-                const _signer = await getSigner(_provider);
+                const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
                 if (subscribed && _signer) {
                     setSigner(_signer)
                     const address = await _signer.getAddress()
@@ -285,7 +416,7 @@ export class ReactComponent {
               if (contract.deploymentFile) {
                 writer.write(`
                   const contractAddress = ${contract.name}Deployment.receipt.contractAddress
-                  const instance = _signer ? ${contract.typechainName}Factory.connect(contractAddress, _signer) : ${contract.typechainName}Factory.connect(contractAddress, _provider)
+                  const instance = _signer ? ${contract.typechainFactoryName}.connect(contractAddress, _signer) : ${contract.typechainFactoryName}.connect(contractAddress, _provider)
                 `);
               } else {
                 writer.writeLine(`let instance = undefined`);
@@ -295,8 +426,8 @@ export class ReactComponent {
                 `const contract: ${contractInterfaceName(contract)} = {
                   instance: instance  ,
                   factory: _signer ? new ${
-                    contract.typechainName
-                  }Factory(_signer) : undefined,
+                    contract.typechainFactoryName
+                  }(_signer) : undefined,
                 } 
                 return contract`
               );

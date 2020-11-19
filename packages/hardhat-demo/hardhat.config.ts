@@ -9,7 +9,7 @@ import "@typechain/ethers-v5";
 
 const config: HardhatUserConfig = {
   react: {
-    providerPriority: ["web3modal", "hardhat"],
+    providerPriority: ["brreg", "web3modal", "hardhat"],
   },
   solidity: {
     compilers: [
@@ -29,8 +29,52 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
+      inject: true,
       accounts: {
-        inject: true,
+        mnemonic:
+          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
+      },
+    },
+    localhost: {
+      inject: true,
+    },
+    brreg: {
+      url:
+        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+
+      gasPrice: 0,
+      inject: true,
+      user: "u1qdua80h5",
+      password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
+      providerType: "JsonRpcProvider",
+      accounts: {
+        mnemonic:
+          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
+      },
+    },
+    brregStage: {
+      url:
+        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+      gasPrice: 0,
+      inject: true,
+      user: "u1qdua80h5",
+      password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
+      providerType: "StaticJsonRpcProvider",
+      accounts: {
+        mnemonic:
+          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
+      },
+    },
+    brregProd: {
+      url:
+        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+
+      gasPrice: 0,
+      inject: false,
+      user: "u1qdua80h5",
+      password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
+      providerType: "JsonRpcProvider",
+      accounts: {
         mnemonic:
           "shrug antique orange tragic direct drop abstract ring carry price anchor train",
       },
