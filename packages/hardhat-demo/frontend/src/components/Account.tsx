@@ -1,6 +1,6 @@
 
 
-import { Box, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import React, { useContext, useEffect } from 'react';
 import { CurrentAddressContext, HardhatContext, ProviderContext } from './../hardhat/HardhatContext';
 
@@ -15,8 +15,12 @@ export const Account: React.FC<Props> = () => {
         console.log("Provider in comp", provider)
     }, [provider])
     return (
-        <Box pad="small" background="red" onClick={() => init()}>
-            <Text >{address.substr(0, 4) + ".." + address.substring(address.length - 3, address.length)}</Text>
+        <Box >
+            {address ?
+                <Text >{address.substr(0, 4) + ".." + address.substring(address.length - 3, address.length)}</Text>
+                : <Button label="Connect" onClick={() => init()}></Button>
+            }
+
         </Box>
     )
 }
