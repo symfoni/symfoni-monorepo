@@ -1,4 +1,4 @@
-import { readdirSync } from "fs-extra";
+import { readdirSync, removeSync } from "fs-extra";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import path from "path";
 import {
@@ -132,6 +132,8 @@ export class TsMorphProject {
     const typechainInstanceFiles = readdirSync(
       this.hre.config.typechain.outDir
     );
+    // TODO : Create PR to typechain for optional index file or implciit / explicit generation.
+    removeSync(path.resolve(this.hre.config.typechain.outDir, "index.ts"));
     const typechainFactoriesFiles = readdirSync(typechainFactoriesPath);
     log("typechainInstanceFiles => " + typechainInstanceFiles.join(","));
     log("typechainFactoriesFiles => " + typechainFactoriesFiles.join(","));
