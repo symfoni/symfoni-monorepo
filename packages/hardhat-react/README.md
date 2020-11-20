@@ -251,13 +251,28 @@ The React context tries to connect the frontend up with an Ethereum provider. He
 ```json
 {
   "react": {
-    "providerPriority": ["web3modal", "hardhat"]
+    "providerPriority": ["web3modal", "hardhat"],
+    ...
   }
 }
 ```
 
 `Later, we will add the possibility to set all config networks providers, URLs, etc. as provider priority.`
 We stole this concept from [Embark](https://framework.embarklabs.io/docs/overview.html). Props to them.
+
+## Explicit / Implicit contract generation
+
+If you have many contracts you can choose to be implicit or explicit for what contracts you want to create a context for.
+
+```json
+{
+  "react": {
+    "skip": ["SimpleStorage2"],
+    "handle": ["SimpleStorage"]
+    ...
+  }
+}
+```
 
 ## Paths React
 

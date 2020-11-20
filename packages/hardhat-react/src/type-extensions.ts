@@ -3,6 +3,8 @@ import "hardhat/types/runtime";
 
 export interface React {
   providerPriority: string[];
+  skip?: string[];
+  handle?: string[];
 }
 
 export interface SymfoniAccount {

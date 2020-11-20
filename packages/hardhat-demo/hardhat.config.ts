@@ -10,6 +10,7 @@ import "@typechain/ethers-v5";
 const config: HardhatUserConfig = {
   react: {
     providerPriority: ["brreg", "web3modal", "hardhat"],
+    handle: ["SimpleStorage"],
   },
   solidity: {
     compilers: [
@@ -18,6 +19,24 @@ const config: HardhatUserConfig = {
       },
       {
         version: "0.6.2",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 50,
+          },
+        },
+      },
+      {
+        version: "0.4.15",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 50,
+          },
+        },
+      },
+      {
+        version: "0.5.16",
         settings: {
           optimizer: {
             enabled: true,

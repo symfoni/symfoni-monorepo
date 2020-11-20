@@ -6,13 +6,31 @@ import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
 import { Testing } from "./typechain/Testing";
 import { Testing__factory } from "./typechain/factories/Testing__factory";
-import { SimpleStorage2 } from "./typechain/SimpleStorage2";
-import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
+import { Factory } from "./typechain/Factory";
+import { Factory__factory } from "./typechain/factories/Factory__factory";
+import { MultiSigWalletFactory } from "./typechain/MultiSigWalletFactory";
+import { MultiSigWalletFactory__factory } from "./typechain/factories/MultiSigWalletFactory__factory";
+import { MultiSigWallet } from "./typechain/MultiSigWallet";
+import { MultiSigWallet__factory } from "./typechain/factories/MultiSigWallet__factory";
+import { MultiSigWalletWithDailyLimitFactory } from "./typechain/MultiSigWalletWithDailyLimitFactory";
+import { MultiSigWalletWithDailyLimitFactory__factory } from "./typechain/factories/MultiSigWalletWithDailyLimitFactory__factory";
+import { TestCalls } from "./typechain/TestCalls";
+import { TestCalls__factory } from "./typechain/factories/TestCalls__factory";
+import { MultiSigWalletWithDailyLimit } from "./typechain/MultiSigWalletWithDailyLimit";
+import { MultiSigWalletWithDailyLimit__factory } from "./typechain/factories/MultiSigWalletWithDailyLimit__factory";
+import { TestToken } from "./typechain/TestToken";
+import { TestToken__factory } from "./typechain/factories/TestToken__factory";
 import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json";
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__factory";
 import { Token } from "./typechain/Token";
 import { Token__factory } from "./typechain/factories/Token__factory";
+import { UniswapV2Pair } from "./typechain/UniswapV2Pair";
+import { UniswapV2Pair__factory } from "./typechain/factories/UniswapV2Pair__factory";
+import { UniswapV2Factory } from "./typechain/UniswapV2Factory";
+import { UniswapV2Factory__factory } from "./typechain/factories/UniswapV2Factory__factory";
+import { UniswapV2ERC20 } from "./typechain/UniswapV2ERC20";
+import { UniswapV2ERC20__factory } from "./typechain/factories/UniswapV2ERC20__factory";
 import { ERC20 } from "./typechain/ERC20";
 import { ERC20__factory } from "./typechain/factories/ERC20__factory";
 
@@ -27,9 +45,18 @@ export const CurrentAddressContext = React.createContext<[string, React.Dispatch
 export const defaultSigner: Signer | undefined = undefined;
 export const SignerContext = React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }]);
 export const TestingContext = React.createContext<SymfoniTesting>(emptyContract);
-export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
+export const FactoryContext = React.createContext<SymfoniFactory>(emptyContract);
+export const MultiSigWalletFactoryContext = React.createContext<SymfoniMultiSigWalletFactory>(emptyContract);
+export const MultiSigWalletContext = React.createContext<SymfoniMultiSigWallet>(emptyContract);
+export const MultiSigWalletWithDailyLimitFactoryContext = React.createContext<SymfoniMultiSigWalletWithDailyLimitFactory>(emptyContract);
+export const TestCallsContext = React.createContext<SymfoniTestCalls>(emptyContract);
+export const MultiSigWalletWithDailyLimitContext = React.createContext<SymfoniMultiSigWalletWithDailyLimit>(emptyContract);
+export const TestTokenContext = React.createContext<SymfoniTestToken>(emptyContract);
 export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 export const TokenContext = React.createContext<SymfoniToken>(emptyContract);
+export const UniswapV2PairContext = React.createContext<SymfoniUniswapV2Pair>(emptyContract);
+export const UniswapV2FactoryContext = React.createContext<SymfoniUniswapV2Factory>(emptyContract);
+export const UniswapV2ERC20Context = React.createContext<SymfoniUniswapV2ERC20>(emptyContract);
 export const ERC20Context = React.createContext<SymfoniERC20>(emptyContract);
 
 export interface HardhatContextProps {
@@ -40,9 +67,39 @@ export interface SymfoniTesting {
     factory?: Testing__factory;
 }
 
-export interface SymfoniSimpleStorage2 {
-    instance?: SimpleStorage2;
-    factory?: SimpleStorage2__factory;
+export interface SymfoniFactory {
+    instance?: Factory;
+    factory?: Factory__factory;
+}
+
+export interface SymfoniMultiSigWalletFactory {
+    instance?: MultiSigWalletFactory;
+    factory?: MultiSigWalletFactory__factory;
+}
+
+export interface SymfoniMultiSigWallet {
+    instance?: MultiSigWallet;
+    factory?: MultiSigWallet__factory;
+}
+
+export interface SymfoniMultiSigWalletWithDailyLimitFactory {
+    instance?: MultiSigWalletWithDailyLimitFactory;
+    factory?: MultiSigWalletWithDailyLimitFactory__factory;
+}
+
+export interface SymfoniTestCalls {
+    instance?: TestCalls;
+    factory?: TestCalls__factory;
+}
+
+export interface SymfoniMultiSigWalletWithDailyLimit {
+    instance?: MultiSigWalletWithDailyLimit;
+    factory?: MultiSigWalletWithDailyLimit__factory;
+}
+
+export interface SymfoniTestToken {
+    instance?: TestToken;
+    factory?: TestToken__factory;
 }
 
 export interface SymfoniSimpleStorage {
@@ -55,13 +112,28 @@ export interface SymfoniToken {
     factory?: Token__factory;
 }
 
+export interface SymfoniUniswapV2Pair {
+    instance?: UniswapV2Pair;
+    factory?: UniswapV2Pair__factory;
+}
+
+export interface SymfoniUniswapV2Factory {
+    instance?: UniswapV2Factory;
+    factory?: UniswapV2Factory__factory;
+}
+
+export interface SymfoniUniswapV2ERC20 {
+    instance?: UniswapV2ERC20;
+    factory?: UniswapV2ERC20__factory;
+}
+
 export interface SymfoniERC20 {
     instance?: ERC20;
     factory?: ERC20__factory;
 }
 
 export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
-    const [ready, setReady] = useState(false);
+    const [initialized, setInitialized] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
     const [/* providerName */, setProviderName] = useState<string>();
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
@@ -69,9 +141,18 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
     const providerPriority = ["brreg", "web3modal", "hardhat"];
     const [Testing, setTesting] = useState<SymfoniTesting>(emptyContract);
-    const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
+    const [Factory, setFactory] = useState<SymfoniFactory>(emptyContract);
+    const [MultiSigWalletFactory, setMultiSigWalletFactory] = useState<SymfoniMultiSigWalletFactory>(emptyContract);
+    const [MultiSigWallet, setMultiSigWallet] = useState<SymfoniMultiSigWallet>(emptyContract);
+    const [MultiSigWalletWithDailyLimitFactory, setMultiSigWalletWithDailyLimitFactory] = useState<SymfoniMultiSigWalletWithDailyLimitFactory>(emptyContract);
+    const [TestCalls, setTestCalls] = useState<SymfoniTestCalls>(emptyContract);
+    const [MultiSigWalletWithDailyLimit, setMultiSigWalletWithDailyLimit] = useState<SymfoniMultiSigWalletWithDailyLimit>(emptyContract);
+    const [TestToken, setTestToken] = useState<SymfoniTestToken>(emptyContract);
     const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
     const [Token, setToken] = useState<SymfoniToken>(emptyContract);
+    const [UniswapV2Pair, setUniswapV2Pair] = useState<SymfoniUniswapV2Pair>(emptyContract);
+    const [UniswapV2Factory, setUniswapV2Factory] = useState<SymfoniUniswapV2Factory>(emptyContract);
+    const [UniswapV2ERC20, setUniswapV2ERC20] = useState<SymfoniUniswapV2ERC20>(emptyContract);
     const [ERC20, setERC20] = useState<SymfoniERC20>(emptyContract);
     useEffect(() => {
         console.debug(messages.pop())
@@ -196,11 +277,20 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
                 }
 
                 setTesting(getTesting(_provider, _signer))
-                setSimpleStorage2(getSimpleStorage2(_provider, _signer))
+                setFactory(getFactory(_provider, _signer))
+                setMultiSigWalletFactory(getMultiSigWalletFactory(_provider, _signer))
+                setMultiSigWallet(getMultiSigWallet(_provider, _signer))
+                setMultiSigWalletWithDailyLimitFactory(getMultiSigWalletWithDailyLimitFactory(_provider, _signer))
+                setTestCalls(getTestCalls(_provider, _signer))
+                setMultiSigWalletWithDailyLimit(getMultiSigWalletWithDailyLimit(_provider, _signer))
+                setTestToken(getTestToken(_provider, _signer))
                 setSimpleStorage(getSimpleStorage(_provider, _signer))
                 setToken(getToken(_provider, _signer))
+                setUniswapV2Pair(getUniswapV2Pair(_provider, _signer))
+                setUniswapV2Factory(getUniswapV2Factory(_provider, _signer))
+                setUniswapV2ERC20(getUniswapV2ERC20(_provider, _signer))
                 setERC20(getERC20(_provider, _signer))
-                setReady(true)
+                setInitialized(true)
             }
         };
         doAsync();
@@ -218,14 +308,80 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
         }
         return contract
     };
-    const getSimpleStorage2 = (_provider: providers.Provider, _signer?: Signer) => {
+    const getFactory = (_provider: providers.Provider, _signer?: Signer) => {
 
 
 
         let instance = undefined
-        const contract: SymfoniSimpleStorage2 = {
+        const contract: SymfoniFactory = {
             instance: instance,
-            factory: _signer ? new SimpleStorage2__factory(_signer) : undefined,
+            factory: _signer ? new Factory__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getMultiSigWalletFactory = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniMultiSigWalletFactory = {
+            instance: instance,
+            factory: _signer ? new MultiSigWalletFactory__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getMultiSigWallet = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniMultiSigWallet = {
+            instance: instance,
+            factory: _signer ? new MultiSigWallet__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getMultiSigWalletWithDailyLimitFactory = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniMultiSigWalletWithDailyLimitFactory = {
+            instance: instance,
+            factory: _signer ? new MultiSigWalletWithDailyLimitFactory__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getTestCalls = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniTestCalls = {
+            instance: instance,
+            factory: _signer ? new TestCalls__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getMultiSigWalletWithDailyLimit = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniMultiSigWalletWithDailyLimit = {
+            instance: instance,
+            factory: _signer ? new MultiSigWalletWithDailyLimit__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getTestToken = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniTestToken = {
+            instance: instance,
+            factory: _signer ? new TestToken__factory(_signer) : undefined,
         }
         return contract
     };
@@ -252,6 +408,39 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
         }
         return contract
     };
+    const getUniswapV2Pair = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniUniswapV2Pair = {
+            instance: instance,
+            factory: _signer ? new UniswapV2Pair__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getUniswapV2Factory = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniUniswapV2Factory = {
+            instance: instance,
+            factory: _signer ? new UniswapV2Factory__factory(_signer) : undefined,
+        }
+        return contract
+    };
+    const getUniswapV2ERC20 = (_provider: providers.Provider, _signer?: Signer) => {
+
+
+
+        let instance = undefined
+        const contract: SymfoniUniswapV2ERC20 = {
+            instance: instance,
+            factory: _signer ? new UniswapV2ERC20__factory(_signer) : undefined,
+        }
+        return contract
+    };
     const getERC20 = (_provider: providers.Provider, _signer?: Signer) => {
 
 
@@ -268,24 +457,42 @@ export const HardhatContext: React.FC<HardhatContextProps> = (props) => {
             <SignerContext.Provider value={[signer, setSigner]}>
                 <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
                     <TestingContext.Provider value={Testing}>
-                        <SimpleStorage2Context.Provider value={SimpleStorage2}>
-                            <SimpleStorageContext.Provider value={SimpleStorage}>
-                                <TokenContext.Provider value={Token}>
-                                    <ERC20Context.Provider value={ERC20}>
-                                        {ready &&
-                                            (props.children)
-                                        }
-                                        {!ready &&
-                                            <div>
-                                                {messages.map((msg, i) => (
-                                                    <p key={i}>{msg}</p>
-                                                ))}
-                                            </div>
-                                        }
-                                    </ERC20Context.Provider >
-                                </TokenContext.Provider >
-                            </SimpleStorageContext.Provider >
-                        </SimpleStorage2Context.Provider >
+                        <FactoryContext.Provider value={Factory}>
+                            <MultiSigWalletFactoryContext.Provider value={MultiSigWalletFactory}>
+                                <MultiSigWalletContext.Provider value={MultiSigWallet}>
+                                    <MultiSigWalletWithDailyLimitFactoryContext.Provider value={MultiSigWalletWithDailyLimitFactory}>
+                                        <TestCallsContext.Provider value={TestCalls}>
+                                            <MultiSigWalletWithDailyLimitContext.Provider value={MultiSigWalletWithDailyLimit}>
+                                                <TestTokenContext.Provider value={TestToken}>
+                                                    <SimpleStorageContext.Provider value={SimpleStorage}>
+                                                        <TokenContext.Provider value={Token}>
+                                                            <UniswapV2PairContext.Provider value={UniswapV2Pair}>
+                                                                <UniswapV2FactoryContext.Provider value={UniswapV2Factory}>
+                                                                    <UniswapV2ERC20Context.Provider value={UniswapV2ERC20}>
+                                                                        <ERC20Context.Provider value={ERC20}>
+                                                                            {initialized &&
+                                                                                (props.children)
+                                                                            }
+                                                                            {!initialized &&
+                                                                                <div>
+                                                                                    {messages.map((msg, i) => (
+                                                                                        <p key={i}>{msg}</p>
+                                                                                    ))}
+                                                                                </div>
+                                                                            }
+                                                                        </ERC20Context.Provider >
+                                                                    </UniswapV2ERC20Context.Provider >
+                                                                </UniswapV2FactoryContext.Provider >
+                                                            </UniswapV2PairContext.Provider >
+                                                        </TokenContext.Provider >
+                                                    </SimpleStorageContext.Provider >
+                                                </TestTokenContext.Provider >
+                                            </MultiSigWalletWithDailyLimitContext.Provider >
+                                        </TestCallsContext.Provider >
+                                    </MultiSigWalletWithDailyLimitFactoryContext.Provider >
+                                </MultiSigWalletContext.Provider >
+                            </MultiSigWalletFactoryContext.Provider >
+                        </FactoryContext.Provider >
                     </TestingContext.Provider >
                 </CurrentAddressContext.Provider>
             </SignerContext.Provider>

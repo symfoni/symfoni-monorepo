@@ -47,7 +47,10 @@ export class ReactComponent {
   }
 
   useStateStatements() {
-    this.insertConstStatement("[ready, setReady]", "useState(false)");
+    this.insertConstStatement(
+      "[initialized, setInitialized]",
+      "useState(false)"
+    );
     this.insertConstStatement(
       "[messages, setMessages]",
       "useState<string[]>([])"
@@ -174,52 +177,12 @@ export class ReactComponent {
   }
 
   private getSigner() {
-    // TODO - This could lead to users publishing a mnemonic or private key. Will make it explicit on hardhat account config.
-    const signers = this.hre.config.react.providerPriority.reduce(
-      (acu: string[], provider) => {
-        if (provider.toLowerCase() === "web3modal") {
-          return [
-            ...acu,
-            `case "Web3Provider":
-          const web3provider = _provider as ethers.providers.Web3Provider
-          return await web3provider.getSigner()`,
-          ];
-        } else {
-          //   const switch = `switch (hardhatProviderName) {
-          //     case "brreg" :
-          //     return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
-          // }`
-        }
-
-        if (provider in this.hre.config.networks) {
-          if ("accounts" in this.hre.config.networks[provider]) {
-            // const isHD = Object.keys(
-            //   this.hre.config.networks[provider].accounts
-            // ).includes("mnemonic");
-            const accounts = this.hre.config.networks[provider].accounts;
-            if (typeof accounts !== "string" && "mnemonic" in accounts) {
-              log("Injecting mnemonic into React context.");
-              return [
-                ...acu,
-                `case "JsonRpcProvider":
-                    return ethers.Wallet.fromMnemonic("${accounts.mnemonic}").connect(_provider)`,
-              ];
-            }
-          }
-        }
-
-        return acu;
-      },
-      []
-    );
-
     const writeSigners = (writer: CodeBlockWriter) => {
       writer.writeLine(
         `case "Web3Provider":
           const web3provider = _provider as ethers.providers.Web3Provider
           return await web3provider.getSigner()`
       );
-      log("before sort " + Object.keys(this.hre.config.networks).join(" | "));
 
       const networksByProviderType = Object.entries(
         this.hre.config.networks
@@ -240,7 +203,10 @@ export class ReactComponent {
         {}
       );
 
-      log("after sort ", Object.keys(networksByProviderType).join(" | "));
+      log(
+        "Useing this providerTypes: ",
+        Object.keys(networksByProviderType).join(" | ")
+      );
 
       for (const [providerType, networks] of Object.entries(
         networksByProviderType
@@ -294,6 +260,8 @@ export class ReactComponent {
         "mnemonic" in network.accounts
       ) {
         const mnemonic = network.accounts.mnemonic;
+        log(`Injecting ${name} into React context`);
+        log(`Exposing Mnemonic in you React app : ${mnemonic}`);
         writer.writeLine(`case "${name}":
         return ethers.Wallet.fromMnemonic("${mnemonic}").connect(_provider)`);
       }
@@ -310,7 +278,6 @@ export class ReactComponent {
                 switch (_provider.constructor.name) {`
             );
             writeSigners(writer);
-            // signers.forEach((walletCase) => writer.writeLine(walletCase));
             writer.write(`
                     default:
                         return undefined
@@ -380,7 +347,7 @@ export class ReactComponent {
       });
 
       writer.write(
-        `setReady(true)
+        `setInitialized(true)
             }
         };
         doAsync();
@@ -443,10 +410,10 @@ export class ReactComponent {
   private renderFunction() {
     const body = (writer: CodeBlockWriter) => {
       writer.writeLine(
-        `{ready &&
+        `{initialized &&
           (props.children)
       }
-      {!ready &&
+      {!initialized &&
           <div>
               {messages.map((msg, i) => (
                   <p key={i}>{msg}</p>

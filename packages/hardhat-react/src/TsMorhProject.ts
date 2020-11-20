@@ -142,6 +142,28 @@ export class TsMorphProject {
         const artifactJson = await this.hre.artifacts.readArtifact(
           artifactFile
         );
+
+        // Skip list
+        if (this.hre.config.react.skip) {
+          if (
+            this.hre.config.react.skip.indexOf(artifactJson.contractName) !== -1
+          ) {
+            log("Skipping " + artifactFile + " because its in skip list.");
+            return;
+          }
+        }
+        // Skip list
+        if (this.hre.config.react.handle) {
+          if (
+            this.hre.config.react.handle.indexOf(artifactJson.contractName) ===
+            -1
+          ) {
+            log(
+              "Skipping " + artifactFile + " because its NOT in handle list."
+            );
+            return;
+          }
+        }
         if (artifactJson.bytecode.length < 3) {
           // TODO handle interface contracts
           log(
@@ -205,6 +227,27 @@ export class TsMorphProject {
         });
       })
     );
+    // Filter out possible duplicates
+    contracts = contracts.filter((contract, i, arr) => {
+      const duplicate =
+        arr.slice(0, i).findIndex((otherContract) => {
+          log(
+            contract.typechainInstance +
+              " === " +
+              otherContract.typechainInstance
+          );
+          return (
+            contract.typechainInstance === otherContract.typechainInstance ||
+            contract.typechainFactory === otherContract.typechainFactory
+          );
+        }) !== -1;
+      if (duplicate) {
+        log(
+          `Contract ${contract.name} is a duplicated. Removing the last instance of it from React context generation`
+        );
+      }
+      return !duplicate;
+    });
     log(
       contracts.length + " contracts has been set for react context generation"
     );
