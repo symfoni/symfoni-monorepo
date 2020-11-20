@@ -163,7 +163,18 @@ export class ReactContext {
     this.sourceFile.addInterface({
       name: this.componentName + "Props",
       isExported: true,
-      properties: [],
+      properties: [
+        {
+          name: "autoInit",
+          type: `boolean`,
+          hasQuestionToken: true,
+        },
+        {
+          name: "deferRender",
+          type: `boolean`,
+          hasQuestionToken: true,
+        },
+      ],
     });
     this.contractContexts.forEach((contract) => {
       this.sourceFile.addInterface({
@@ -193,7 +204,11 @@ export class ReactContext {
         {
           name: this.componentName,
           type: `React.FC<${this.componentName + "Props"}>`,
-          initializer: "(props) => {}",
+          initializer: `({
+            deferRender = false,
+            autoInit = true,
+            ...props
+          }) => {}`,
         },
       ],
     });

@@ -373,11 +373,8 @@ export class ReactComponent {
           {
             name: `get${contract.name}`,
             initializer: (writer) => {
-              writer.write(
-                `(_provider: providers.Provider, _signer?: Signer ) => {
-
-                  
-                `
+              writer.writeLine(
+                `(_provider: providers.Provider, _signer?: Signer ) => {`
               );
 
               if (contract.deploymentFile) {
