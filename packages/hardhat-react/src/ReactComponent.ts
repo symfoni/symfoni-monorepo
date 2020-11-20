@@ -315,30 +315,28 @@ export class ReactComponent {
 
   private initSideEffect() {
     this.component.addStatements((writer) => {
-      writer.write(
-        `useEffect(() => {
+      writer.write(`
+      useEffect(() => {
           let subscribed = true
           const doAsync = async () => {
-              setMessages(old => [...old, "Initiating Hardhat React"])
-              const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
-              if (subscribed && providerObject) {
-                const _provider = providerObject.provider
-                const _providerName = _provider.constructor.name;
-                console.debug("_providerName", _providerName)
-                setProvider(_provider)
-                setProviderName(_providerName)
-                setMessages(old => [...old, "Useing provider: " + _providerName])
-                const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
-                if (subscribed && _signer) {
-                    setSigner(_signer)
-                    const address = await _signer.getAddress()
-                    if (subscribed && address) {
-                        console.debug("address", address)
-                        setCurrentAddress(address)
-                    }
-                }
-                `
-      );
+            setMessages(old => [...old, "Initiating Hardhat React"])
+            const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
+
+            if (!subscribed || !providerObject) return null
+            const _provider = providerObject.provider
+            const _providerName = _provider.constructor.name;
+            setProvider(_provider)
+            setProviderName(_providerName)
+            setMessages(old => [...old, "Useing provider: " + _providerName])
+            const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
+
+            if (!subscribed || !_signer) return null
+            setSigner(_signer)
+            const address = await _signer.getAddress()
+
+            if (!subscribed || !address) return null
+            setCurrentAddress(address)
+            `);
 
       this.contractContexts.forEach((contract) => {
         writer.writeLine(
@@ -346,14 +344,12 @@ export class ReactComponent {
         );
       });
 
-      writer.write(
-        `setInitialized(true)
-            }
+      writer.write(`
+      setInitialized(true)  
         };
         doAsync();
         return () => { subscribed = false }
-      }, [])`
-      );
+      }, [])`);
     });
   }
 
