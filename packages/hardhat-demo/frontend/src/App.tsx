@@ -1,7 +1,7 @@
 import { Box, Footer, Grommet, Main, Text } from "grommet";
 import React from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { HardhatContext } from "./hardhat/HardhatContext";
+import { Hardhat } from "./hardhat/HardhatContext";
 import { SimpleStorage } from './components/SimpleStorage';
 import { Navigation } from './ui/Navigation';
 
@@ -26,7 +26,7 @@ function App() {
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Grommet>
-        <HardhatContext>
+        <Hardhat>
           <Box>
             {/* Navigation */}
             <Navigation></Navigation>
@@ -44,7 +44,7 @@ function App() {
             </Footer>
 
           </Box>
-        </HardhatContext>
+        </Hardhat>
       </Grommet>
     </BrowserRouter >
   );

@@ -96,16 +96,16 @@ Create React app can be initialized in your Hardhat root folder with:
 To use the React component in a React application. Import the HardhatContext.tsx file in your app.
 
 ```ts
-import { HardhatContext } from "./hardhat/HardhatContext";
+import { Hardhat } from "./hardhat/HardhatContext";
 ```
 
 Then wrap everything or the components in this context as a provider.
 
 ```ts
-<HardhatContext>
+<Hardhat>
   <SomeComponent></SomeComponent>
   <SomeOtherComponent></SomeComponent>
-</HardhatContext>
+</Hardhat>
 ```
 
 To use a contract, import that context into the component that needs it.
@@ -131,7 +131,7 @@ export interface ContractContext {
 }
 ```
 
-If the Hardhatcontext successfully connected to a provider in your frontend (web3modal or Hardhat node) and
+If the Hardhat context successfully connected to a provider in your frontend (web3modal or Hardhat node) and
 
 - hardhat-deploy **deployed** an instance of your contract. The **ContractContext.instance** property will be initiated. Here you have access to all functions, events, and so on.
 - the provider has Sing functionality. The **ContractContext.factory** will be available, and you can deploy a contract or connect to other instances.
@@ -144,16 +144,16 @@ If the Hardhatcontext successfully connected to a provider in your frontend (web
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { HardhatContext } from "./hardhat/HardhatContext";
+import { Hardhat } from "./hardhat/HardhatContext";
 import { Greeter } from "./components/Greeter";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <HardhatContext>
+        <Hardhat>
           <Greeter></Greeter>
-        </HardhatContext>
+        </Hardhat>
       </header>
     </div>
   );

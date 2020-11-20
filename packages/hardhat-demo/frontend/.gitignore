@@ -59,4 +59,5 @@ typings/
 # next.js build output
 .next
 
-src/frontend/hardhat
+src/frontend/hardhat/deployments
+src/frontend/hardhat/typechain

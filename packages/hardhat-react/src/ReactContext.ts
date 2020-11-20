@@ -18,7 +18,7 @@ export class ReactContext {
   private readonly hre: HardhatRuntimeEnvironment;
   private readonly contractContexts: ContractContext[];
   private reactComponent?: ReactComponent;
-  private componentName = "HardhatContext";
+  private componentName = "Hardhat";
   constructor(
     sourceFile: SourceFile,
     args: any,
@@ -101,65 +101,104 @@ export class ReactContext {
     });
   }
 
-  private addConstExportedStatment(
-    declaration: OptionalKind<VariableDeclarationStructure>
+  private addConstStatment(
+    declaration: OptionalKind<VariableDeclarationStructure>,
+    exported = false
   ) {
     this.sourceFile.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,
-      isExported: true,
+      isExported: exported,
       declarations: [declaration],
     });
   }
   private preComponentStatements() {
-    this.addConstExportedStatment({
+    this.addConstStatment({
       name: "emptyContract",
       initializer: `{
           instance: undefined,
           factory: undefined
         }`,
-    });
-    this.addConstExportedStatment({
+    };
+    this.addConstStatment({
       name: "defaultProvider",
       type: "providers.Provider | undefined",
       initializer: "undefined",
     });
-    this.addConstExportedStatment({
+    this.addConstStatment({
       name: "ProviderContext",
       initializer:
         "React.createContext<[providers.Provider | undefined, React.Dispatch<React.SetStateAction<providers.Provider | undefined>>]>([defaultProvider, () => { }])",
-    });
-    this.addConstExportedStatment({
+    }, true);
+    this.addConstStatment({
       name: "defaultCurrentAddress",
       type: "string",
       initializer: `""`,
     });
-    this.addConstExportedStatment({
+    this.addConstStatment({
       name: "CurrentAddressContext",
       initializer:
         "React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }])",
-    });
-    this.addConstExportedStatment({
+    }, true);
+    this.addConstStatment({
       name: "defaultSigner",
       type: "Signer | undefined",
       initializer: "undefined",
     });
-    this.addConstExportedStatment({
+    this.addConstStatment({
       name: "SignerContext",
       initializer:
         "React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }])",
+    }, true);
+
+    this.addConstStatment({
+      name: "defaultHardhatContext",
+      type: "HardhatContextInterface",
+      initializer: `{
+        currentHardhatProvider: "",
+        init: () => { throw Error("Hardhat context not initialized") },
+        loading: false,
+        messages: []
+      }`,
     });
+    this.addConstStatment({
+      name: "HardhatContext",
+      initializer:
+        "React.createContext<HardhatContextInterface>(defaultHardhatContext)",
+    }, true);
 
     this.contractContexts.forEach((contract) => {
-      this.addConstExportedStatment({
+      this.addConstStatment({
         name: `${contract.name}Context`,
         initializer: `React.createContext<${contractInterfaceName(
           contract
         )}>(emptyContract)`,
-      });
+      }, true);
     });
   }
 
   private preComponentInterfaces() {
+    this.sourceFile.addInterface({
+      name: this.componentName + "ContextInterface",
+      isExported: true,
+      properties: [
+        {
+          name: "init",
+          type: `(provider?: string) => void`,
+        },
+        {
+          name: "loading",
+          type: `boolean`,
+        },
+        {
+          name: "messages",
+          type: `string[]`,
+        },
+        {
+          name: "currentHardhatProvider",
+          type: `string`,
+        },
+      ],
+    });
     this.sourceFile.addInterface({
       name: this.componentName + "Props",
       isExported: true,
@@ -170,8 +209,13 @@ export class ReactContext {
           hasQuestionToken: true,
         },
         {
-          name: "deferRender",
+          name: "showLoading",
           type: `boolean`,
+          hasQuestionToken: true,
+        },
+        {
+          name: "loadingComponent",
+          type: `React.ReactNode`,
           hasQuestionToken: true,
         },
       ],
@@ -205,7 +249,7 @@ export class ReactContext {
           name: this.componentName,
           type: `React.FC<${this.componentName + "Props"}>`,
           initializer: `({
-            deferRender = false,
+            showLoading = true,
             autoInit = true,
             ...props
           }) => {}`,

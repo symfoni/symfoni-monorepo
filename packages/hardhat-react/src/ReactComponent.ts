@@ -43,14 +43,20 @@ export class ReactComponent {
     this.getWeb3ModalProvider();
     this.initSideEffect();
     this.contractInits();
+    this.handleInitProvider();
     this.renderFunction();
   }
 
   useStateStatements() {
     this.insertConstStatement(
-      "[initialized, setInitialized]",
-      "useState(false)"
+      "[initializeCounter, setInitializeCounter]",
+      "useState(0)"
     );
+    this.insertConstStatement(
+      "[currentHardhatProvider, setCurrentHardhatProvider]",
+      `useState("")`
+    );
+    this.insertConstStatement("[loading, setLoading]", "useState(false)");
     this.insertConstStatement(
       "[messages, setMessages]",
       "useState<string[]>([])"
@@ -72,8 +78,10 @@ export class ReactComponent {
       "useState<string>(defaultCurrentAddress)"
     );
     this.insertConstStatement(
-      "providerPriority",
-      this.toArrayString(this.hre.config.react.providerPriority)
+      "[providerPriority, setProviderPriority]",
+      `useState<string[]>(${this.toArrayString(
+        this.hre.config.react.providerPriority
+      )})`
     );
     this.contractContexts.forEach((contract) => {
       this.insertConstStatement(
@@ -104,6 +112,7 @@ export class ReactComponent {
                                 try {
                                     const provider = await getWeb3ModalProvider()
                                     const web3provider = new ethers.providers.Web3Provider(provider);
+                                    hardhatProviderName =  "web3modal";
                                     return Promise.resolve(web3provider)
                                 } catch (error) {
                                     return Promise.resolve(undefined)
@@ -140,7 +149,7 @@ export class ReactComponent {
                 writer.write(
                   `case "${name}":
                       try {
-                          const provider = new ethers.providers.${providerConnection.providerType}({ // TODO make this param
+                          const provider = new ethers.providers.${providerConnection.providerType}({
                               url: "${providerConnection.url}",`
                 );
                 if (providerConnection.user) {
@@ -154,6 +163,7 @@ export class ReactComponent {
 
                 writer.write(
                   `});
+                  hardhatProviderName =  "${name}";
                   return Promise.resolve(provider)
               } catch (error) {
                   return Promise.resolve(undefined)
@@ -318,23 +328,31 @@ export class ReactComponent {
       writer.write(`
       useEffect(() => {
           let subscribed = true
+          const finish = (text: string) => {
+            setLoading(false)
+            setMessages(old => [...old, text])
+        }
           const doAsync = async () => {
+            if (!autoInit && initializeCounter === 0) return finish("Auto init turned off.")
+            setLoading(true)
             setMessages(old => [...old, "Initiating Hardhat React"])
             const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
 
-            if (!subscribed || !providerObject) return null
+            if (!subscribed || !providerObject) return finish("No provider or signer.")
             const _provider = providerObject.provider
             const _providerName = _provider.constructor.name;
             setProvider(_provider)
             setProviderName(_providerName)
             setMessages(old => [...old, "Useing provider: " + _providerName])
+            setCurrentHardhatProvider(providerObject.hardhatProviderName)
             const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
 
-            if (!subscribed || !_signer) return null
+            if (!subscribed || !_signer) return finish("Provider, without signer.")
             setSigner(_signer)
+            setMessages(old => [...old, "Useing signer"])
             const address = await _signer.getAddress()
 
-            if (!subscribed || !address) return null
+            if (!subscribed || !address) return finish("Provider and signer, without address.")
             setCurrentAddress(address)
             `);
 
@@ -345,18 +363,19 @@ export class ReactComponent {
       });
 
       writer.write(`
-      setInitialized(true)  
+      return finish("Completed Hardhat context initialization.")
         };
         doAsync();
         return () => { subscribed = false }
-      }, [])`);
+      }, [initializeCounter])`);
     });
   }
 
   private consoleLog() {
     this.component.addStatements(
       `useEffect(() => {
-        console.debug(messages.pop())
+        if(messages.length > 0)
+          console.debug(messages.pop())
     }, [messages])`
     );
   }
@@ -392,7 +411,8 @@ export class ReactComponent {
                 return contract`
               );
 
-              writer.write(`}`);
+              writer.write(`}
+              `);
             },
           },
         ],
@@ -400,19 +420,29 @@ export class ReactComponent {
     });
   }
 
+  private handleInitProvider() {
+    this.component.addStatements(`
+    const handleInitProvider = (provider?: string) => {
+        if (provider) {
+            setProviderPriority(old => old.sort((a, b) => {
+                return a === provider ? -1 : b === provider ? 1 : 0;
+            }))
+        }
+        setInitializeCounter(old => old++)
+      }`);
+  }
+
   private renderFunction() {
     const body = (writer: CodeBlockWriter) => {
       writer.writeLine(
-        `{initialized &&
-          (props.children)
-      }
-      {!initialized &&
+        `{initializeCounter === 0 && showLoading && loading ?
           <div>
               {messages.map((msg, i) => (
                   <p key={i}>{msg}</p>
               ))}
           </div>
-      }`
+          : props.children
+        }`
       );
     };
 
@@ -432,6 +462,7 @@ export class ReactComponent {
     this.component.addStatements((writer) => {
       writer.write(
         `return (
+          <HardhatContext.Provider value={{ init: handleInitProvider, currentHardhatProvider, loading, messages }}>
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>`
@@ -443,6 +474,7 @@ export class ReactComponent {
         `           </CurrentAddressContext.Provider>
                 </SignerContext.Provider>
             </ProviderContext.Provider>
+          </HardhatContext.Provider>
         )`
       );
     });
