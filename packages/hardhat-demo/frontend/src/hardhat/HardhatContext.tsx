@@ -58,7 +58,7 @@ export const Hardhat: React.FC<HardhatProps> = ({
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
     const [provider, setProvider] = useState<providers.Provider | undefined>(defaultProvider);
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
-    const [providerPriority, setProviderPriority] = useState<string[]>(["web3modal", "brreg", "hardhat"]);
+    const [providerPriority, setProviderPriority] = useState<string[]>(["brreg", "web3modal", "hardhat"]);
     const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
     useEffect(() => {
         if (messages.length > 0)
@@ -184,7 +184,7 @@ export const Hardhat: React.FC<HardhatProps> = ({
             const _providerName = _provider.constructor.name;
             setProvider(_provider)
             setProviderName(_providerName)
-            setMessages(old => [...old, "Useing provider: " + _providerName])
+            setMessages(old => [...old, "Useing " + _providerName + " from " + providerObject.hardhatProviderName])
             setCurrentHardhatProvider(providerObject.hardhatProviderName)
             const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
 
@@ -217,15 +217,16 @@ export const Hardhat: React.FC<HardhatProps> = ({
         ;
 
     const handleInitProvider = (provider?: string) => {
+        console.log("running")
         if (provider) {
             setProviderPriority(old => old.sort((a, b) => {
                 return a === provider ? -1 : b === provider ? 1 : 0;
             }))
         }
-        setInitializeCounter(old => old++)
+        setInitializeCounter(initializeCounter + 1)
     }
     return (
-        <HardhatContext.Provider value={{ init: handleInitProvider, currentHardhatProvider, loading, messages }}>
+        <HardhatContext.Provider value={{ init: (provider) => handleInitProvider(provider), currentHardhatProvider, loading, messages }}>
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
@@ -244,4 +245,5 @@ export const Hardhat: React.FC<HardhatProps> = ({
             </ProviderContext.Provider>
         </HardhatContext.Provider>
     )
+
 };
