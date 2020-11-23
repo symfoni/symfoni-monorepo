@@ -25,7 +25,7 @@ export const Account: React.FC<Props> = () => {
                     value={selectedProvider}
                     onChange={(option) => setSelectedProvider(option.value)}
                 ></Select>
-                <Button disabled={loading} size="small" label={selectedProvider ? "Connect " + selectedProvider : "Connect"} onClick={() => init(selectedProvider)}></Button>
+                <Button disabled={loading || currentHardhatProvider === selectedProvider} size="small" label={selectedProvider ? "Connect " + selectedProvider : "Connect"} onClick={() => init(selectedProvider)}></Button>
             </Grid>
             <Box alignContent="end" gap="small">
                 {address &&

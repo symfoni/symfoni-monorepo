@@ -129,7 +129,6 @@ export class ReactComponent {
                 password?: string;
                 providerType?: string;
               };
-              console.log(name, network);
               // REVIEW Probably not optimal
               if (name === "localhost") {
                 name = "hardhat";
