@@ -120,7 +120,7 @@ export class ReactComponent {
                             `
             );
 
-            for (const [name, network] of Object.entries(
+            for (let [name, network] of Object.entries(
               this.hre.config.networks
             )) {
               type ProviderConnection = {
@@ -129,6 +129,24 @@ export class ReactComponent {
                 password?: string;
                 providerType?: string;
               };
+              console.log(name, network);
+              // REVIEW Probably not optimal
+              if (name === "localhost") {
+                name = "hardhat";
+                network = {
+                  ...network,
+                  ...this.hre.config.networks["hardhat"],
+                };
+              }
+              const hasInject = "inject" in network && network.inject;
+              if (!hasInject) {
+                log(
+                  "Provider " +
+                    name +
+                    " does not have inject property. Not adding to provider list."
+                );
+                continue;
+              }
               let providerConnection: ProviderConnection | undefined =
                 "url" in network ? { url: network.url } : undefined;
 
@@ -466,7 +484,7 @@ export class ReactComponent {
     this.component.addStatements((writer) => {
       writer.write(
         `return (
-          <HardhatContext.Provider value={{ init: (provider) => handleInitProvider(provider), currentHardhatProvider, loading, messages }}>
+          <HardhatContext.Provider value={{ init: (provider) => handleInitProvider(provider), providers: providerPriority,currentHardhatProvider, loading, messages }}>
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>`

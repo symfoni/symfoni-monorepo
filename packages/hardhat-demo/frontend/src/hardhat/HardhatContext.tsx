@@ -10,28 +10,45 @@ import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__fac
 
 const emptyContract = {
     instance: undefined,
-    factory: undefined
+    factory: undefined,
 };
 const defaultProvider: providers.Provider | undefined = undefined;
-export const ProviderContext = React.createContext<[providers.Provider | undefined, React.Dispatch<React.SetStateAction<providers.Provider | undefined>>]>([defaultProvider, () => { }]);
+export const ProviderContext = React.createContext<
+    [
+        providers.Provider | undefined,
+        React.Dispatch<React.SetStateAction<providers.Provider | undefined>>
+    ]
+>([defaultProvider, () => { }]);
 const defaultCurrentAddress: string = "";
-export const CurrentAddressContext = React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }]);
+export const CurrentAddressContext = React.createContext<
+    [string, React.Dispatch<React.SetStateAction<string>>]
+>([defaultCurrentAddress, () => { }]);
 const defaultSigner: Signer | undefined = undefined;
-export const SignerContext = React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }]);
+export const SignerContext = React.createContext<
+    [Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]
+>([defaultSigner, () => { }]);
 const defaultHardhatContext: HardhatContextInterface = {
     currentHardhatProvider: "",
-    init: () => { throw Error("Hardhat context not initialized") },
+    init: () => {
+        throw Error("Hardhat context not initialized");
+    },
     loading: false,
-    messages: []
+    messages: [],
+    providers: [],
 };
-export const HardhatContext = React.createContext<HardhatContextInterface>(defaultHardhatContext);
-export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
+export const HardhatContext = React.createContext<HardhatContextInterface>(
+    defaultHardhatContext
+);
+export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(
+    emptyContract
+);
 
 export interface HardhatContextInterface {
     init: (provider?: string) => void;
     loading: boolean;
     messages: string[];
     currentHardhatProvider: string;
+    providers: string[];
 }
 
 export interface HardhatProps {
@@ -54,107 +71,129 @@ export const Hardhat: React.FC<HardhatProps> = ({
     const [currentHardhatProvider, setCurrentHardhatProvider] = useState("");
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
-    const [/* providerName */, setProviderName] = useState<string>();
+    const [, /* providerName */ setProviderName] = useState<string>();
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
-    const [provider, setProvider] = useState<providers.Provider | undefined>(defaultProvider);
-    const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
-    const [providerPriority, setProviderPriority] = useState<string[]>(["brreg", "web3modal", "hardhat"]);
-    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
+    const [provider, setProvider] = useState<providers.Provider | undefined>(
+        defaultProvider
+    );
+    const [currentAddress, setCurrentAddress] = useState<string>(
+        defaultCurrentAddress
+    );
+    const [providerPriority, setProviderPriority] = useState<string[]>([
+        "brreg",
+        "web3modal",
+        "hardhat",
+    ]);
+    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(
+        emptyContract
+    );
     useEffect(() => {
-        if (messages.length > 0)
-            console.debug(messages.pop())
-    }, [messages])
+        if (messages.length > 0) console.debug(messages.pop());
+    }, [messages]);
 
-    const getProvider = async (): Promise<{ provider: providers.Provider, hardhatProviderName: string } | undefined> => {
+    const getProvider = async (): Promise<
+        { provider: providers.Provider; hardhatProviderName: string } | undefined
+    > => {
         let hardhatProviderName = "Not set";
-        const provider = await providerPriority.reduce(async (maybeProvider: Promise<providers.Provider | undefined>, providerIdentification) => {
-            let foundProvider = await maybeProvider
-            if (foundProvider) {
-                return Promise.resolve(foundProvider)
-            }
-            else {
-                switch (providerIdentification.toLowerCase()) {
-                    case "web3modal":
-                        try {
-                            const provider = await getWeb3ModalProvider()
-                            const web3provider = new ethers.providers.Web3Provider(provider);
-                            hardhatProviderName = "web3modal";
-                            return Promise.resolve(web3provider)
-                        } catch (error) {
-                            return Promise.resolve(undefined)
-                        }
-                    case "localhost":
-                        try {
-                            const provider = new ethers.providers.JsonRpcProvider({
-                                url: "http://127.0.0.1:8545",
-                            });
-                            hardhatProviderName = "localhost";
-                            return Promise.resolve(provider)
-                        } catch (error) {
-                            return Promise.resolve(undefined)
-                        } case "brreg":
-                        try {
-                            const provider = new ethers.providers.JsonRpcProvider({
-                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-                                user: "u1qdua80h5",
-                                password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
-                            });
-                            hardhatProviderName = "brreg";
-                            return Promise.resolve(provider)
-                        } catch (error) {
-                            return Promise.resolve(undefined)
-                        } case "brregStage":
-                        try {
-                            const provider = new ethers.providers.StaticJsonRpcProvider({
-                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-                                user: "u1qdua80h5",
-                                password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
-                            });
-                            hardhatProviderName = "brregStage";
-                            return Promise.resolve(provider)
-                        } catch (error) {
-                            return Promise.resolve(undefined)
-                        } case "brregProd":
-                        try {
-                            const provider = new ethers.providers.JsonRpcProvider({
-                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-                                user: "u1qdua80h5",
-                                password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
-                            });
-                            hardhatProviderName = "brregProd";
-                            return Promise.resolve(provider)
-                        } catch (error) {
-                            return Promise.resolve(undefined)
-                        } default:
-                        return Promise.resolve(undefined)
+        const provider = await providerPriority.reduce(
+            async (
+                maybeProvider: Promise<providers.Provider | undefined>,
+                providerIdentification
+            ) => {
+                let foundProvider = await maybeProvider;
+                if (foundProvider) {
+                    return Promise.resolve(foundProvider);
+                } else {
+                    switch (providerIdentification.toLowerCase()) {
+                        case "web3modal":
+                            try {
+                                const provider = await getWeb3ModalProvider();
+                                const web3provider = new ethers.providers.Web3Provider(
+                                    provider
+                                );
+                                hardhatProviderName = "web3modal";
+                                return Promise.resolve(web3provider);
+                            } catch (error) {
+                                return Promise.resolve(undefined);
+                            }
+                        case "hardhat":
+                            try {
+                                const provider = new ethers.providers.JsonRpcProvider({
+                                    url: "http://127.0.0.1:8545",
+                                });
+                                hardhatProviderName = "hardhat";
+                                return Promise.resolve(provider);
+                            } catch (error) {
+                                return Promise.resolve(undefined);
+                            }
+                        case "brreg":
+                            try {
+                                const provider = new ethers.providers.JsonRpcProvider({
+                                    url:
+                                        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+                                    user: "u1qdua80h5",
+                                    password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
+                                });
+                                hardhatProviderName = "brreg";
+                                return Promise.resolve(provider);
+                            } catch (error) {
+                                return Promise.resolve(undefined);
+                            }
+                        case "brregStage":
+                            try {
+                                const provider = new ethers.providers.StaticJsonRpcProvider({
+                                    url:
+                                        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+                                    user: "u1qdua80h5",
+                                    password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
+                                });
+                                hardhatProviderName = "brregStage";
+                                return Promise.resolve(provider);
+                            } catch (error) {
+                                return Promise.resolve(undefined);
+                            }
+                        default:
+                            return Promise.resolve(undefined);
+                    }
                 }
-            }
-        }, Promise.resolve(undefined)) // end reduce
-        return provider ? { provider, hardhatProviderName } : undefined
+            },
+            Promise.resolve(undefined)
+        ); // end reduce
+        return provider ? { provider, hardhatProviderName } : undefined;
     };
-    const getSigner = async (_provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
+    const getSigner = async (
+        _provider: providers.Provider,
+        hardhatProviderName: string
+    ): Promise<Signer | undefined> => {
         switch (_provider.constructor.name) {
             case "Web3Provider":
-                const web3provider = _provider as ethers.providers.Web3Provider
-                return await web3provider.getSigner()
+                const web3provider = _provider as ethers.providers.Web3Provider;
+                console.log("v", await web3provider.getSigner())
+                return await web3provider.getSigner();
             case "JsonRpcProvider":
                 switch (hardhatProviderName) {
                     case "hardhat":
-                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+                        return ethers.Wallet.fromMnemonic(
+                            "test test test test test test test test test test test junk"
+                        ).connect(_provider);
                     case "brreg":
-                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+                        return ethers.Wallet.fromMnemonic(
+                            "shrug antique orange tragic direct drop abstract ring carry price anchor train"
+                        ).connect(_provider);
                     default:
-                        return undefined
+                        return undefined;
                 }
             case "StaticJsonRpcProvider":
                 switch (hardhatProviderName) {
                     case "brregStage":
-                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+                        return ethers.Wallet.fromMnemonic(
+                            "shrug antique orange tragic direct drop abstract ring carry price anchor train"
+                        ).connect(_provider);
                     default:
-                        return undefined
+                        return undefined;
                 }
             default:
-                return undefined
+                return undefined;
         }
     };
     const getWeb3ModalProvider = async (): Promise<any> => {
@@ -168,85 +207,115 @@ export const Hardhat: React.FC<HardhatProps> = ({
     };
 
     useEffect(() => {
-        let subscribed = true
-        setLoading(true)
+        let subscribed = true;
         const finish = (text: string) => {
-            setLoading(false)
-            setMessages(old => [...old, text])
-        }
+            setLoading(false);
+            setMessages((old) => [...old, text]);
+        };
         const doAsync = async () => {
-            if (!autoInit && initializeCounter === 0) return finish("Auto init turned off.")
-            setLoading(true)
-            setMessages(old => [...old, "Initiating Hardhat React"])
-            const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
+            if (!autoInit && initializeCounter === 0)
+                return finish("Auto init turned off.");
+            setLoading(true);
+            setMessages((old) => [...old, "Initiating Hardhat React"]);
+            const providerObject = await getProvider(); // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
 
-            if (!subscribed || !providerObject) return finish("No provider or signer.")
-            const _provider = providerObject.provider
+            if (!subscribed || !providerObject)
+                return finish("No provider or signer.");
+            const _provider = providerObject.provider;
             const _providerName = _provider.constructor.name;
-            setProvider(_provider)
-            setProviderName(_providerName)
-            setMessages(old => [...old, "Useing " + _providerName + " from " + providerObject.hardhatProviderName])
-            setCurrentHardhatProvider(providerObject.hardhatProviderName)
-            const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
+            setProvider(_provider);
+            setProviderName(_providerName);
+            setMessages((old) => [
+                ...old,
+                "Useing " +
+                _providerName +
+                " from " +
+                providerObject.hardhatProviderName,
+            ]);
+            setCurrentHardhatProvider(providerObject.hardhatProviderName);
+            const _signer = await getSigner(
+                _provider,
+                providerObject.hardhatProviderName
+            );
 
-            if (!subscribed || !_signer) return finish("Provider, without signer.")
-            setSigner(_signer)
-            setMessages(old => [...old, "Useing signer"])
-            const address = await _signer.getAddress()
+            if (!subscribed || !_signer) return finish("Provider, without signer.");
+            setSigner(_signer);
+            setMessages((old) => [...old, "Useing signer"]);
+            const address = await _signer.getAddress();
+            console.log("address", address)
 
-            if (!subscribed || !address) return finish("Provider and signer, without address.")
-            setCurrentAddress(address)
+            if (!subscribed || !address)
+                return finish("Provider and signer, without address.");
+            setCurrentAddress(address);
 
-            setSimpleStorage(getSimpleStorage(_provider, _signer))
+            setSimpleStorage(getSimpleStorage(_provider, _signer));
 
-            return finish("Completed Hardhat context initialization.")
+            return finish("Completed Hardhat context initialization.");
         };
         doAsync();
-        return () => { subscribed = false }
-    }, [initializeCounter])
+        return () => {
+            subscribed = false;
+        };
+    }, [initializeCounter]);
 
-    const getSimpleStorage = (_provider: providers.Provider, _signer?: Signer) => {
-
-        const contractAddress = SimpleStorageDeployment.receipt.contractAddress
-        const instance = _signer ? SimpleStorage__factory.connect(contractAddress, _signer) : SimpleStorage__factory.connect(contractAddress, _provider)
+    const getSimpleStorage = (
+        _provider: providers.Provider,
+        _signer?: Signer
+    ) => {
+        const contractAddress = SimpleStorageDeployment.receipt.contractAddress;
+        const instance = _signer
+            ? SimpleStorage__factory.connect(contractAddress, _signer)
+            : SimpleStorage__factory.connect(contractAddress, _provider);
         const contract: SymfoniSimpleStorage = {
             instance: instance,
             factory: _signer ? new SimpleStorage__factory(_signer) : undefined,
-        }
-        return contract
-    }
-        ;
-
+        };
+        return contract;
+    };
     const handleInitProvider = (provider?: string) => {
-        console.log("running")
+        console.log("running");
         if (provider) {
-            setProviderPriority(old => old.sort((a, b) => {
-                return a === provider ? -1 : b === provider ? 1 : 0;
-            }))
+            setProviderPriority((old) =>
+                old.sort((a, b) => {
+                    return a === provider ? -1 : b === provider ? 1 : 0;
+                })
+            );
         }
-        setInitializeCounter(initializeCounter + 1)
-    }
+        setInitializeCounter(initializeCounter + 1);
+    };
     return (
-        <HardhatContext.Provider value={{ init: (provider) => handleInitProvider(provider), currentHardhatProvider, loading, messages }}>
+        <HardhatContext.Provider
+            value={{
+                init: (provider) => handleInitProvider(provider),
+                providers: providerPriority,
+                currentHardhatProvider,
+                loading,
+                messages,
+            }}
+        >
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
-                    <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
+                    <CurrentAddressContext.Provider
+                        value={[currentAddress, setCurrentAddress]}
+                    >
                         <SimpleStorageContext.Provider value={SimpleStorage}>
-                            {showLoading && loading ?
-                                props.loadingComponent
-                                    ? props.loadingComponent
-                                    : <div>
-                                        {messages.map((msg, i) => (
-                                            <p key={i}>{msg}</p>
-                                        ))}
-                                    </div>
-                                : props.children
-                            }
-                        </SimpleStorageContext.Provider >
+                            {showLoading && loading ? (
+                                props.loadingComponent ? (
+                                    props.loadingComponent
+                                ) : (
+                                        <div>
+                                            {messages.map((msg, i) => (
+                                                <p key={i}>{msg}</p>
+                                            ))}
+                                        </div>
+                                    )
+                            ) : (
+                                    props.children
+                                )}
+                        </SimpleStorageContext.Provider>
                     </CurrentAddressContext.Provider>
                 </SignerContext.Provider>
             </ProviderContext.Provider>
         </HardhatContext.Provider>
-    )
-
+    );
 };

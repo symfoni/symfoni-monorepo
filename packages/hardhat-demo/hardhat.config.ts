@@ -50,12 +50,8 @@ const config: HardhatUserConfig = {
     hardhat: {
       inject: true,
       accounts: {
-        mnemonic:
-          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
+        mnemonic: "test test test test test test test test test test test junk", // test test test test test test test test test test test junk
       },
-    },
-    localhost: {
-      inject: true,
     },
     brreg: {
       url:

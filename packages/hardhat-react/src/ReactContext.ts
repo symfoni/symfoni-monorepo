@@ -157,7 +157,8 @@ export class ReactContext {
         currentHardhatProvider: "",
         init: () => { throw Error("Hardhat context not initialized") },
         loading: false,
-        messages: []
+        messages: [],
+        providers: []
       }`,
     });
     this.addConstStatment({
@@ -196,6 +197,10 @@ export class ReactContext {
         {
           name: "currentHardhatProvider",
           type: `string`,
+        },
+        {
+          name: "providers",
+          type: `string[]`,
         },
       ],
     });

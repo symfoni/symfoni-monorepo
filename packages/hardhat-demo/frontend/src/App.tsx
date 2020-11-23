@@ -26,7 +26,7 @@ function App() {
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Grommet>
-        <Hardhat autoInit={true} showLoading={true} loadingComponent={<h1>LOADING...</h1>}>
+        <Hardhat autoInit={true} showLoading={false}>
           <Box>
             {/* Navigation */}
             <Navigation></Navigation>

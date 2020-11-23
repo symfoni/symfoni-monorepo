@@ -233,7 +233,7 @@ The init function will initate a connection to your provider based on the priori
 ```ts
 import { HardhatContext } from './../hardhat/HardhatContext';
 ...
- const {  init, messages, currentHardhatProvider, loading  } = useContext(HardhatContext)
+ const {  init, messages, currentHardhatProvider, loading, providers  } = useContext(HardhatContext)
 ```
 
 ### ProviderContext
