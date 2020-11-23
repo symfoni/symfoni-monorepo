@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/hardhat-demo",
-  "version": "0.0.46-alpha.0",
+  "version": "0.0.46-next.0",
   "publishConfig": {
     "access": "public"
   },
@@ -8,6 +8,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^3.2.0",
+    "@typechain/ethers-v5": "^4.0.0",
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.14.3",
     "buidler-ethers-v5": "^0.2.3",
@@ -19,11 +20,10 @@
     "ts-generator": "^0.1.1",
     "ts-node": "^9.0.0",
     "typechain": "^4.0.0",
-    "@typechain/ethers-v5": "^4.0.0",
     "typescript": "^4.0.3"
   },
   "dependencies": {
-    "@symfoni/hardhat-react": "^0.0.46-alpha.0"
+    "@symfoni/hardhat-react": "^0.0.46-next.0"
   },
   "scripts": {
     "node": "npx hardhat node --watch --reset"
