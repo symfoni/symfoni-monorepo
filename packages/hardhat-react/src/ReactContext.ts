@@ -118,37 +118,46 @@ export class ReactContext {
           instance: undefined,
           factory: undefined
         }`,
-    };
+    });
     this.addConstStatment({
       name: "defaultProvider",
       type: "providers.Provider | undefined",
       initializer: "undefined",
     });
-    this.addConstStatment({
-      name: "ProviderContext",
-      initializer:
-        "React.createContext<[providers.Provider | undefined, React.Dispatch<React.SetStateAction<providers.Provider | undefined>>]>([defaultProvider, () => { }])",
-    }, true);
+    this.addConstStatment(
+      {
+        name: "ProviderContext",
+        initializer:
+          "React.createContext<[providers.Provider | undefined, React.Dispatch<React.SetStateAction<providers.Provider | undefined>>]>([defaultProvider, () => { }])",
+      },
+      true
+    );
     this.addConstStatment({
       name: "defaultCurrentAddress",
       type: "string",
       initializer: `""`,
     });
-    this.addConstStatment({
-      name: "CurrentAddressContext",
-      initializer:
-        "React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }])",
-    }, true);
+    this.addConstStatment(
+      {
+        name: "CurrentAddressContext",
+        initializer:
+          "React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }])",
+      },
+      true
+    );
     this.addConstStatment({
       name: "defaultSigner",
       type: "Signer | undefined",
       initializer: "undefined",
     });
-    this.addConstStatment({
-      name: "SignerContext",
-      initializer:
-        "React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }])",
-    }, true);
+    this.addConstStatment(
+      {
+        name: "SignerContext",
+        initializer:
+          "React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }])",
+      },
+      true
+    );
 
     this.addConstStatment({
       name: "defaultHardhatContext",
@@ -161,19 +170,25 @@ export class ReactContext {
         providers: []
       }`,
     });
-    this.addConstStatment({
-      name: "HardhatContext",
-      initializer:
-        "React.createContext<HardhatContextInterface>(defaultHardhatContext)",
-    }, true);
+    this.addConstStatment(
+      {
+        name: "HardhatContext",
+        initializer:
+          "React.createContext<HardhatContextInterface>(defaultHardhatContext)",
+      },
+      true
+    );
 
     this.contractContexts.forEach((contract) => {
-      this.addConstStatment({
-        name: `${contract.name}Context`,
-        initializer: `React.createContext<${contractInterfaceName(
-          contract
-        )}>(emptyContract)`,
-      }, true);
+      this.addConstStatment(
+        {
+          name: `${contract.name}Context`,
+          initializer: `React.createContext<${contractInterfaceName(
+            contract
+          )}>(emptyContract)`,
+        },
+        true
+      );
     });
   }
 

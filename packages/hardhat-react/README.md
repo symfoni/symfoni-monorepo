@@ -4,6 +4,8 @@
 
 **Alpha release, interfaces will change.**
 
+**This version requires typechain 4.0**
+
 <img src="https://github.com/symfoni/hardhat-plugins/blob/hardhat/packages/hardhat-react/SymfoniHardhatReact.gif" width="400">
 
 # Hardhat React
