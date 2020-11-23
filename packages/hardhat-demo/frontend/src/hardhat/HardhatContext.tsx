@@ -47,7 +47,7 @@ export interface SymfoniSimpleStorage {
 
 export const Hardhat: React.FC<HardhatProps> = ({
     showLoading = true,
-    autoInit = false,
+    autoInit = true,
     ...props
 }) => {
     const [initializeCounter, setInitializeCounter] = useState(0);
@@ -169,6 +169,7 @@ export const Hardhat: React.FC<HardhatProps> = ({
 
     useEffect(() => {
         let subscribed = true
+        setLoading(true)
         const finish = (text: string) => {
             setLoading(false)
             setMessages(old => [...old, text])
@@ -231,12 +232,14 @@ export const Hardhat: React.FC<HardhatProps> = ({
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
                         <SimpleStorageContext.Provider value={SimpleStorage}>
-                            {initializeCounter === 0 && showLoading && loading ?
-                                <div>
-                                    {messages.map((msg, i) => (
-                                        <p key={i}>{msg}</p>
-                                    ))}
-                                </div>
+                            {showLoading && loading ?
+                                props.loadingComponent
+                                    ? props.loadingComponent
+                                    : <div>
+                                        {messages.map((msg, i) => (
+                                            <p key={i}>{msg}</p>
+                                        ))}
+                                    </div>
                                 : props.children
                             }
                         </SimpleStorageContext.Provider >

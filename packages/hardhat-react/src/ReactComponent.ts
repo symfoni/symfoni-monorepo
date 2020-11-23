@@ -437,14 +437,16 @@ export class ReactComponent {
   private renderFunction() {
     const body = (writer: CodeBlockWriter) => {
       writer.writeLine(
-        `{initializeCounter === 0 && showLoading && loading ?
-          <div>
-              {messages.map((msg, i) => (
-                  <p key={i}>{msg}</p>
-              ))}
-          </div>
+        `{showLoading && loading ?
+          props.loadingComponent
+              ? props.loadingComponent
+              : <div>
+                  {messages.map((msg, i) => (
+                      <p key={i}>{msg}</p>
+                  ))}
+              </div>
           : props.children
-        }`
+      }`
       );
     };
 

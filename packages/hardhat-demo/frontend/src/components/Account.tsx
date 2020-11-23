@@ -9,7 +9,7 @@ interface Props { }
 export const Account: React.FC<Props> = () => {
     const [provider] = useContext(ProviderContext)
     const [address] = useContext(CurrentAddressContext)
-    const { init } = useContext(HardhatContext)
+    const { init, messages, currentHardhatProvider, loading } = useContext(HardhatContext)
 
     useEffect(() => {
         console.log("Provider in comp", provider)
@@ -20,7 +20,6 @@ export const Account: React.FC<Props> = () => {
                 <Text >{address.substr(0, 4) + ".." + address.substring(address.length - 3, address.length)}</Text>
                 : <Button label="Connect" onClick={() => init()}></Button>
             }
-
         </Box>
     )
 }

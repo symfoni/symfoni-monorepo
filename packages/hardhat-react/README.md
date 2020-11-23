@@ -210,6 +210,32 @@ export const Greeter: React.FC<Props> = () => {
 };
 ```
 
+### Hardhat Provider
+
+You can control when Hardhat context should try to connect with your providers. By default it will autoInit and show loading. If you dont want to show laoding it will start render all child components. You dont need to provide a loading component, in that case it has a native loading component that renders messages from provider connection.
+
+```ts
+import { Hardhat } from "./../hardhat/HardhatContext";
+...
+ <Hardhat autoInit={true} showLoading={true} loadingComponent={<h1>LOADING...</h1>}>
+  // ...<OtherComponents>
+</Hardhat>
+```
+
+### HardhatContext
+
+This context can be used down in your componens to trigger Hardhat context.
+
+By contrast to other contexts, HardhatContext returns an object with properties and functions. So pick whatever you want.
+
+The init function will initate a connection to your provider based on the priority you have set in your Hardhat.config.ts. You can override this by specifying the provider you want to connect with. `init("roptsten")` for example.
+
+```ts
+import { HardhatContext } from './../hardhat/HardhatContext';
+...
+ const {  init, messages, currentHardhatProvider, loading  } = useContext(HardhatContext)
+```
+
 ### ProviderContext
 
 It gives you a context to your current provider and the ability to change it.
