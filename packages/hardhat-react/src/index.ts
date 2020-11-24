@@ -133,7 +133,7 @@ subtask(
   try {
     if (!runSuper.isDefined)
       throw Error("runSuper not defined for " + TASK_DEPLOY_RUN_DEPLOY);
-    await runSuper(...args);
+    await runSuper(args);
     await hre.run(TASK_REACT_MAIN, args);
     return;
   } catch (e) {
