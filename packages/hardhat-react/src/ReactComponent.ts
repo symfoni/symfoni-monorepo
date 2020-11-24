@@ -137,7 +137,8 @@ export class ReactComponent {
                   ...this.hre.config.networks["hardhat"],
                 };
               }
-              const hasInject = "inject" in network && network.inject;
+              const hasInject =
+                ("inject" in network && network.inject) || name === "hardhat";
               if (!hasInject) {
                 log(
                   "Provider " +
