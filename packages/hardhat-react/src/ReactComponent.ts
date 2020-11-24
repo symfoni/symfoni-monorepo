@@ -267,19 +267,13 @@ export class ReactComponent {
           return;
         }
       }
-      if ("inject" in network) {
-        // TS makes us do it this way
-      } else {
+      const hasInject =
+        ("inject" in network && network.inject) || name === "hardhat";
+      if (hasInject) {
         log(
           "Provider " +
             name +
-            " does not have inject property. Disallowing inject."
-        );
-        return;
-      }
-      if (!network.inject) {
-        log(
-          "Provider " + name + " has inject property false. Disallowing inject."
+            " does not have or have false inject property. Disallowing inject."
         );
         return;
       }
