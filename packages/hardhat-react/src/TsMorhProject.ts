@@ -7,13 +7,13 @@ import {
   ModuleKind,
   ModuleResolutionKind,
 } from "ts-morph";
-import { JsxEmit } from "typescript";
 import { ReactContext } from "./ReactContext";
 import { debug } from "debug";
+import { JsxEmit } from "typescript";
 const log = debug("hardhat:plugin:react");
 
 const TS_CONFIG = {
-  target: ScriptTarget.ES5,
+  target: ScriptTarget.ES2018,
   lib: ["dom", "dom.iterable", "esnext"],
   allowJs: true,
   skipLibCheck: true,
@@ -21,7 +21,7 @@ const TS_CONFIG = {
   allowSyntheticDefaultImports: true,
   strict: true,
   forceConsistentCasingInFileNames: true,
-  module: ModuleKind.ESNext,
+  module: ModuleKind.CommonJS,
   moduleResolution: ModuleResolutionKind.NodeJs,
   resolveJsonModule: true,
   isolatedModules: true,
@@ -78,21 +78,23 @@ export class TsMorphProject {
   }
 
   async save() {
-    this.project.save();
-    if (this.args.verbose) {
-      log("Verbode mode, get ready for Diagnostics");
-      const sourceFile = this.project.getSourceFile(
-        this.HARDHAT_CONTEXT_FILE_NAME
-      );
-      if (!sourceFile) throw Error("No Hardhat react context file");
-      const emitOutput = sourceFile.getPreEmitDiagnostics();
-      log(emitOutput);
-    }
+    // if (true) {
+    //   log("Verbode mode, get ready for Diagnostics");
+    //   const sourceFile = this.project.getSourceFile(
+    //     this.HARDHAT_CONTEXT_FILE_NAME
+    //   );
+    //   if (!sourceFile) throw Error("No Hardhat react context file");
+    //   const emitOutput = sourceFile.getPreEmitDiagnostics();
+    //   log(emitOutput);
+    // }
+    this.project.saveSync();
     return true;
   }
 
   private async getContractContexts() {
-    const currentNetwork = this.hre.network.name;
+    let currentNetwork = this.hre.network.name;
+    // currentNetwork =
+    //   currentNetwork === "hardhat" ? "localhost" : currentNetwork;
     log("Mapping deployments from " + currentNetwork + " to React context");
 
     const typechainFactoriesPath = path.resolve(
@@ -118,6 +120,12 @@ export class TsMorphProject {
 
     let deploymentFiles: string[] = [];
     try {
+      log(
+        "Checking deploymentfiles in " +
+          this.hre.config.paths.deployments +
+          "/" +
+          currentNetwork
+      );
       deploymentFiles = readdirSync(
         this.hre.config.paths.deployments + "/" + currentNetwork
       );

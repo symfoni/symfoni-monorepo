@@ -133,7 +133,7 @@ subtask(
   try {
     if (!runSuper.isDefined)
       throw Error("runSuper not defined for " + TASK_DEPLOY_RUN_DEPLOY);
-    await runSuper(args);
+    await runSuper({ ...args, write: true });
     await hre.run(TASK_REACT_MAIN, args);
     return;
   } catch (e) {
@@ -144,8 +144,8 @@ subtask(
 subtask(TASK_NODE_SERVER_READY).setAction(async (args, hre, runSuper) => {
   if (!runSuper.isDefined)
     throw Error("runSuper not defined for " + TASK_NODE_SERVER_READY);
-  console.log(chalk.blue(`Generating React context on change`));
   await runSuper(args);
+  console.log(chalk.blue(`Generating React context on change`));
 });
 
 task(TASK_REACT, "Create React component")

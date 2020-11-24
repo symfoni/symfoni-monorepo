@@ -4,7 +4,7 @@
 import { providers, Signer, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
-import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json";
+import SimpleStorageDeployment from "./deployments/hardhat/SimpleStorage.json";
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__factory";
 
