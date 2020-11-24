@@ -93,6 +93,7 @@ export class TsMorphProject {
 
   private async getContractContexts() {
     const currentNetwork = this.hre.network.name;
+    log("Mapping deployments from " + currentNetwork + " to React context");
 
     const typechainFactoriesPath = path.resolve(
       this.hre.config.typechain.outDir,
@@ -120,7 +121,7 @@ export class TsMorphProject {
       deploymentFiles = readdirSync(
         this.hre.config.paths.deployments + "/" + currentNetwork
       );
-      log("deploymentFiles => " + deploymentFiles.join(","));
+      log("deploymentFiles => " + deploymentFiles.join(" | "));
     } catch (error) {
       log("No deployment folder or files found.");
     }
@@ -135,8 +136,8 @@ export class TsMorphProject {
     // TODO : Create PR to typechain for optional index file or implciit / explicit generation.
     removeSync(path.resolve(this.hre.config.typechain.outDir, "index.ts"));
     const typechainFactoriesFiles = readdirSync(typechainFactoriesPath);
-    log("typechainInstanceFiles => " + typechainInstanceFiles.join(","));
-    log("typechainFactoriesFiles => " + typechainFactoriesFiles.join(","));
+    log("typechainInstanceFiles => " + typechainInstanceFiles.join(" | "));
+    log("typechainFactoriesFiles => " + typechainFactoriesFiles.join(" | "));
 
     let contracts: ContractContext[] = [];
     await Promise.all(

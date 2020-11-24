@@ -11,6 +11,7 @@ import { debug } from "debug";
 
 export const TASK_REACT = "react";
 export const TASK_REACT_MAIN = "react:main";
+import { TASK_NODE_SERVER_READY } from "hardhat/builtin-tasks/task-names";
 import { TASK_DEPLOY_RUN_DEPLOY } from "hardhat-deploy";
 
 const log = debug("hardhat:plugin:react");
@@ -132,12 +133,19 @@ subtask(
   try {
     if (!runSuper.isDefined)
       throw Error("runSuper not defined for " + TASK_DEPLOY_RUN_DEPLOY);
-    await runSuper(args);
+    await runSuper(...args);
     await hre.run(TASK_REACT_MAIN, args);
     return;
   } catch (e) {
     throw Error(e);
   }
+});
+
+subtask(TASK_NODE_SERVER_READY).setAction(async (args, hre, runSuper) => {
+  if (!runSuper.isDefined)
+    throw Error("runSuper not defined for " + TASK_NODE_SERVER_READY);
+  console.log(chalk.blue(`Generating React context on change`));
+  await runSuper(args);
 });
 
 task(TASK_REACT, "Create React component")

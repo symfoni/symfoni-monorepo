@@ -32,9 +32,9 @@ If you want to quickly get started with a new hardhat project and a react applic
 
 ## Install peer dependencies
 
-**Yarn:** `yarn add --dev hardhat hardhat-deploy hardhat-deploy-ethers hardhat-typechain hardhat-typechain ts-morph ts-node typescript ts-generator typechain typechain-target-ethers-v5`
+**Yarn:** `yarn add --dev hardhat hardhat-deploy hardhat-deploy-ethers hardhat-typechain hardhat-typechain ts-morph ts-node typescript ts-generator typechain @typechain/ethers-v5`
 
-**NPM:** `npm install --save-dev hardhat hardhat-deploy hardhat-deploy-ethers hardhat-typechain hardhat-typechain ts-morph ts-node typescript ts-generator typechain typechain-target-ethers-v5`
+**NPM:** `npm install --save-dev hardhat hardhat-deploy hardhat-deploy-ethers hardhat-typechain hardhat-typechain ts-morph ts-node typescript ts-generator typechain @typechain/ethers-v5`
 
 ## import plugins
 
@@ -48,7 +48,7 @@ require("hardhat-deploy-ethers");
 require("hardhat-deploy");
 require("@symfoni/hardhat-react");
 require("hardhat-typechain");
-require("typechain-target-ethers-v5");
+require("@typechain/ethers-v5");
 ```
 
 if typescript project, hardhat.config.ts
@@ -60,7 +60,7 @@ import "hardhat-deploy-ethers";
 import "hardhat-deploy";
 import "@symfoni/hardhat-react";
 import "hardhat-typechain";
-import "typechain-target-ethers-v5";
+import "@typechain/ethers-v5";
 ```
 
 # Runtime
