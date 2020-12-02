@@ -150,11 +150,29 @@ export class ReactComponent {
                 "url" in network ? { url: network.url } : undefined;
 
               if (providerConnection) {
-                if ("user" in network) {
-                  providerConnection.user = network.user;
-                }
-                if ("user" in network) {
-                  providerConnection.password = network.password;
+                const urlRegEx = new RegExp(
+                  "^(?<protocol>.+?//)(?<username>.+?):(?<password>.+?)@(?<address>.+)$"
+                );
+                const regExResult = urlRegEx.exec(providerConnection.url);
+                if (regExResult && regExResult.groups) {
+                  if ("username" in regExResult.groups) {
+                    log(
+                      "Found username " +
+                        regExResult.groups.username +
+                        " in provider url for  " +
+                        name
+                    );
+                    providerConnection.user = regExResult.groups.username;
+                  }
+                  if ("password" in regExResult.groups) {
+                    log(
+                      "Found password " +
+                        regExResult.groups.password +
+                        " in provider url for " +
+                        name
+                    );
+                    providerConnection.password = regExResult.groups.password;
+                  }
                 }
                 if ("providerType" in network) {
                   providerConnection.providerType = network.providerType;

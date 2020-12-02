@@ -37,9 +37,9 @@
     "@types/node": "^14.14.3",
     "chai": "^4.2.0",
     "debug": "^4.2.0",
-    "hardhat": "^2.0.3",
-    "hardhat-deploy": "^0.7.0-beta.30",
-    "hardhat-deploy-ethers": "^0.3.0-beta.6",
+    "hardhat": "^2.0.4",
+    "hardhat-deploy": "^0.7.0-beta.35",
+    "hardhat-deploy-ethers": "^0.3.0-beta.7",
     "hardhat-typechain": "^0.3.3",
     "mocha": "^8.2.0",
     "prettier": "^2.1.2",
@@ -53,9 +53,9 @@
     "typescript": "^4.0.3"
   },
   "peerDependencies": {
-    "hardhat": "^2.0.3",
-    "hardhat-deploy": "^0.7.0-beta.30",
-    "hardhat-deploy-ethers": "^0.3.0-beta.6",
+    "hardhat": "^2.0.4",
+    "hardhat-deploy": "^0.7.0-beta.35",
+    "hardhat-deploy-ethers": "^0.3.0-beta.7",
     "hardhat-typechain": "^0.3.3",
     "ts-morph": "^9.0.0",
     "typechain": "^4.0.0"
