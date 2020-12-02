@@ -173,6 +173,23 @@ export class ReactComponent {
                     );
                     providerConnection.password = regExResult.groups.password;
                   }
+                  if (
+                    "password" in regExResult.groups &&
+                    "address" in regExResult.groups
+                  ) {
+                    log(
+                      "Found protocol and address " +
+                        regExResult.groups.protocol +
+                        "//:" +
+                        regExResult.groups.address +
+                        " in provider url for " +
+                        name
+                    );
+                    providerConnection.url =
+                      regExResult.groups.protocol +
+                      "//:" +
+                      regExResult.groups.address;
+                  }
                 }
                 if ("providerType" in network) {
                   providerConnection.providerType = network.providerType;
