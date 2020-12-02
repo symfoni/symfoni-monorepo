@@ -180,15 +180,12 @@ export class ReactComponent {
                     log(
                       "Found protocol and address " +
                         regExResult.groups.protocol +
-                        "//:" +
                         regExResult.groups.address +
                         " in provider url for " +
                         name
                     );
                     providerConnection.url =
-                      regExResult.groups.protocol +
-                      "//:" +
-                      regExResult.groups.address;
+                      regExResult.groups.protocol + regExResult.groups.address;
                   }
                 }
                 if ("providerType" in network) {
