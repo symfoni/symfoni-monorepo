@@ -9,8 +9,6 @@ export interface React {
 
 export interface SymfoniAccount {
   inject?: boolean;
-  user?: string;
-  password?: string;
 }
 
 declare module "hardhat/types/config" {
@@ -53,18 +51,12 @@ declare module "hardhat/types/config" {
   // HTTP Network
   export interface HttpNetworkHDAccountsConfigSymfoni {
     inject?: boolean;
-    user?: string;
-    password?: string;
   }
   export interface HDAccountsUserConfigSymfoni {
     inject?: boolean;
-    user?: string;
-    password?: string;
   }
   export interface HttpNetworkUserConfig {
     inject?: boolean;
-    user?: string;
-    password?: string;
     providerType?:
       | "UrlJsonRpcProvider"
       | "AlchemyProvider"
@@ -85,8 +77,6 @@ declare module "hardhat/types/config" {
   }
   export interface HttpNetworkConfig {
     inject?: boolean;
-    user?: string;
-    password?: string;
     providerType?:
       | "UrlJsonRpcProvider"
       | "AlchemyProvider"

@@ -59,8 +59,6 @@ const config: HardhatUserConfig = {
 
       gasPrice: 0,
       inject: true,
-      user: "u1qdua80h5",
-      password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
       providerType: "JsonRpcProvider",
       accounts: {
         mnemonic:
@@ -72,8 +70,6 @@ const config: HardhatUserConfig = {
         "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
       gasPrice: 0,
       inject: true,
-      user: "u1qdua80h5",
-      password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
       providerType: "StaticJsonRpcProvider",
       accounts: {
         mnemonic:
@@ -86,8 +82,6 @@ const config: HardhatUserConfig = {
 
       gasPrice: 0,
       inject: false,
-      user: "u1qdua80h5",
-      password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s",
       providerType: "JsonRpcProvider",
       accounts: {
         mnemonic:
