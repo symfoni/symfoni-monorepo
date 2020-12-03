@@ -2,14 +2,14 @@
 
 import { Box, Button, Grid, Select, Text } from 'grommet';
 import React, { useContext, useEffect, useState } from 'react';
-import { CurrentAddressContext, HardhatContext, ProviderContext } from './../hardhat/SymfoniContext';
+import { CurrentAddressContext, SymfoniContext, ProviderContext } from './../hardhat/SymfoniContext';
 
 interface Props { }
 
 export const Account: React.FC<Props> = () => {
     const [provider] = useContext(ProviderContext)
     const [address] = useContext(CurrentAddressContext)
-    const { init, currentHardhatProvider, loading, providers } = useContext(HardhatContext)
+    const { init, currentHardhatProvider, loading, providers } = useContext(SymfoniContext)
     const [selectedProvider, setSelectedProvider] = useState<string>();
 
     useEffect(() => {
