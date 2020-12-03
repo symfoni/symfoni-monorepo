@@ -71,6 +71,15 @@ You can run it manually with `npx hardhat react`. You probably need to run `npx 
 
 The React context uses the output from typechain and deployments. It generates a react context component as a typescript react file (HardhatContext.tsx), which imports both typechain and deployment files. It then uses these files alongside Ethers and Web3Modal to set up a context for your connection and each smart contract (deployed or not deployed).
 
+# Deployment and .gitignore
+
+We are still evaluating how to best handle deployments. For now we suggest to .gitignore the networks you develop on do versioning on deployments to shared networks.
+
+```bash
+frontend/src/hardhat/deployments/hardhat
+frontend/src/hardhat/deployments/localhost
+```
+
 # Frontend
 
 This plugin assumes that you are building your frontend inside a hardhat project (we later want to go away from this assumption). So we recommend you create a `frontend` folder inside your hardhat project where all your frontend code and packages reside. Take a look at https://github.com/symfoni/hardhat-react-boilerplate for a demonstration.

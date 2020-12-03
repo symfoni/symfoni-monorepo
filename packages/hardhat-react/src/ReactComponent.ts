@@ -137,12 +137,14 @@ export class ReactComponent {
                   ...this.hre.config.networks["hardhat"],
                 };
               }
+              const isPrioritisedProvider =
+                this.hre.config.react.providerPriority.indexOf(name) !== -1;
               const hasInject = "inject" in network && network.inject;
-              if (!hasInject && name !== "hardhat") {
+              if (!isPrioritisedProvider) {
                 log(
                   "Provider " +
                     name +
-                    " does not have inject property. Not adding to provider list."
+                    " is not configured as a priortised provider for React. Not adding to provider list."
                 );
                 continue;
               }
