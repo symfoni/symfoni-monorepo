@@ -51,7 +51,7 @@ export class TsMorphProject {
   constructor(args: any, hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
     this.args = args;
-    this.HARDHAT_CONTEXT_FILE_NAME = "HardhatContext.tsx";
+    this.HARDHAT_CONTEXT_FILE_NAME = "SymfoniContext.tsx";
     this.project = new Project({
       compilerOptions: TS_CONFIG, // REVIEW : tsconfig can depend on frontend project
     });

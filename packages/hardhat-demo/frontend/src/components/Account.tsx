@@ -2,7 +2,7 @@
 
 import { Box, Button, Grid, Select, Text } from 'grommet';
 import React, { useContext, useEffect, useState } from 'react';
-import { CurrentAddressContext, HardhatContext, ProviderContext } from './../hardhat/HardhatContext';
+import { CurrentAddressContext, HardhatContext, ProviderContext } from './../hardhat/SymfoniContext';
 
 interface Props { }
 

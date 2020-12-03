@@ -7,6 +7,8 @@ import Web3Modal, { IProviderOptions } from "web3modal";
 import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json";
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__factory";
+import { SimpleStorage2 } from "./typechain/SimpleStorage2";
+import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
 
 const emptyContract = {
     instance: undefined,
@@ -18,17 +20,18 @@ const defaultCurrentAddress: string = "";
 export const CurrentAddressContext = React.createContext<[string, React.Dispatch<React.SetStateAction<string>>]>([defaultCurrentAddress, () => { }]);
 const defaultSigner: Signer | undefined = undefined;
 export const SignerContext = React.createContext<[Signer | undefined, React.Dispatch<React.SetStateAction<Signer | undefined>>]>([defaultSigner, () => { }]);
-const defaultHardhatContext: HardhatContextInterface = {
+const defaultSymfoniContext: SymfoniContextInterface = {
     currentHardhatProvider: "",
-    init: () => { throw Error("Hardhat context not initialized") },
+    init: () => { throw Error("Symfoni context not initialized") },
     loading: false,
     messages: [],
     providers: []
 };
-export const HardhatContext = React.createContext<HardhatContextInterface>(defaultHardhatContext);
+export const HardhatContext = React.createContext<SymfoniContextInterface>(defaultSymfoniContext);
 export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
+export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
 
-export interface HardhatContextInterface {
+export interface SymfoniContextInterface {
     init: (provider?: string) => void;
     loading: boolean;
     messages: string[];
@@ -36,7 +39,7 @@ export interface HardhatContextInterface {
     providers: string[];
 }
 
-export interface HardhatProps {
+export interface SymfoniProps {
     autoInit?: boolean;
     showLoading?: boolean;
     loadingComponent?: React.ReactNode;
@@ -47,7 +50,12 @@ export interface SymfoniSimpleStorage {
     factory?: SimpleStorage__factory;
 }
 
-export const Hardhat: React.FC<HardhatProps> = ({
+export interface SymfoniSimpleStorage2 {
+    instance?: SimpleStorage2;
+    factory?: SimpleStorage2__factory;
+}
+
+export const Symfoni: React.FC<SymfoniProps> = ({
     showLoading = true,
     autoInit = true,
     ...props
@@ -62,6 +70,7 @@ export const Hardhat: React.FC<HardhatProps> = ({
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
     const [providerPriority, setProviderPriority] = useState<string[]>(["hardhat", "brreg", "web3modal"]);
     const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
+    const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
     useEffect(() => {
         if (messages.length > 0)
             console.debug(messages.pop())
@@ -97,22 +106,11 @@ export const Hardhat: React.FC<HardhatProps> = ({
                         } case "brreg":
                         try {
                             const provider = new ethers.providers.JsonRpcProvider({
-                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+                                url: "https://u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
                                 user: "u1qdua80h5",
                                 password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
                             });
                             hardhatProviderName = "brreg";
-                            return Promise.resolve(provider)
-                        } catch (error) {
-                            return Promise.resolve(undefined)
-                        } case "brregStage":
-                        try {
-                            const provider = new ethers.providers.StaticJsonRpcProvider({
-                                url: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-                                user: "u1qdua80h5",
-                                password: "Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s"
-                            });
-                            hardhatProviderName = "brregStage";
                             return Promise.resolve(provider)
                         } catch (error) {
                             return Promise.resolve(undefined)
@@ -160,14 +158,19 @@ export const Hardhat: React.FC<HardhatProps> = ({
 
     useEffect(() => {
         let subscribed = true
-        const finish = (text: string) => {
-            setLoading(false)
-            setMessages(old => [...old, text])
-        }
         const doAsync = async () => {
+            const finish = (text: string) => {
+                setLoading(false)
+                setMessages(old => [...old, text])
+            }
+            const finishWithContracts = (text: string) => {
+                setSimpleStorage(getSimpleStorage(_provider, _signer))
+                setSimpleStorage2(getSimpleStorage2(_provider, _signer))
+                finish(text)
+            }
             if (!autoInit && initializeCounter === 0) return finish("Auto init turned off.")
             setLoading(true)
-            setMessages(old => [...old, "Initiating Hardhat React"])
+            setMessages(old => [...old, "Initiating Symfoni React"])
             const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
 
             if (!subscribed || !providerObject) return finish("No provider or signer.")
@@ -179,17 +182,15 @@ export const Hardhat: React.FC<HardhatProps> = ({
             setCurrentHardhatProvider(providerObject.hardhatProviderName)
             const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
 
-            if (!subscribed || !_signer) return finish("Provider, without signer.")
+            if (!subscribed || !_signer) return finishWithContracts("Provider, without signer.")
             setSigner(_signer)
             setMessages(old => [...old, "Useing signer"])
             const address = await _signer.getAddress()
 
-            if (!subscribed || !address) return finish("Provider and signer, without address.")
+            if (!subscribed || !address) return finishWithContracts("Provider and signer, without address.")
             setCurrentAddress(address)
 
-            setSimpleStorage(getSimpleStorage(_provider, _signer))
-
-            return finish("Completed Hardhat context initialization.")
+            return finish("Completed Symfoni context initialization.")
         };
         doAsync();
         return () => { subscribed = false }
@@ -202,6 +203,15 @@ export const Hardhat: React.FC<HardhatProps> = ({
         const contract: SymfoniSimpleStorage = {
             instance: instance,
             factory: _signer ? new SimpleStorage__factory(_signer) : undefined,
+        }
+        return contract
+    }
+        ;
+    const getSimpleStorage2 = (_provider: providers.Provider, _signer?: Signer) => {
+        let instance = undefined
+        const contract: SymfoniSimpleStorage2 = {
+            instance: instance,
+            factory: _signer ? new SimpleStorage2__factory(_signer) : undefined,
         }
         return contract
     }
@@ -222,16 +232,18 @@ export const Hardhat: React.FC<HardhatProps> = ({
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
                         <SimpleStorageContext.Provider value={SimpleStorage}>
-                            {showLoading && loading ?
-                                props.loadingComponent
-                                    ? props.loadingComponent
-                                    : <div>
-                                        {messages.map((msg, i) => (
-                                            <p key={i}>{msg}</p>
-                                        ))}
-                                    </div>
-                                : props.children
-                            }
+                            <SimpleStorage2Context.Provider value={SimpleStorage2}>
+                                {showLoading && loading ?
+                                    props.loadingComponent
+                                        ? props.loadingComponent
+                                        : <div>
+                                            {messages.map((msg, i) => (
+                                                <p key={i}>{msg}</p>
+                                            ))}
+                                        </div>
+                                    : props.children
+                                }
+                            </SimpleStorage2Context.Provider >
                         </SimpleStorageContext.Provider >
                     </CurrentAddressContext.Provider>
                 </SignerContext.Provider>

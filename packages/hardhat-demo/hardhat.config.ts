@@ -10,7 +10,7 @@ import "@typechain/ethers-v5";
 const config: HardhatUserConfig = {
   react: {
     providerPriority: ["hardhat", "brreg", "web3modal"],
-    handle: ["SimpleStorage"],
+    handle: ["SimpleStorage", "SimpleStorage2"],
   },
   solidity: {
     compilers: [

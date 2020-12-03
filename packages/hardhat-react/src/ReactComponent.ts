@@ -1,17 +1,13 @@
+import { debug } from "debug";
 import { HardhatRuntimeEnvironment, NetworkConfig } from "hardhat/types";
-
 import {
   ArrowFunction,
   CodeBlockWriter,
   SourceFile,
-  SyntaxKind,
   VariableDeclarationKind,
-  WriterFunction,
 } from "ts-morph";
 import { ContractContext, contractInterfaceName } from "./TsMorhProject";
-import { debug } from "debug";
-import { network } from "hardhat";
-import { writer } from "repl";
+
 const log = debug("hardhat:plugin:react");
 const providersDisallowedInject = ["mainnet"];
 
@@ -372,14 +368,23 @@ export class ReactComponent {
       writer.write(`
       useEffect(() => {
           let subscribed = true
-          const finish = (text: string) => {
-            setLoading(false)
-            setMessages(old => [...old, text])
-        }
           const doAsync = async () => {
+            const finish = (text: string) => {
+              setLoading(false)
+              setMessages(old => [...old, text])
+            }
+            const finishWithContracts = (text: string) => {`);
+      this.contractContexts.forEach((contract) => {
+        writer.writeLine(
+          `set${contract.name}(get${contract.name}(_provider, _signer))`
+        );
+      });
+      writer.write(
+        `finish(text)
+            }
             if (!autoInit && initializeCounter === 0) return finish("Auto init turned off.")
             setLoading(true)
-            setMessages(old => [...old, "Initiating Hardhat React"])
+            setMessages(old => [...old, "Initiating Symfoni React"])
             const providerObject = await getProvider() // getProvider can actually return undefined, see issue https://github.com/microsoft/TypeScript/issues/11094
 
             if (!subscribed || !providerObject) return finish("No provider or signer.")
@@ -391,23 +396,18 @@ export class ReactComponent {
             setCurrentHardhatProvider(providerObject.hardhatProviderName)
             const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
 
-            if (!subscribed || !_signer) return finish("Provider, without signer.")
+            if (!subscribed || !_signer) return finishWithContracts("Provider, without signer.")
             setSigner(_signer)
             setMessages(old => [...old, "Useing signer"])
             const address = await _signer.getAddress()
 
-            if (!subscribed || !address) return finish("Provider and signer, without address.")
+            if (!subscribed || !address) return finishWithContracts("Provider and signer, without address.")
             setCurrentAddress(address)
-            `);
-
-      this.contractContexts.forEach((contract) => {
-        writer.writeLine(
-          `set${contract.name}(get${contract.name}(_provider, _signer))`
-        );
-      });
+            `
+      );
 
       writer.write(`
-      return finish("Completed Hardhat context initialization.")
+      return finish("Completed Symfoni context initialization.")
         };
         doAsync();
         return () => { subscribed = false }

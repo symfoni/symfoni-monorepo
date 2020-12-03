@@ -18,7 +18,7 @@ export class ReactContext {
   private readonly hre: HardhatRuntimeEnvironment;
   private readonly contractContexts: ContractContext[];
   private reactComponent?: ReactComponent;
-  private componentName = "Hardhat";
+  private componentName = "Symfoni";
   constructor(
     sourceFile: SourceFile,
     args: any,
@@ -160,11 +160,11 @@ export class ReactContext {
     );
 
     this.addConstStatment({
-      name: "defaultHardhatContext",
-      type: "HardhatContextInterface",
+      name: `default${this.componentName}Context`,
+      type: `${this.componentName}ContextInterface`,
       initializer: `{
         currentHardhatProvider: "",
-        init: () => { throw Error("Hardhat context not initialized") },
+        init: () => { throw Error("Symfoni context not initialized") },
         loading: false,
         messages: [],
         providers: []
@@ -173,8 +173,7 @@ export class ReactContext {
     this.addConstStatment(
       {
         name: "HardhatContext",
-        initializer:
-          "React.createContext<HardhatContextInterface>(defaultHardhatContext)",
+        initializer: `React.createContext<${this.componentName}ContextInterface>(default${this.componentName}Context)`,
       },
       true
     );

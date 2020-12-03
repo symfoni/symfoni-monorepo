@@ -69,7 +69,7 @@ The plugin will hooks into hardhat-deploy, which hooks into `npx hardhat node --
 
 You can run it manually with `npx hardhat react`. You probably need to run `npx hardhat typechain` and `npx hardhat deploy`first to have artifacts, deployments, and typechain files ready.
 
-The React context uses the output from typechain and deployments. It generates a react context component as a typescript react file (HardhatContext.tsx), which imports both typechain and deployment files. It then uses these files alongside Ethers and Web3Modal to set up a context for your connection and each smart contract (deployed or not deployed).
+The React context uses the output from typechain and deployments. It generates a react context component as a typescript react file (SymfoniContext.tsx), which imports both typechain and deployment files. It then uses these files alongside Ethers and Web3Modal to set up a context for your connection and each smart contract (deployed or not deployed).
 
 # Deployment and .gitignore
 
@@ -104,25 +104,25 @@ Create React app can be initialized in your Hardhat root folder with:
 
 ## React component
 
-To use the React component in a React application. Import the HardhatContext.tsx file in your app.
+To use the React component in a React application. Import the SymfoniContext.tsx file in your app.
 
 ```ts
-import { Hardhat } from "./hardhat/HardhatContext";
+import { Symfoni } from "./hardhat/SymfoniContext";
 ```
 
 Then wrap everything or the components in this context as a provider.
 
 ```ts
-<Hardhat>
+<Symfoni>
   <SomeComponent></SomeComponent>
   <SomeOtherComponent></SomeComponent>
-</Hardhat>
+</Symfoni>
 ```
 
 To use a contract, import that context into the component that needs it.
 
 ```ts
-import { GreeterContext } from "./../hardhat/HardhatContext";
+import { GreeterContext } from "./../hardhat/SymfoniContext";
 ```
 
 Then use it as a state in that component.
@@ -149,22 +149,22 @@ If the Hardhat context successfully connected to a provider in your frontend (we
 
 ## Component examples
 
-### Hardhat context example
+### Symfoni context example
 
 ```ts
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { Hardhat } from "./hardhat/HardhatContext";
+import { Hardhat } from "./hardhat/SymfoniContext";
 import { Greeter } from "./components/Greeter";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Hardhat>
+        <Symfoni>
           <Greeter></Greeter>
-        </Hardhat>
+        </Symfoni>
       </header>
     </div>
   );
@@ -179,7 +179,7 @@ The contract is named Greeeter.sol
 
 ```ts
 import React, { useContext, useEffect, useState } from "react";
-import { GreeterContext } from "./../hardhat/HardhatContext";
+import { GreeterContext } from "./../hardhat/SymfoniContext";
 
 interface Props {}
 
@@ -221,30 +221,30 @@ export const Greeter: React.FC<Props> = () => {
 };
 ```
 
-### Hardhat Provider
+### Symfoni Provider
 
 You can control when Hardhat context should try to connect with your providers. By default it will autoInit and show loading. If you dont want to show laoding it will start render all child components. You dont need to provide a loading component, in that case it has a native loading component that renders messages from provider connection.
 
 ```ts
-import { Hardhat } from "./../hardhat/HardhatContext";
+import { Symfoni } from "./../hardhat/SymfoniContext";
 ...
- <Hardhat autoInit={true} showLoading={true} loadingComponent={<h1>LOADING...</h1>}>
+ <Symfoni autoInit={true} loadingComponent={<h1>LOADING...</h1>}>
   // ...<OtherComponents>
-</Hardhat>
+</Symfoni>
 ```
 
-### HardhatContext
+### SymfoniContext
 
-This context can be used down in your componens to trigger Hardhat context.
+This context can be used down in your componens to trigger Symfoni context.
 
-By contrast to other contexts, HardhatContext returns an object with properties and functions. So pick whatever you want.
+By contrast to other contexts, SymfoniContext returns an object with properties and functions. So pick whatever you want.
 
 The init function will initate a connection to your provider based on the priority you have set in your Hardhat.config.ts. You can override this by specifying the provider you want to connect with. `init("roptsten")` for example.
 
 ```ts
-import { HardhatContext } from './../hardhat/HardhatContext';
+import { SymfoniContext } from './../hardhat/SymfoniContext';
 ...
- const {  init, messages, currentHardhatProvider, loading, providers  } = useContext(HardhatContext)
+ const {  init, messages, currentHardhatProvider, loading, providers  } = useContext(SymfoniContext)
 ```
 
 ### ProviderContext
@@ -252,7 +252,7 @@ import { HardhatContext } from './../hardhat/HardhatContext';
 It gives you a context to your current provider and the ability to change it.
 
 ```ts
-import { ProviderContext } from "./../hardhat/HardhatContext";
+import { ProviderContext } from "./../hardhat/SymfoniContext";
 ...
 const [provider, setProvider] = useContext(ProviderContext)
 ```
@@ -262,7 +262,7 @@ const [provider, setProvider] = useContext(ProviderContext)
 It gives you a context to your current signer and the ability to change it.
 
 ```ts
-import { SignerContext } from "./../hardhat/HardhatContext";
+import { SignerContext } from "./../hardhat/SymfoniContext";
 ...
 const [signer, setSigner] = useContext(SignerContext)
 ```
@@ -272,7 +272,7 @@ const [signer, setSigner] = useContext(SignerContext)
 It gives you a context to your current address and the ability to change it.
 
 ```ts
-import { CurrentAddressContext } from "./../hardhat/HardhatContext";
+import { CurrentAddressContext } from "./../hardhat/SymfoniContext";
 ...
 const [currentAddress, setCurrentAddress] = useContext(CurrentAddressContext)
 ```
@@ -313,7 +313,7 @@ If you have many contracts you can choose to be implicit or explicit for what co
 
 ## Paths React
 
-HardhatContext.tsx (the React component) will be written to this path.
+SymfoniContext.tsx (the React component) will be written to this path.
 
 ```json
 {

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { Box, Button, DataTable, Grid, Heading } from 'grommet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { SimpleStorageContext } from './../hardhat/HardhatContext';
+import { SimpleStorageContext } from './../hardhat/SymfoniContext';
 
 
 
