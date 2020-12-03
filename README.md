@@ -1,8 +1,8 @@
-### We wish to improve the output of Hardhat, and include Textile out of the box.
+### Universal Ethers backend (Hardhat) and Frontend(React) enviroment.
 
-This is just a part of our contribution to the Ethonline hackathon.
+- [THE PLUGIN - @symfoni/hardhat-react](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-react)
 
-- [🕶 Check out this repo for an introduction](https://github.com/symfoni/hardhat-react-boilerplate)
+- [Boilerplate](https://github.com/symfoni/hardhat-react-boilerplate)
 
 ## Packages
 
