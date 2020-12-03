@@ -510,7 +510,7 @@ export class ReactComponent {
     this.component.addStatements((writer) => {
       writer.write(
         `return (
-          <HardhatContext.Provider value={{ init: (provider) => handleInitProvider(provider), providers: providerPriority,currentHardhatProvider, loading, messages }}>
+          <SymfoniContext.Provider value={{ init: (provider) => handleInitProvider(provider), providers: providerPriority,currentHardhatProvider, loading, messages }}>
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>`
@@ -522,7 +522,7 @@ export class ReactComponent {
         `           </CurrentAddressContext.Provider>
                 </SignerContext.Provider>
             </ProviderContext.Provider>
-          </HardhatContext.Provider>
+          </SymfoniContext.Provider>
         )`
       );
     });

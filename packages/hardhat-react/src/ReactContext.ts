@@ -172,7 +172,7 @@ export class ReactContext {
     });
     this.addConstStatment(
       {
-        name: "HardhatContext",
+        name: `${this.componentName}Context`,
         initializer: `React.createContext<${this.componentName}ContextInterface>(default${this.componentName}Context)`,
       },
       true
@@ -275,10 +275,10 @@ export class ReactContext {
         },
       ],
     });
-    const hardhatContextComponent = this.sourceFile.getVariableDeclarationOrThrow(
+    const symfoniContextContextComponent = this.sourceFile.getVariableDeclarationOrThrow(
       this.componentName
     );
-    const reactComponent = hardhatContextComponent.getInitializerIfKindOrThrow(
+    const reactComponent = symfoniContextContextComponent.getInitializerIfKindOrThrow(
       SyntaxKind.ArrowFunction
     );
 
