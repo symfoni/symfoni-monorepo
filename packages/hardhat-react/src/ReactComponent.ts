@@ -407,7 +407,7 @@ export class ReactComponent {
       );
 
       writer.write(`
-      return finish("Completed Symfoni context initialization.")
+      return finishWithContracts("Completed Symfoni context initialization.")
         };
         doAsync();
         return () => { subscribed = false }
