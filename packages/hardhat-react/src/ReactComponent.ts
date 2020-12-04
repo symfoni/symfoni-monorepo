@@ -58,10 +58,6 @@ export class ReactComponent {
       "useState<string[]>([])"
     );
     this.insertConstStatement(
-      "[/* providerName */, setProviderName]",
-      "useState<string>()"
-    );
-    this.insertConstStatement(
       "[signer, setSigner]",
       "useState<Signer | undefined>(defaultSigner)"
     );
@@ -388,10 +384,8 @@ export class ReactComponent {
 
             if (!subscribed || !providerObject) return finish("No provider or signer.")
             const _provider = providerObject.provider
-            const _providerName = _provider.constructor.name;
             setProvider(_provider)
-            setProviderName(_providerName)
-            setMessages(old => [...old, "Useing " + _providerName + " from " + providerObject.hardhatProviderName])
+            setMessages(old => [...old, "Useing " + providerObject.hardhatProviderName])
             setCurrentHardhatProvider(providerObject.hardhatProviderName)
             const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
 

@@ -64,7 +64,6 @@ export const Symfoni: React.FC<SymfoniProps> = ({
     const [currentHardhatProvider, setCurrentHardhatProvider] = useState("");
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
-    const [/* providerName */, setProviderName] = useState<string>();
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
     const [provider, setProvider] = useState<providers.Provider | undefined>(defaultProvider);
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
@@ -142,7 +141,6 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                 return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
             case "brregStage":
                 return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
-
             default:
                 return undefined
         }
@@ -176,10 +174,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
 
             if (!subscribed || !providerObject) return finish("No provider or signer.")
             const _provider = providerObject.provider
-            const _providerName = _provider.constructor.name;
             setProvider(_provider)
-            setProviderName(_providerName)
-            setMessages(old => [...old, "Useing " + _providerName + " from " + providerObject.hardhatProviderName])
+            setMessages(old => [...old, "Useing " + providerObject.hardhatProviderName])
             setCurrentHardhatProvider(providerObject.hardhatProviderName)
             const _signer = await getSigner(_provider, providerObject.hardhatProviderName);
 
