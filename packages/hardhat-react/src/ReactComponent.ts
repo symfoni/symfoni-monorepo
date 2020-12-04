@@ -75,8 +75,9 @@ export class ReactComponent {
     );
     this.insertConstStatement(
       "[fallbackProvider]",
-      `useState<string | undefined>(${this.hre.config.react.fallbackProvider})`
+      `useState<string | undefined>(${this.getFallbackProvider()})`
     );
+
     this.insertConstStatement(
       "[providerPriority, setProviderPriority]",
       `useState<string[]>(${this.toArrayString(
@@ -558,5 +559,11 @@ export class ReactComponent {
 
   private toArrayString(arr: string[]) {
     return "[" + arr.map((i) => `"` + i + `"`).join(",") + "]";
+  }
+  private getFallbackProvider() {
+    if (this.hre.config.react.fallbackProvider) {
+      return `"${this.hre.config.react.fallbackProvider}"`;
+    }
+    return undefined;
   }
 }

@@ -285,7 +285,7 @@ Our goal with this plugin was to make it easier for new developers to try out sm
 
 The React context tries to connect the frontend up with an Ethereum provider. Here you can set that priority. In this scenario, the react context will try to connect with Web3modal(Metamask) first, then if that fails. Try to connect with your Hardhat node.
 
-If you set a fallbackprovider, it will try to connect with that first on first auto init (auto init must be true) and if the user has not connected with web3modal before.
+If you set a fallbackprovider, it will try to connect to that provider first. But only on first auto init (auto init must be true) and if the user has not connected with web3modal before (that is stored in the cache). If the user does not have any wallets and you try with web3modal first, it will require a click from the user to try another provider. Setting a fallback provider circuments this.
 
 ```json
 {
