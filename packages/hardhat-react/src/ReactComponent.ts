@@ -435,7 +435,9 @@ export class ReactComponent {
                   const instance = _signer ? ${contract.typechainFactoryName}.connect(contractAddress, _signer) : ${contract.typechainFactoryName}.connect(contractAddress, _provider)
                 `);
               } else {
-                writer.writeLine(`let instance = undefined`);
+                writer.writeLine(
+                  `let instance = _signer ? ${contract.typechainFactoryName}.connect(ethers.constants.AddressZero, _signer) : ${contract.typechainFactoryName}.connect(ethers.constants.AddressZero, _provider)`
+                );
               }
 
               writer.write(
