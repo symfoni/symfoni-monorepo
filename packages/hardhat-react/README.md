@@ -144,8 +144,9 @@ export interface ContractContext {
 
 If the Hardhat context successfully connected to a provider in your frontend (web3modal or Hardhat node) and
 
-- hardhat-deploy **deployed** an instance of your contract. The **ContractContext.instance** property will be initiated. Here you have access to all functions, events, and so on.
-- the provider has Sing functionality. The **ContractContext.factory** will be available, and you can deploy a contract or connect to other instances.
+- hardhat-deploy **deployed** an instance of your contract. The **ContractContext.instance** property will be initiated with this deployment address. Here you have access to all functions, events, and so on.
+- If an instance was NOT deployed by hardhat-deploy, it will be set to a zero address. This way makes it easier to connect with another contract address in you frontend with for example `erc20.instance?.attach("SOME_ADDRESS")`
+- If the provider has sign() functionality. The **ContractContext.factory** will be available, and you can deploy a contract or connect to other instances.
 
 ## Component examples
 
