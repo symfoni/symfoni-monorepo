@@ -98,7 +98,7 @@ export class ReactComponent {
             writer.write(
               `async (): Promise<{provider: providers.Provider, hardhatProviderName: string } | undefined> => {
                 let hardhatProviderName = "Not set";
-                let _providerPriority = providerPriority
+                let _providerPriority = [...providerPriority];
                 // Fallback provider
                 if (fallbackProvider && autoInit && initializeCounter === 0) {
                     if (localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER") === null) {
