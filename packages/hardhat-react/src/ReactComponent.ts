@@ -250,7 +250,7 @@ export class ReactComponent {
   private getSigner() {
     const writeSigners = (writer: CodeBlockWriter) => {
       writer.writeLine(
-        `case "Web3Provider":
+        `case "web3modal":
           const web3provider = _provider as ethers.providers.Web3Provider
           return await web3provider.getSigner()`
       );
@@ -274,24 +274,8 @@ export class ReactComponent {
         {}
       );
 
-      log(
-        "Useing this providerTypes: ",
-        Object.keys(networksByProviderType).join(" | ")
-      );
-
-      for (const [providerType, networks] of Object.entries(
-        networksByProviderType
-      )) {
-        writer.writeLine(`case "${providerType}":`);
-
-        writer.write(`switch(hardhatProviderName) {`);
-
-        for (const [name, network] of Object.entries(networks)) {
-          writeProviderSigner(writer, name, network);
-        }
-        writer.write(`default:
-                        return undefined
-                }`);
+      for (const [name, network] of Object.entries(this.hre.config.networks)) {
+        writeProviderSigner(writer, name, network);
       }
     };
 
@@ -339,14 +323,15 @@ export class ReactComponent {
           initializer: (writer) => {
             writer.write(
               `async ( _provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
-                switch (_provider.constructor.name) {`
+                switch (hardhatProviderName) {`
             );
             writeSigners(writer);
-            writer.write(`
-                    default:
+            writer.write(
+              `default:
                         return undefined
                 }
-            }`);
+            }`
+            );
           },
         },
       ],

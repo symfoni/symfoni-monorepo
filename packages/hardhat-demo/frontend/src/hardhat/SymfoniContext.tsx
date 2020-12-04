@@ -4,11 +4,11 @@
 import { providers, Signer, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
+import { SimpleStorage2 } from "./typechain/SimpleStorage2";
+import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
 import SimpleStorageDeployment from "./deployments/localhost/SimpleStorage.json";
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__factory";
-import { SimpleStorage2 } from "./typechain/SimpleStorage2";
-import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
 
 const emptyContract = {
     instance: undefined,
@@ -28,8 +28,8 @@ const defaultSymfoniContext: SymfoniContextInterface = {
     providers: []
 };
 export const SymfoniContext = React.createContext<SymfoniContextInterface>(defaultSymfoniContext);
-export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
+export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 
 export interface SymfoniContextInterface {
     init: (provider?: string) => void;
@@ -45,14 +45,14 @@ export interface SymfoniProps {
     loadingComponent?: React.ReactNode;
 }
 
-export interface SymfoniSimpleStorage {
-    instance?: SimpleStorage;
-    factory?: SimpleStorage__factory;
-}
-
 export interface SymfoniSimpleStorage2 {
     instance?: SimpleStorage2;
     factory?: SimpleStorage2__factory;
+}
+
+export interface SymfoniSimpleStorage {
+    instance?: SimpleStorage;
+    factory?: SimpleStorage__factory;
 }
 
 export const Symfoni: React.FC<SymfoniProps> = ({
@@ -68,10 +68,10 @@ export const Symfoni: React.FC<SymfoniProps> = ({
     const [signer, setSigner] = useState<Signer | undefined>(defaultSigner);
     const [provider, setProvider] = useState<providers.Provider | undefined>(defaultProvider);
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
-    const [fallbackProvider] = useState<string | undefined>(undefined);
+    const [fallbackProvider] = useState<string | undefined>("brreg");
     const [providerPriority, setProviderPriority] = useState<string[]>(["hardhat", "brreg", "web3modal"]);
-    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
     const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
+    const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
     useEffect(() => {
         if (messages.length > 0)
             console.debug(messages.pop())
@@ -132,26 +132,17 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         return provider ? { provider, hardhatProviderName } : undefined
     };
     const getSigner = async (_provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
-        switch (_provider.constructor.name) {
-            case "Web3Provider":
+        switch (hardhatProviderName) {
+            case "web3modal":
                 const web3provider = _provider as ethers.providers.Web3Provider
                 return await web3provider.getSigner()
-            case "JsonRpcProvider":
-                switch (hardhatProviderName) {
-                    case "hardhat":
-                        return ethers.Wallet.fromMnemonic("test test test test test test test test test test test junk").connect(_provider)
-                    case "brreg":
-                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
-                    default:
-                        return undefined
-                }
-            case "StaticJsonRpcProvider":
-                switch (hardhatProviderName) {
-                    case "brregStage":
-                        return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
-                    default:
-                        return undefined
-                }
+            case "hardhat":
+                return ethers.Wallet.fromMnemonic("test test test test test test test test test test test junk").connect(_provider)
+            case "brreg":
+                return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+            case "brregStage":
+                return ethers.Wallet.fromMnemonic("shrug antique orange tragic direct drop abstract ring carry price anchor train").connect(_provider)
+
             default:
                 return undefined
         }
@@ -174,8 +165,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                 setMessages(old => [...old, text])
             }
             const finishWithContracts = (text: string) => {
-                setSimpleStorage(getSimpleStorage(_provider, _signer))
                 setSimpleStorage2(getSimpleStorage2(_provider, _signer))
+                setSimpleStorage(getSimpleStorage(_provider, _signer))
                 finish(text)
             }
             if (!autoInit && initializeCounter === 0) return finish("Auto init turned off.")
@@ -206,6 +197,15 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         return () => { subscribed = false }
     }, [initializeCounter])
 
+    const getSimpleStorage2 = (_provider: providers.Provider, _signer?: Signer) => {
+        let instance = undefined
+        const contract: SymfoniSimpleStorage2 = {
+            instance: instance,
+            factory: _signer ? new SimpleStorage2__factory(_signer) : undefined,
+        }
+        return contract
+    }
+        ;
     const getSimpleStorage = (_provider: providers.Provider, _signer?: Signer) => {
 
         const contractAddress = SimpleStorageDeployment.receipt.contractAddress
@@ -213,15 +213,6 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         const contract: SymfoniSimpleStorage = {
             instance: instance,
             factory: _signer ? new SimpleStorage__factory(_signer) : undefined,
-        }
-        return contract
-    }
-        ;
-    const getSimpleStorage2 = (_provider: providers.Provider, _signer?: Signer) => {
-        let instance = undefined
-        const contract: SymfoniSimpleStorage2 = {
-            instance: instance,
-            factory: _signer ? new SimpleStorage2__factory(_signer) : undefined,
         }
         return contract
     }
@@ -241,8 +232,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
-                        <SimpleStorageContext.Provider value={SimpleStorage}>
-                            <SimpleStorage2Context.Provider value={SimpleStorage2}>
+                        <SimpleStorage2Context.Provider value={SimpleStorage2}>
+                            <SimpleStorageContext.Provider value={SimpleStorage}>
                                 {showLoading && loading ?
                                     props.loadingComponent
                                         ? props.loadingComponent
@@ -253,8 +244,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                                         </div>
                                     : props.children
                                 }
-                            </SimpleStorage2Context.Provider >
-                        </SimpleStorageContext.Provider >
+                            </SimpleStorageContext.Provider >
+                        </SimpleStorage2Context.Provider >
                     </CurrentAddressContext.Provider>
                 </SignerContext.Provider>
             </ProviderContext.Provider>
