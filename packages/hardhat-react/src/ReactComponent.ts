@@ -74,6 +74,10 @@ export class ReactComponent {
       "useState<string>(defaultCurrentAddress)"
     );
     this.insertConstStatement(
+      "[fallbackProvider]",
+      `useState<string | undefined>(${this.hre.config.react.fallbackProvider})`
+    );
+    this.insertConstStatement(
       "[providerPriority, setProviderPriority]",
       `useState<string[]>(${this.toArrayString(
         this.hre.config.react.providerPriority
@@ -97,7 +101,16 @@ export class ReactComponent {
             writer.write(
               `async (): Promise<{provider: providers.Provider, hardhatProviderName: string } | undefined> => {
                 let hardhatProviderName = "Not set";
-                  const provider = await providerPriority.reduce(async (maybeProvider: Promise<providers.Provider | undefined>, providerIdentification)=> {
+                let _providerPriority = providerPriority
+                // Fallback provider
+                if (fallbackProvider && autoInit && initializeCounter === 0) {
+                    if (localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER") === null) {
+                        _providerPriority = _providerPriority.sort((a, b) => {
+                            return a === fallbackProvider ? -1 : b === fallbackProvider ? 1 : 0;
+                        })
+                    }
+                }
+                  const provider = await _providerPriority.reduce(async (maybeProvider: Promise<providers.Provider | undefined>, providerIdentification)=> {
                     let foundProvider = await maybeProvider
                     if (foundProvider) {
                         return Promise.resolve(foundProvider)

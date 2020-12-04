@@ -3,6 +3,7 @@ import "hardhat/types/runtime";
 
 export interface React {
   providerPriority: string[];
+  fallbackProvider?: string;
   skip?: string[];
   handle?: string[];
 }

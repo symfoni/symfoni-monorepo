@@ -11,6 +11,7 @@ const config: HardhatUserConfig = {
   react: {
     providerPriority: ["hardhat", "brreg", "web3modal"],
     handle: ["SimpleStorage", "SimpleStorage2"],
+    fallbackProvider: "brreg",
   },
   solidity: {
     compilers: [
