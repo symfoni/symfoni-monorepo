@@ -8,7 +8,7 @@
     "access": "public"
   },
   "scripts": {
-    "bootstrap": "npx lerna bootstrap --nohoist=eslint* && yarn run build",
+    "bootstrap": "npx lerna bootstrap --nohoist=eslint* && yarn run build && cd packages/hardhat-demo/frontend && yarn",
     "build": "npx lerna run build --stream",
     "node": "npx lerna run node --stream",
     "watch": "npx lerna run watch --parallel",

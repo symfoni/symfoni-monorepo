@@ -17,6 +17,7 @@ Here is the code for the hardhat react plugin. Lerna will symlink this package t
 ## Developing
 
 1. Install lerna globally `npm i -g lerna`
+2. Run `yarn`
 2. Run `yarn run bootstrap` // This will install all packages and build
 
 You need three processes running for the full development enviroment
