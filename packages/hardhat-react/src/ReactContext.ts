@@ -74,23 +74,25 @@ export class ReactContext {
         moduleSpecifier: "web3modal",
       },
     ]);
-
+    // Adding .replace(`\\`, `/`) for windows corrections
     this.contractContexts.forEach((contract) => {
       if (contract.deploymentFile) {
         this.sourceFile.addImportDeclaration({
           defaultImport: `${contract.name}Deployment`,
-          moduleSpecifier: "./" + contract.deploymentFile,
+          moduleSpecifier: "./" + contract.deploymentFile.replace(`\\`, `/`),
         });
       }
+      console.log("#################", contract.typechainFactory);
+      
       this.sourceFile.addImportDeclarations([
         {
           namedImports: [`${contract.typechainInstanceName}`],
           moduleSpecifier:
-            "./" + contract.typechainInstance.replace(".d.ts", ""),
+            "./" + contract.typechainInstance.replace(".d.ts", "").replace(`\\`, `/`),
         },
         {
           namedImports: [`${contract.typechainFactoryName}`],
-          moduleSpecifier: "./" + contract.typechainFactory.replace(".ts", ""),
+          moduleSpecifier: "./" + contract.typechainFactory.replace(".ts", "").replace(`\\`, `/`),
         },
         // REVIEW : Maybe import artifact files
         // {

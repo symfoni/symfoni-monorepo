@@ -103,8 +103,9 @@ export class TsMorphProject {
     );
     const relativeDeploymentsPath = path.relative(
       this.hre.config.paths.react,
-      this.hre.config.paths.deployments + "/" + currentNetwork + "/"
-    );
+      path.resolve( this.hre.config.paths.deployments,currentNetwork )
+    )
+    
     const relativeTypechainsInstancePath = path.relative(
       this.hre.config.paths.react,
       this.hre.config.typechain.outDir
@@ -122,12 +123,10 @@ export class TsMorphProject {
     try {
       log(
         "Checking deploymentfiles in " +
-          this.hre.config.paths.deployments +
-          "/" +
-          currentNetwork
+          path.resolve(this.hre.config.paths.deployments, currentNetwork)
       );
       deploymentFiles = readdirSync(
-        this.hre.config.paths.deployments + "/" + currentNetwork
+        path.resolve(this.hre.config.paths.deployments, currentNetwork)
       );
       log("deploymentFiles => " + deploymentFiles.join(" | "));
     } catch (error) {
