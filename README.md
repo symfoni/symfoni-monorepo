@@ -1,6 +1,6 @@
 ### Universal Ethers backend (Hardhat) and Frontend(React) enviroment.
 
-- [THE PLUGIN - @symfoni/hardhat-react](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-react)
+- [THE PLUGIN - @symfoni/hardhat-react](https://github.com/symfoni/hardhat-plugins/tree/master/packages/hardhat-react)
 
 - [Boilerplate](https://github.com/symfoni/hardhat-react-boilerplate)
 
@@ -18,7 +18,7 @@ Here is the code for the hardhat react plugin. Lerna will symlink this package t
 
 1. Install lerna globally `npm i -g lerna`
 2. Run `yarn`
-2. Run `yarn run bootstrap` // This will install all packages and build
+3. Run `yarn run bootstrap` // This will install all packages and build
 
 You need three processes running for the full development enviroment
 
