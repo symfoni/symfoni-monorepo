@@ -12,6 +12,13 @@ const config: HardhatUserConfig = {
     providerPriority: ["hardhat", "brreg", "web3modal"],
     handle: ["SimpleStorage", "SimpleStorage2"],
     fallbackProvider: "brreg",
+    providerOptions: {
+      walletconnect: {
+        options: {
+          infuraId: "c229331f1d044c8f95e03f54b0ea2f26",
+        },
+      },
+    },
   },
   solidity: {
     compilers: [

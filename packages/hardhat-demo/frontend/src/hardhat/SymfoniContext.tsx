@@ -9,6 +9,7 @@ import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__factory";
 import { SimpleStorage2 } from "./typechain/SimpleStorage2";
 import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const emptyContract = {
     instance: undefined,
@@ -146,7 +147,14 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         }
     };
     const getWeb3ModalProvider = async (): Promise<any> => {
-        const providerOptions: IProviderOptions = {};
+        const providerOptions: IProviderOptions = {
+            walletconnect: {
+                package: WalletConnectProvider,
+                options: {
+                    infuraId: "c229331f1d044c8f95e03f54b0ea2f26"
+                }
+            }
+        };
         const web3Modal = new Web3Modal({
             // network: "mainnet",
             cacheProvider: true,

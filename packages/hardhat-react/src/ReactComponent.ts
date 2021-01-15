@@ -335,6 +335,14 @@ export class ReactComponent {
   }
 
   private getWeb3ModalProvider() {
+    const providerOptions = {
+      walletconnect: {
+        package: `${"WalletConnectProvider"}`,
+        options: {
+          infuraId: "INFURA_ID",
+        },
+      },
+    };
     this.component.addVariableStatement({
       declarationKind: VariableDeclarationKind.Const,
       declarations: [
@@ -343,15 +351,38 @@ export class ReactComponent {
           initializer: (writer) => {
             writer.write(
               `async (): Promise<any> => {
-                const providerOptions: IProviderOptions = {};
+                const providerOptions: IProviderOptions = {
+                  `
+            );
+            if (this.hre.config.react.providerOptions) {
+              for (const [providerName, providerOptions] of Object.entries(
+                this.hre.config.react.providerOptions
+              )) {
+                if (providerName === "walletconnect") {
+                  if ("infuraId" in providerOptions.options) {
+                    writer.write(`walletconnect: {
+                      package: WalletConnectProvider,
+                      options: {
+                        infuraId: "${providerOptions.options.infuraId}"
+                      }
+                    }`);
+                  } else {
+                    throw Error(
+                      "Found WalletConnect web3modal configuration, but no infuraId in options. Please add react.providerOptions.walletconnect.options.infuraId in your Hardhat.config "
+                    );
+                  }
+                }
+              }
+            }
+            writer.write(`
+                };
                 const web3Modal = new Web3Modal({
                     // network: "mainnet",
                     cacheProvider: true,
                     providerOptions, // required
                 });
                 return await web3Modal.connect();
-            }`
-            );
+            }`);
           },
         },
       ],

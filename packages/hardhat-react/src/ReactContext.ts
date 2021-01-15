@@ -83,16 +83,19 @@ export class ReactContext {
         });
       }
       console.log("#################", contract.typechainFactory);
-      
+
       this.sourceFile.addImportDeclarations([
         {
           namedImports: [`${contract.typechainInstanceName}`],
           moduleSpecifier:
-            "./" + contract.typechainInstance.replace(".d.ts", "").replace(`\\`, `/`),
+            "./" +
+            contract.typechainInstance.replace(".d.ts", "").replace(`\\`, `/`),
         },
         {
           namedImports: [`${contract.typechainFactoryName}`],
-          moduleSpecifier: "./" + contract.typechainFactory.replace(".ts", "").replace(`\\`, `/`),
+          moduleSpecifier:
+            "./" +
+            contract.typechainFactory.replace(".ts", "").replace(`\\`, `/`),
         },
         // REVIEW : Maybe import artifact files
         // {
@@ -101,6 +104,23 @@ export class ReactContext {
         // }
       ]);
     });
+
+    // Handle web3modal providers
+    if (this.hre.config.react.providerOptions) {
+      for (const [providerName, providerOptions] of Object.entries(
+        this.hre.config.react.providerOptions
+      )) {
+        if (providerName === "walletconnect") {
+          log(
+            "WalletConnect configuration found. Ensure @walletconnect/web3-provider is installed in Frontend."
+          );
+          this.sourceFile.addImportDeclaration({
+            defaultImport: `${"WalletConnectProvider"}`,
+            moduleSpecifier: `${"@walletconnect/web3-provider"}`,
+          });
+        }
+      }
+    }
   }
 
   private addConstStatment(

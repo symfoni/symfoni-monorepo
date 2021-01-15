@@ -1,3 +1,4 @@
+import { string } from "hardhat/internal/core/params/argumentTypes";
 import "hardhat/types/config";
 import "hardhat/types/runtime";
 
@@ -6,6 +7,11 @@ export interface React {
   fallbackProvider?: string;
   skip?: string[];
   handle?: string[];
+  providerOptions?: {
+    [id in "walletconnect"]: {
+      options?: any;
+    };
+  };
 }
 
 export interface SymfoniAccount {

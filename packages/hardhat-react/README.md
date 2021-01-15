@@ -315,6 +315,31 @@ If you have many contracts you can choose to be implicit or explicit for what co
 }
 ```
 
+## Web3Modal providers
+
+### WalletConnect
+
+To add WalletConnect as an otional web3modal provider add the following configuration to hardhard.config.
+
+You MUST also install @walletconnect/web3-provider in your frontend project.
+
+```json
+{
+  "react": {
+     "providerOptions": {
+      "walletconnect": {
+        "options": {
+          "infuraId": "c229331f1d044c8f95e03f54b0ea2f26",
+        },
+      },
+    },
+    ...
+  }
+}
+```
+
+`npm i --save @walletconnect/web3-provider` or with Yarn `yarn add @walletconnect/web3-provider`
+
 ## Paths React
 
 SymfoniContext.tsx (the React component) will be written to this path.
