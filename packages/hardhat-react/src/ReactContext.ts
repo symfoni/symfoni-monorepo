@@ -82,27 +82,29 @@ export class ReactContext {
           moduleSpecifier: "./" + contract.deploymentFile.replace(`\\`, `/`),
         });
       }
-      console.log("#################", contract.typechainFactory);
-
-      this.sourceFile.addImportDeclarations([
-        {
-          namedImports: [`${contract.typechainInstanceName}`],
-          moduleSpecifier:
-            "./" +
-            contract.typechainInstance.replace(".d.ts", "").replace(`\\`, `/`),
-        },
-        {
-          namedImports: [`${contract.typechainFactoryName}`],
-          moduleSpecifier:
-            "./" +
-            contract.typechainFactory.replace(".ts", "").replace(`\\`, `/`),
-        },
-        // REVIEW : Maybe import artifact files
-        // {
-        //   namedImports: [`${contract.name}Artifact`],
-        //   moduleSpecifier: contract.artifactFile
-        // }
-      ]);
+      if (!contract.instance) {
+        this.sourceFile.addImportDeclarations([
+          {
+            namedImports: [`${contract.typechainInstanceName}`],
+            moduleSpecifier:
+              "./" +
+              contract.typechainInstance
+                .replace(".d.ts", "")
+                .replace(`\\`, `/`),
+          },
+          {
+            namedImports: [`${contract.typechainFactoryName}`],
+            moduleSpecifier:
+              "./" +
+              contract.typechainFactory.replace(".ts", "").replace(`\\`, `/`),
+          },
+          // REVIEW : Maybe import artifact files
+          // {
+          //   namedImports: [`${contract.name}Artifact`],
+          //   moduleSpecifier: contract.artifactFile
+          // }
+        ]);
+      }
     });
 
     // Handle web3modal providers

@@ -377,6 +377,38 @@ If you don't set these configurations yourself, the hardhat-react plugin will de
 }
 ```
 
+## Contract instances
+
+React generation will now try to resolve dangling deployments which are probably instances of an artifact. It will resolve based on name, so if you keep the basename of the artifact in the instance it should resolve correctly.
+
+Here is an example deploy typescript function that will create two instances of the SimpleStorage contract. Both instances will be available in frontend by its instance name and with its respective deployment.
+
+```ts
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction } from "hardhat-deploy/types";
+
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const { deployments, getNamedAccounts } = hre;
+  const { deploy } = deployments;
+
+  const { deployer } = await getNamedAccounts();
+
+  await deploy("SimpleStorageA", {
+    from: deployer,
+    contract: "SimpleStorage",
+    args: [],
+    log: true,
+  });
+  await deploy("SimpleStorageB", {
+    from: deployer,
+    contract: "SimpleStorage",
+    args: [],
+    log: true,
+  });
+};
+export default func;
+```
+
 # Projects
 
 - [hardhat-plugins](https://github.com/symfoni/hardhat-plugins) - Lerna repo containing a demo project and hardhat-react plugin.

@@ -37,6 +37,7 @@ export interface ContractContext {
   artifactFile: string;
   typechainInstance: string;
   typechainFactory: string;
+  instance: boolean;
 }
 
 export const contractInterfaceName = (contract: ContractContext) => {
@@ -103,9 +104,9 @@ export class TsMorphProject {
     );
     const relativeDeploymentsPath = path.relative(
       this.hre.config.paths.react,
-      path.resolve( this.hre.config.paths.deployments,currentNetwork )
-    )
-    
+      path.resolve(this.hre.config.paths.deployments, currentNetwork)
+    );
+
     const relativeTypechainsInstancePath = path.relative(
       this.hre.config.paths.react,
       this.hre.config.typechain.outDir
@@ -148,17 +149,15 @@ export class TsMorphProject {
 
     let contracts: ContractContext[] = [];
     await Promise.all(
-      artifactFiles.map(async (artifactFile) => {
-        const artifactJson = await this.hre.artifacts.readArtifact(
-          artifactFile
-        );
+      [...artifactFiles].map(async (fileName) => {
+        const artifactJson = await this.hre.artifacts.readArtifact(fileName);
 
         // Skip list
         if (this.hre.config.react.skip) {
           if (
             this.hre.config.react.skip.indexOf(artifactJson.contractName) !== -1
           ) {
-            log("Skipping " + artifactFile + " because its in skip list.");
+            log("Skipping " + fileName + " because its in skip list.");
             return;
           }
         }
@@ -168,17 +167,13 @@ export class TsMorphProject {
             this.hre.config.react.handle.indexOf(artifactJson.contractName) ===
             -1
           ) {
-            log(
-              "Skipping " + artifactFile + " because its NOT in handle list."
-            );
+            log("Skipping " + fileName + " because its NOT in handle list.");
             return;
           }
         }
         if (artifactJson.bytecode.length < 3) {
           // TODO handle interface contracts
-          log(
-            "Skipping " + artifactFile + " because we think its an interface."
-          );
+          log("Skipping " + fileName + " because we think its a interface.");
           return;
         }
 
@@ -234,6 +229,7 @@ export class TsMorphProject {
           artifactFile: `${relativeArtifactsPath}/${artifactJson.sourceName}`,
           typechainInstance: `${relativeTypechainsInstancePath}/${typechainInstanceFile}`,
           typechainFactory: `${relativeTypechainsFactoriesPath}/${typechainFactoryFile}`,
+          instance: false,
         });
       })
     );
@@ -258,6 +254,50 @@ export class TsMorphProject {
       }
       return !duplicate;
     });
+    console.log("COntract 1 => ", contracts[0]);
+    console.log("deploymentFiles  => ", deploymentFiles);
+    let contractInstances: ContractContext[] = [];
+
+    // Handle possible deployment instances
+    deploymentFiles
+      .filter(
+        (deploymentFile) => ![".chainId", "solcInputs"].includes(deploymentFile)
+      )
+      .forEach((deploymentFile) => {
+        const exist = contracts.find(
+          (contract) => contract.deploymentFile === deploymentFile
+        );
+        if (!exist) {
+          console.log("Deployment " + deploymentFile + " had no contract.");
+          // try to find the contract which has been used to instantiate the deploymentInstance
+          const possibleContract = contracts.find((contract) => {
+            const deploymentFileNormalized = path
+              .basename(deploymentFile, ".json")
+              .toLowerCase();
+            const artifactFileNormalized = path
+              .basename(contract.artifactFile, ".sol")
+              .toLowerCase();
+            return deploymentFileNormalized.includes(artifactFileNormalized);
+          });
+          if (possibleContract) {
+            console.log(
+              "Useing " +
+                possibleContract.artifactFile +
+                " as contract for deployment " +
+                deploymentFile
+            );
+            contractInstances.push({
+              ...possibleContract,
+              deploymentFile: `${relativeDeploymentsPath}/${deploymentFile}`,
+              name: path.basename(deploymentFile, ".json"),
+              instance: true,
+            });
+          }
+        }
+      });
+
+    contracts = [...contractInstances, ...contracts];
+
     log(
       contracts.length + " contracts has been set for react context generation"
     );
