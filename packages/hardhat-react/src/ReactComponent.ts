@@ -348,7 +348,7 @@ export class ReactComponent {
       declarations: [
         {
           name: "getWeb3ModalProvider",
-          initializer: (writer) => {
+          initializer: async (writer) => {
             writer.write(
               `async (): Promise<any> => {
                 const providerOptions: IProviderOptions = {
@@ -366,6 +366,21 @@ export class ReactComponent {
                         infuraId: "${providerOptions.options.infuraId}"
                       }
                     }`);
+                  } else if ("rpc" in providerOptions.options) {
+                    writer.write(`walletconnect: {
+                      package: WalletConnectProvider,
+                      options: {
+                        rpc: {`);
+                    for (const [chainId, providerUrl] of Object.entries(
+                      providerOptions.options.rpc
+                    )) {
+                      writer.writeLine(`${chainId}: "${providerUrl}"`);
+                    }
+                    writer.write(
+                      `}
+                      }
+                    }`
+                    );
                   } else {
                     throw Error(
                       "Found WalletConnect web3modal configuration, but no infuraId in options. Please add react.providerOptions.walletconnect.options.infuraId in your Hardhat.config "
