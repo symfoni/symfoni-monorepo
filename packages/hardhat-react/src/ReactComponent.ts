@@ -508,7 +508,6 @@ export class ReactComponent {
   private handleInitProvider() {
     this.component.addStatements(`
       const handleInitProvider = (provider?: string) => {
-        console.log("running")
         if (provider) {
             setProviderPriority(old => old.sort((a, b) => {
                 return a === provider ? -1 : b === provider ? 1 : 0;

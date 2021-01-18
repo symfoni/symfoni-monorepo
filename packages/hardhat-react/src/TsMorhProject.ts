@@ -254,8 +254,6 @@ export class TsMorphProject {
       }
       return !duplicate;
     });
-    console.log("COntract 1 => ", contracts[0]);
-    console.log("deploymentFiles  => ", deploymentFiles);
     let contractInstances: ContractContext[] = [];
 
     // Handle possible deployment instances
@@ -268,7 +266,7 @@ export class TsMorphProject {
           (contract) => contract.deploymentFile === deploymentFile
         );
         if (!exist) {
-          console.log("Deployment " + deploymentFile + " had no contract.");
+          log("Deployment " + deploymentFile + " had no contract.");
           // try to find the contract which has been used to instantiate the deploymentInstance
           const possibleContract = contracts.find((contract) => {
             const deploymentFileNormalized = path
@@ -280,10 +278,10 @@ export class TsMorphProject {
             return deploymentFileNormalized.includes(artifactFileNormalized);
           });
           if (possibleContract) {
-            console.log(
-              "Useing " +
-                possibleContract.artifactFile +
-                " as contract for deployment " +
+            log(
+              "Found possible contract " +
+                possibleContract.name +
+                " for deploymentFile " +
                 deploymentFile
             );
             contractInstances.push({
