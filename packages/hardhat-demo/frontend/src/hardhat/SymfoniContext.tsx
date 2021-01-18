@@ -166,9 +166,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
             walletconnect: {
                 package: WalletConnectProvider,
                 options: {
-                    rpc: {
-                        55577: "https://e0cteq8qnh:IY2scS2ywMZkinR5m4sS7GBs7EDgm4Mh9F1uUVkmKFI@e0qchlost7-e0zi3w4q2r-rpc.de0-aws.kaleido.io"
-                    }
+                    infuraId: "c229331f1d044c8f95e03f54b0ea2f26"
                 }
             }
         };
