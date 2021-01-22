@@ -1,0 +1,59 @@
+{
+    "multiCommand.commands": [
+
+        {
+          "command": "multiCommand.watch",
+          "sequence": [
+            "workbench.action.terminal.new",
+            {
+              "command": "workbench.action.terminal.renameWithArg",
+              "args": {
+                "name": "yarn watch"
+              }
+            },
+            {
+              "command": "workbench.action.terminal.sendSequence",
+              "args": {
+                "text": "yarn run watch\u000D"  // \u000D is a return so it runs
+              }
+            }
+          ]
+        },
+        {
+            "command": "multiCommand.node",
+            "sequence": [
+              "workbench.action.terminal.new",
+              {
+                "command": "workbench.action.terminal.renameWithArg",
+                "args": {
+                  "name": "yarn node"
+                }
+              },
+              {
+                "command": "workbench.action.terminal.sendSequence",
+                "args": {
+                  "text": "yarn run node\u000D"  // \u000D is a return so it runs
+                }
+              }
+            ]
+          },
+          {
+            "command": "multiCommand.frontend",
+            "sequence": [
+              "workbench.action.terminal.new",
+              {
+                "command": "workbench.action.terminal.renameWithArg",
+                "args": {
+                  "name": "yarn frontend"
+                }
+              },
+              {
+                "command": "workbench.action.terminal.sendSequence",
+                "args": {
+                  "text": "yarn run frontend\u000D"  // \u000D is a return so it runs
+                }
+              }
+            ]
+          },
+    ]
+}

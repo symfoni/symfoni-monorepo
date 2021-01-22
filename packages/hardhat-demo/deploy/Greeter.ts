@@ -7,19 +7,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const { deployer } = await getNamedAccounts();
 
-  await deploy("SimpleStorageA", {
+  await deploy("Greeter", {
     from: deployer,
-    contract: "SimpleStorage",
-    args: [],
-    log: true,
-  });
-  await deploy("SimpleStorageB", {
-    from: deployer,
-    contract: "SimpleStorage",
-    args: [],
+    args: ["Hello from Hardhat"],
     log: true,
   });
 };
 export default func;
-// func.tags = ['SimpleStorage'];
-// func.dependencies = ['SimpleStorageA'];
+// func.tags = ['Greeter'];
+// func.dependencies = ['GreeterElse'];

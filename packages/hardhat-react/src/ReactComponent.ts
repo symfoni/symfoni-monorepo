@@ -393,7 +393,7 @@ export class ReactComponent {
                 };
                 const web3Modal = new Web3Modal({
                     // network: "mainnet",
-                    cacheProvider: true,
+                    cacheProvider: false,
                     providerOptions, // required
                 });
                 return await web3Modal.connect();
