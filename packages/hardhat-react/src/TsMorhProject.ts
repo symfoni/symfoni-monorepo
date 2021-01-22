@@ -129,14 +129,16 @@ export class TsMorphProject {
       deploymentFiles = readdirSync(
         path.resolve(this.hre.config.paths.deployments, currentNetwork)
       );
-      log("deploymentFiles => " + deploymentFiles.join(" | "));
+      log("deploymentFiles => ");
+      log(deploymentFiles);
     } catch (error) {
       log("No deployment folder or files found.");
     }
     // TODO : Hardhat maybe rewrite later
     // const deploymentFiles = await this.hre.deployments.all();
     const artifactFiles = await this.hre.artifacts.getAllFullyQualifiedNames();
-    log("artifactFiles => " + artifactFiles.join(","));
+    log("artifactFiles => ");
+    log(artifactFiles);
 
     const typechainInstanceFiles = readdirSync(
       this.hre.config.typechain.outDir
@@ -144,8 +146,10 @@ export class TsMorphProject {
     // TODO : Create PR to typechain for optional index file or implciit / explicit generation.
     removeSync(path.resolve(this.hre.config.typechain.outDir, "index.ts"));
     const typechainFactoriesFiles = readdirSync(typechainFactoriesPath);
-    log("typechainInstanceFiles => " + typechainInstanceFiles.join(" | "));
-    log("typechainFactoriesFiles => " + typechainFactoriesFiles.join(" | "));
+    log("typechainInstanceFiles => ");
+    log(typechainInstanceFiles);
+    log("typechainFactoriesFiles => ");
+    log(typechainFactoriesFiles);
 
     let contracts: ContractContext[] = [];
     await Promise.all(
@@ -178,6 +182,13 @@ export class TsMorphProject {
         }
 
         const deploymentFile = deploymentFiles.find((deploymentFile) => {
+          console.log("deploymentFile###");
+          console.log(
+            path.basename(deploymentFile, ".json"),
+            " === ",
+            artifactJson.contractName
+          );
+
           return (
             path.basename(deploymentFile, ".json") === artifactJson.contractName
           );
@@ -237,11 +248,6 @@ export class TsMorphProject {
     contracts = contracts.filter((contract, i, arr) => {
       const duplicate =
         arr.slice(0, i).findIndex((otherContract) => {
-          log(
-            contract.typechainInstance +
-              " === " +
-              otherContract.typechainInstance
-          );
           return (
             contract.typechainInstance === otherContract.typechainInstance ||
             contract.typechainFactory === otherContract.typechainFactory
@@ -262,9 +268,12 @@ export class TsMorphProject {
         (deploymentFile) => ![".chainId", "solcInputs"].includes(deploymentFile)
       )
       .forEach((deploymentFile) => {
-        const exist = contracts.find(
-          (contract) => contract.deploymentFile === deploymentFile
-        );
+        const exist = contracts.find((contract) => {
+          if (!contract.deploymentFile) {
+            return false;
+          }
+          return path.basename(contract.deploymentFile) === deploymentFile;
+        });
         if (!exist) {
           log("Deployment " + deploymentFile + " had no contract.");
           // try to find the contract which has been used to instantiate the deploymentInstance

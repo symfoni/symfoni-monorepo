@@ -6,7 +6,9 @@ import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
 import SimpleStorageADeployment from "./deployments/hardhat/SimpleStorageA.json";
 import SimpleStorageBDeployment from "./deployments/hardhat/SimpleStorageB.json";
-import SimpleStorageCDeployment from "./deployments/hardhat/SimpleStorageC.json";
+import GreeterDeployment from "./deployments/hardhat/Greeter.json";
+import { Greeter } from "./typechain/Greeter";
+import { Greeter__factory } from "./typechain/factories/Greeter__factory";
 import { SimpleStorage2 } from "./typechain/SimpleStorage2";
 import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
 import { SimpleStorage } from "./typechain/SimpleStorage";
@@ -33,7 +35,7 @@ const defaultSymfoniContext: SymfoniContextInterface = {
 export const SymfoniContext = React.createContext<SymfoniContextInterface>(defaultSymfoniContext);
 export const SimpleStorageAContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 export const SimpleStorageBContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
-export const SimpleStorageCContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
+export const GreeterContext = React.createContext<SymfoniGreeter>(emptyContract);
 export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
 export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 
@@ -61,9 +63,9 @@ export interface SymfoniSimpleStorage {
     factory?: SimpleStorage__factory;
 }
 
-export interface SymfoniSimpleStorage {
-    instance?: SimpleStorage;
-    factory?: SimpleStorage__factory;
+export interface SymfoniGreeter {
+    instance?: Greeter;
+    factory?: Greeter__factory;
 }
 
 export interface SymfoniSimpleStorage2 {
@@ -92,7 +94,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
     const [providerPriority, setProviderPriority] = useState<string[]>(["hardhat", "brreg", "web3modal"]);
     const [SimpleStorageA, setSimpleStorageA] = useState<SymfoniSimpleStorage>(emptyContract);
     const [SimpleStorageB, setSimpleStorageB] = useState<SymfoniSimpleStorage>(emptyContract);
-    const [SimpleStorageC, setSimpleStorageC] = useState<SymfoniSimpleStorage>(emptyContract);
+    const [Greeter, setGreeter] = useState<SymfoniGreeter>(emptyContract);
     const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
     const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
     useEffect(() => {
@@ -196,7 +198,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
             const finishWithContracts = (text: string) => {
                 setSimpleStorageA(getSimpleStorageA(_provider, _signer))
                 setSimpleStorageB(getSimpleStorageB(_provider, _signer))
-                setSimpleStorageC(getSimpleStorageC(_provider, _signer))
+                setGreeter(getGreeter(_provider, _signer))
                 setSimpleStorage2(getSimpleStorage2(_provider, _signer))
                 setSimpleStorage(getSimpleStorage(_provider, _signer))
                 finish(text)
@@ -249,13 +251,13 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         return contract
     }
         ;
-    const getSimpleStorageC = (_provider: providers.Provider, _signer?: Signer) => {
+    const getGreeter = (_provider: providers.Provider, _signer?: Signer) => {
 
-        const contractAddress = SimpleStorageCDeployment.receipt.contractAddress
-        const instance = _signer ? SimpleStorage__factory.connect(contractAddress, _signer) : SimpleStorage__factory.connect(contractAddress, _provider)
-        const contract: SymfoniSimpleStorage = {
+        const contractAddress = GreeterDeployment.receipt.contractAddress
+        const instance = _signer ? Greeter__factory.connect(contractAddress, _signer) : Greeter__factory.connect(contractAddress, _provider)
+        const contract: SymfoniGreeter = {
             instance: instance,
-            factory: _signer ? new SimpleStorage__factory(_signer) : undefined,
+            factory: _signer ? new Greeter__factory(_signer) : undefined,
         }
         return contract
     }
@@ -294,7 +296,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
                         <SimpleStorageAContext.Provider value={SimpleStorageA}>
                             <SimpleStorageBContext.Provider value={SimpleStorageB}>
-                                <SimpleStorageCContext.Provider value={SimpleStorageC}>
+                                <GreeterContext.Provider value={Greeter}>
                                     <SimpleStorage2Context.Provider value={SimpleStorage2}>
                                         <SimpleStorageContext.Provider value={SimpleStorage}>
                                             {showLoading && loading ?
@@ -309,7 +311,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                                             }
                                         </SimpleStorageContext.Provider >
                                     </SimpleStorage2Context.Provider >
-                                </SimpleStorageCContext.Provider >
+                                </GreeterContext.Provider >
                             </SimpleStorageBContext.Provider >
                         </SimpleStorageAContext.Provider >
                     </CurrentAddressContext.Provider>
