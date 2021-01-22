@@ -182,13 +182,6 @@ export class TsMorphProject {
         }
 
         const deploymentFile = deploymentFiles.find((deploymentFile) => {
-          console.log("deploymentFile###");
-          console.log(
-            path.basename(deploymentFile, ".json"),
-            " === ",
-            artifactJson.contractName
-          );
-
           return (
             path.basename(deploymentFile, ".json") === artifactJson.contractName
           );
