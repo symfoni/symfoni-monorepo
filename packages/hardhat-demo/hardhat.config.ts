@@ -15,7 +15,9 @@ const config: HardhatUserConfig = {
     providerOptions: {
       walletconnect: {
         options: {
-          infuraId: "c229331f1d044c8f95e03f54b0ea2f26",
+          rpc: {
+            55577: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+          },
         },
       },
     },

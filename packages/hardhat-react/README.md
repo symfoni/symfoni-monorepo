@@ -416,16 +416,6 @@ export default func;
 
 # Caveats
 
-## Users get Metamask up in their faces right after they enter the webpage. BAD UX!
-
-Yea, we know. We have some patterns with a fallback provider that solves this. But for the hackathon, we have not that had time to implement that. Coming
-
-## Can I only use Metemask?
-
-Web3modal supports many wallets. We will soon provide configuration for each of them.
-
-We will also allow you to inject your "whatever" hardhat development node you are using as a fallback provider when developing. We think this is a friendly tool for new Ethereum developers also as then they don't need to wrap their heads around a provider while building a smart-contract and a provider in the frontend.
-
 ## Invalid nonce.
 
 ```bash
@@ -439,13 +429,9 @@ Reset your account in Metamask.
 
 We don't know enough of the react build process to efficiently create a typescript react component which can be consumed by any other React build process. This is something we want to achieve!
 
-## Do I have to create a context of all contracts?
+## Useing Gatsby
 
-It will do so by default, but we will later provide an option to be explicit about which contracts create a context.
-
-## Will you support other frontend frameworks?
-
-Not planned atm.
+Make sure transcript target is es6 or higher.
 
 # Development
 
