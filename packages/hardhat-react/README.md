@@ -282,6 +282,53 @@ const [currentAddress, setCurrentAddress] = useContext(CurrentAddressContext)
 
 Our goal with this plugin was to make it easier for new developers to try out smart-contract development. Therefore we default the most needed configuration.
 
+## Accounts, private keys, and mnemonic.
+
+(This is simplified and in terms of Metamask to make it easier to get up developing)
+mnemonic: 12-word phrases that will correspond to many accounts(address and private key). You can only have one for each Metamask instance. [Use browser profiles to hold more than one.](https://metamask.zendesk.com/hc/en-us/articles/360015289952-How-to-Migrate-to-a-New-Seed-Phrase)
+privateKey: corresponds to one address
+
+When developing locally on hardhat you are most probably using ["hardhat-network"](https://hardhat.org/hardhat-network/) locally as your blockchain. By default, this blockchain will only have funds on addresses connected to mnemonic `test test test test test test test test test test test junk`. You can configure "hardhat-network" to use another mnemonic or private key [here](https://hardhat.org/config/#hardhat-network).
+
+### Private key
+
+```JSON
+{
+  "networks": {
+    "hardhat": {
+      "accounts": [
+        {
+          "balance": "10000000000000000000000",
+          "privateKey": "0xPRIVATE_KEY_GO_HERE"
+        }
+      ]
+    }
+  }
+}
+```
+
+### mnemonic
+
+```JSON
+{
+  "networks": {
+    "hardhat": {
+      "inject": false, // optional. If true, it will EXPOSE your mnemonic in your frontend code. Then it would be available as an "in-page browser wallet" / signer which can sign without confirmation.
+      "accounts": {
+        "mnemonic": "test test test test test test test test test test test junk" // test test test test test test test test test test test junk
+      }
+    }
+  }
+}
+```
+
+Then when you point your wallet (Metamask) to your "hardhat-network" provider. This is usually `http://127.0.0.1:8545` you should see funds on your account so that you can make transactions while developing.
+
+### Inject mnemonic
+
+- Have not added inject for private keys yet. Create an issue if you would like to see this.
+- Cant inject mnemonic if the provider is set to "mainnet" or has "live" property.
+
 ## Provider priority
 
 The React context tries to connect the frontend up with an Ethereum provider. Here you can set that priority. In this scenario, the react context will try to connect with Web3modal(Metamask) first, then if that fails. Try to connect with your Hardhat node.
