@@ -1,18 +1,33 @@
-### Universal Ethers backend (Hardhat) and Frontend(React) enviroment.
+# Hardhat Autogeneration All-in-one Suite
 
-- [THE PLUGIN - @symfoni/hardhat-react](https://github.com/symfoni/hardhat-plugins/tree/master/packages/hardhat-react)
+* Autogenerate fully typed React hooks integrated to your Hardhat smart contract watch pipeline.
 
-- [Boilerplate](https://github.com/symfoni/hardhat-react-boilerplate)
+* No need to manually write your own react hooks on top of new Contract(ABI, ...) instances (which aren't function typed anyways)
 
-## Packages
+#### Suite includes
 
-### [@symfoni/hardhat-demo](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-demo)
+* Typechain
+* Ethers.js
+* React.js
+* Hardhat
+* Autogeneration plugin
 
-This is a demo project that includes hardhat-react as a plugin to generate the react component that is used to display some example content.
+## Getting started 
+
+* Get started by forking 👉 [this repo. Tutorial in the Readme](https://github.com/symfoni/hardhat-react-boilerplate) 👈
+
+
+# Contribute
+
+## Packages in this repo
 
 ### [@symfoni/hardhat-react](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-react)
 
 Here is the code for the hardhat react plugin. Lerna will symlink this package to @symfoni/hardhat-demo so we can use it there.
+
+### [@symfoni/hardhat-demo](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-demo)
+
+Test project. It's the boilerplate "Simplestorage code" using hardhat-react for the front-end.
 
 ## Developing
 
