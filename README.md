@@ -1,8 +1,11 @@
 # Hardhat Autogeneration All-in-one Suite
 
-* Autogenerate fully typed React hooks integrated to your Hardhat smart contract watch pipeline.
-
+* Autogenerate fully typed React hooks integrated into your Hardhat smart contract watch pipeline.
 * No need to manually write your own react hooks on top of new Contract(ABI, ...) instances (which aren't function typed anyways)
+
+Suppose you change something in your smart contract. In that case, hardhat will recompile the ABIs hardhat-react (using Typechain) will scan those and generate React context hooks for you! Plus provider, signer, and currentAdd.
+
+**This saves you a lot of time 🕑**
 
 #### Suite includes
 
@@ -27,7 +30,7 @@ Here is the code for the hardhat react plugin. Lerna will symlink this package t
 
 ### [@symfoni/hardhat-demo](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-demo)
 
-Test project. It's the boilerplate "Simplestorage code" using hardhat-react for the front-end.
+Test project. It's the boilerplate "SimpleStorage code" using hardhat-react for the frontend.
 
 ## Developing
 
@@ -35,7 +38,7 @@ Test project. It's the boilerplate "Simplestorage code" using hardhat-react for 
 2. Run `yarn`
 3. Run `yarn run bootstrap` // This will install all packages and build
 
-You need three processes running for the full development enviroment
+You need three processes running for the full development environment
 
 1. `yarn run watch` watches changes in hardhat-react plugin. Lerna will then symlink this package to be used in hardhat-demo.
 2. `yarn run node` runs up a blockchain node, generate typechain interfaces, compile and deploy smart-contracts then watch for changes in smart contracts and deploy them.
@@ -51,4 +54,4 @@ You need three processes running for the full development enviroment
 2. Use Mnemonic "shrug antique orange tragic direct drop abstract ring carry price anchor train".
 3. Set the Network to custom rpc at "http://127.0.0.1:8545/".
 
-Demo should be working!
+The demo should be working! 
