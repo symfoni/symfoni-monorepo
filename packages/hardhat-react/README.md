@@ -18,7 +18,7 @@ A Hardhat plugin that generates a React hook component from your smart contracts
 - Runs alongside **hardhat-node** or hardhat-deploy --watch so any change you do in a smart contract is immediately injected into React app. Just start the hardhat runtime, and everything should be reflected.
 - Provision a connection to your blockchain node. Either with **Web3modal**, which supports many wallets, or directly to your hardhat node through HttpRPC.
 
-# Quik start
+# Quick start
 
 If you want to quickly get started with a new hardhat project and a react application. Try this [boilerplate](https://github.com/symfoni/hardhat-react-boilerplate).
 
