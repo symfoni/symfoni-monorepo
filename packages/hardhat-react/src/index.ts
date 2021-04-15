@@ -47,14 +47,15 @@ extendConfig(
     config.paths.react = newReactPath;
 
     // Set deployments path default
-    const userDeploymentPath = userConfig.paths?.deployments;
-    if (userDeploymentPath === undefined) {
-      const newDeploymentPath = path.join(
-        config.paths.root,
-        "./frontend/src/hardhat/deployments"
-      );
-      config.paths.deployments = newDeploymentPath;
-    }
+    // Removed, dont relie on deployment files anymore.
+    // const userDeploymentPath = userConfig.paths?.deployments;
+    // if (userDeploymentPath === undefined) {
+    //   const newDeploymentPath = path.join(
+    //     config.paths.root,
+    //     "./frontend/src/hardhat/deployments"
+    //   );
+    //   config.paths.deployments = newDeploymentPath;
+    // }
 
     // Set some defaults for other plugins to get fast going.
     // deployer

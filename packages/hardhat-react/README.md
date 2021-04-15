@@ -69,16 +69,16 @@ The plugin will hooks into hardhat-deploy, which hooks into `npx hardhat node --
 
 You can run it manually with `npx hardhat react`. You probably need to run `npx hardhat typechain` and `npx hardhat deploy`first to have artifacts, deployments, and typechain files ready.
 
-The React context uses the output from typechain and deployments. It generates a react context component as a typescript react file (SymfoniContext.tsx), which imports both typechain and deployment files. It then uses these files alongside Ethers and Web3Modal to set up a context for your connection and each smart contract (deployed or not deployed).
+The React context uses the output from typechain and deployments. It generates a react context component as a typescript react file (SymfoniContext.tsx), which imports typechain. It then uses these files alongside Ethers and Web3Modal to set up a context for your connection and each smart contract (deployed or not deployed).
 
-# Deployment and .gitignore
+<!-- # Deployment and .gitignore
 
 We are still evaluating how to best handle deployments. For now we suggest to .gitignore the networks you develop on do versioning on deployments to shared networks.
 
 ```bash
 frontend/src/hardhat/deployments/hardhat
 frontend/src/hardhat/deployments/localhost
-```
+``` -->
 
 # Frontend
 
@@ -409,8 +409,7 @@ If you don't set these configurations yourself, the hardhat-react plugin will de
     "providerPriority": ["web3modal", "hardhat"]
   },
   "paths": {
-    "react": "./frontend/src/hardhat",
-    "deployments": "./frontend/src/hardhat/deployments/"
+    "react": "./frontend/src/hardhat"
   },
   "namedAccounts": {
     "deployer": {

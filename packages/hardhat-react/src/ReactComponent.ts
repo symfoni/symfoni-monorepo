@@ -470,14 +470,14 @@ export class ReactComponent {
         declarations: [
           {
             name: `get${contract.name}`,
-            initializer: (writer) => {
+            initializer: async (writer) => {
               writer.writeLine(
                 `(_provider: providers.Provider, _signer?: Signer ) => {`
               );
 
-              if (contract.deploymentFile) {
+              if (contract.contractAddress) {
                 writer.write(`
-                  const contractAddress = ${contract.name}Deployment.receipt.contractAddress
+                  const contractAddress = "${contract.contractAddress}"
                   const instance = _signer ? ${contract.typechainFactoryName}.connect(contractAddress, _signer) : ${contract.typechainFactoryName}.connect(contractAddress, _provider)
                 `);
               } else {

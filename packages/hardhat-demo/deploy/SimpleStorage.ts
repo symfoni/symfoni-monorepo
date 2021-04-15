@@ -6,6 +6,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
 
   const { deployer } = await getNamedAccounts();
+  await deploy("SimpleStorage", {
+    from: deployer,
+    contract: "SimpleStorage",
+    args: [],
+    log: true,
+  });
 
   await deploy("SimpleStorageA", {
     from: deployer,

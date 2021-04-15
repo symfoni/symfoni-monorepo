@@ -4,15 +4,12 @@
 import { providers, Signer, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
-import SimpleStorageADeployment from "./deployments/localhost/SimpleStorageA.json";
-import SimpleStorageBDeployment from "./deployments/localhost/SimpleStorageB.json";
-import GreeterDeployment from "./deployments/localhost/Greeter.json";
 import { Greeter } from "./typechain/Greeter";
 import { Greeter__factory } from "./typechain/factories/Greeter__factory";
-import { SimpleStorage2 } from "./typechain/SimpleStorage2";
-import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
 import { SimpleStorage } from "./typechain/SimpleStorage";
 import { SimpleStorage__factory } from "./typechain/factories/SimpleStorage__factory";
+import { SimpleStorage2 } from "./typechain/SimpleStorage2";
+import { SimpleStorage2__factory } from "./typechain/factories/SimpleStorage2__factory";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const emptyContract = {
@@ -36,8 +33,8 @@ export const SymfoniContext = React.createContext<SymfoniContextInterface>(defau
 export const SimpleStorageAContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 export const SimpleStorageBContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
 export const GreeterContext = React.createContext<SymfoniGreeter>(emptyContract);
-export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
 export const SimpleStorageContext = React.createContext<SymfoniSimpleStorage>(emptyContract);
+export const SimpleStorage2Context = React.createContext<SymfoniSimpleStorage2>(emptyContract);
 
 export interface SymfoniContextInterface {
     init: (provider?: string) => void;
@@ -68,14 +65,14 @@ export interface SymfoniGreeter {
     factory?: Greeter__factory;
 }
 
-export interface SymfoniSimpleStorage2 {
-    instance?: SimpleStorage2;
-    factory?: SimpleStorage2__factory;
-}
-
 export interface SymfoniSimpleStorage {
     instance?: SimpleStorage;
     factory?: SimpleStorage__factory;
+}
+
+export interface SymfoniSimpleStorage2 {
+    instance?: SimpleStorage2;
+    factory?: SimpleStorage2__factory;
 }
 
 export const Symfoni: React.FC<SymfoniProps> = ({
@@ -95,8 +92,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
     const [SimpleStorageA, setSimpleStorageA] = useState<SymfoniSimpleStorage>(emptyContract);
     const [SimpleStorageB, setSimpleStorageB] = useState<SymfoniSimpleStorage>(emptyContract);
     const [Greeter, setGreeter] = useState<SymfoniGreeter>(emptyContract);
-    const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
     const [SimpleStorage, setSimpleStorage] = useState<SymfoniSimpleStorage>(emptyContract);
+    const [SimpleStorage2, setSimpleStorage2] = useState<SymfoniSimpleStorage2>(emptyContract);
     useEffect(() => {
         if (messages.length > 0)
             console.debug(messages.pop())
@@ -201,8 +198,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                 setSimpleStorageA(getSimpleStorageA(_provider, _signer))
                 setSimpleStorageB(getSimpleStorageB(_provider, _signer))
                 setGreeter(getGreeter(_provider, _signer))
-                setSimpleStorage2(getSimpleStorage2(_provider, _signer))
                 setSimpleStorage(getSimpleStorage(_provider, _signer))
+                setSimpleStorage2(getSimpleStorage2(_provider, _signer))
                 finish(text)
             }
             if (!autoInit && initializeCounter === 0) return finish("Auto init turned off.")
@@ -233,7 +230,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
 
     const getSimpleStorageA = (_provider: providers.Provider, _signer?: Signer) => {
 
-        const contractAddress = SimpleStorageADeployment.receipt.contractAddress
+        const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
         const instance = _signer ? SimpleStorage__factory.connect(contractAddress, _signer) : SimpleStorage__factory.connect(contractAddress, _provider)
         const contract: SymfoniSimpleStorage = {
             instance: instance,
@@ -244,7 +241,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         ;
     const getSimpleStorageB = (_provider: providers.Provider, _signer?: Signer) => {
 
-        const contractAddress = SimpleStorageBDeployment.receipt.contractAddress
+        const contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
         const instance = _signer ? SimpleStorage__factory.connect(contractAddress, _signer) : SimpleStorage__factory.connect(contractAddress, _provider)
         const contract: SymfoniSimpleStorage = {
             instance: instance,
@@ -255,11 +252,22 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         ;
     const getGreeter = (_provider: providers.Provider, _signer?: Signer) => {
 
-        const contractAddress = GreeterDeployment.receipt.contractAddress
+        const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
         const instance = _signer ? Greeter__factory.connect(contractAddress, _signer) : Greeter__factory.connect(contractAddress, _provider)
         const contract: SymfoniGreeter = {
             instance: instance,
             factory: _signer ? new Greeter__factory(_signer) : undefined,
+        }
+        return contract
+    }
+        ;
+    const getSimpleStorage = (_provider: providers.Provider, _signer?: Signer) => {
+
+        const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+        const instance = _signer ? SimpleStorage__factory.connect(contractAddress, _signer) : SimpleStorage__factory.connect(contractAddress, _provider)
+        const contract: SymfoniSimpleStorage = {
+            instance: instance,
+            factory: _signer ? new SimpleStorage__factory(_signer) : undefined,
         }
         return contract
     }
@@ -269,15 +277,6 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         const contract: SymfoniSimpleStorage2 = {
             instance: instance,
             factory: _signer ? new SimpleStorage2__factory(_signer) : undefined,
-        }
-        return contract
-    }
-        ;
-    const getSimpleStorage = (_provider: providers.Provider, _signer?: Signer) => {
-        let instance = _signer ? SimpleStorage__factory.connect(ethers.constants.AddressZero, _signer) : SimpleStorage__factory.connect(ethers.constants.AddressZero, _provider)
-        const contract: SymfoniSimpleStorage = {
-            instance: instance,
-            factory: _signer ? new SimpleStorage__factory(_signer) : undefined,
         }
         return contract
     }
@@ -299,8 +298,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                         <SimpleStorageAContext.Provider value={SimpleStorageA}>
                             <SimpleStorageBContext.Provider value={SimpleStorageB}>
                                 <GreeterContext.Provider value={Greeter}>
-                                    <SimpleStorage2Context.Provider value={SimpleStorage2}>
-                                        <SimpleStorageContext.Provider value={SimpleStorage}>
+                                    <SimpleStorageContext.Provider value={SimpleStorage}>
+                                        <SimpleStorage2Context.Provider value={SimpleStorage2}>
                                             {showLoading && loading ?
                                                 props.loadingComponent
                                                     ? props.loadingComponent
@@ -311,8 +310,8 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                                                     </div>
                                                 : props.children
                                             }
-                                        </SimpleStorageContext.Provider >
-                                    </SimpleStorage2Context.Provider >
+                                        </SimpleStorage2Context.Provider >
+                                    </SimpleStorageContext.Provider >
                                 </GreeterContext.Provider >
                             </SimpleStorageBContext.Provider >
                         </SimpleStorageAContext.Provider >

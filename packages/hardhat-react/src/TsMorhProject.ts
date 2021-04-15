@@ -38,6 +38,7 @@ export interface ContractContext {
   typechainInstance: string;
   typechainFactory: string;
   instance: boolean;
+  contractAddress?: string;
 }
 
 export const contractInterfaceName = (contract: ContractContext) => {
@@ -248,7 +249,7 @@ export class TsMorphProject {
         }) !== -1;
       if (duplicate) {
         log(
-          `Contract ${contract.name} is a duplicated. Removing the last instance of it from React context generation`
+          `Contract ${contract.name} is duplicated. Removing the last instance of it from React context generation`
         );
       }
       return !duplicate;
@@ -297,6 +298,19 @@ export class TsMorphProject {
       });
 
     contracts = [...contractInstances, ...contracts];
+
+    contracts = await Promise.all(
+      contracts.map(async (contract) => {
+        if (contract.deploymentFile) {
+          const deploymentFile = await this.hre.deployments.get(contract.name);
+          console.log(deploymentFile.receipt?.contractAddress);
+          if (deploymentFile.receipt) {
+            contract.contractAddress = deploymentFile.receipt.contractAddress;
+          }
+        }
+        return contract;
+      })
+    );
 
     log(
       contracts.length + " contracts has been set for react context generation"
