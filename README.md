@@ -1,18 +1,36 @@
-### Universal Ethers backend (Hardhat) and Frontend(React) enviroment.
+# Hardhat Autogeneration All-in-one Suite
 
-- [THE PLUGIN - @symfoni/hardhat-react](https://github.com/symfoni/hardhat-plugins/tree/master/packages/hardhat-react)
+* Autogenerate fully typed React hooks integrated into your Hardhat smart contract watch pipeline.
+* No need to manually write your own react hooks on top of new Contract(ABI, ...) instances (which aren't function typed anyways)
 
-- [Boilerplate](https://github.com/symfoni/hardhat-react-boilerplate)
+Suppose you change something in your smart contract. In that case, hardhat will recompile the ABIs hardhat-react (using Typechain) will scan those and generate React context hooks for you! Plus provider, signer, and currentAdd.
 
-## Packages
+**This saves you a lot of time 🕑**
 
-### [@symfoni/hardhat-demo](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-demo)
+#### Suite includes
 
-This is a demo project that includes hardhat-react as a plugin to generate the react component that is used to display some example content.
+* Typechain
+* Ethers.js
+* React.js
+* Hardhat
+* Autogeneration plugin
+
+## Getting started 
+
+* Get started by forking 👉 [this repo. Tutorial in the Readme](https://github.com/symfoni/hardhat-react-boilerplate) 👈
+
+
+# Contribute
+
+## Packages in this repo
 
 ### [@symfoni/hardhat-react](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-react)
 
 Here is the code for the hardhat react plugin. Lerna will symlink this package to @symfoni/hardhat-demo so we can use it there.
+
+### [@symfoni/hardhat-demo](https://github.com/symfoni/hardhat-plugins/tree/hardhat/packages/hardhat-demo)
+
+Test project. It's the boilerplate "SimpleStorage code" using hardhat-react for the frontend.
 
 ## Developing
 
@@ -20,7 +38,7 @@ Here is the code for the hardhat react plugin. Lerna will symlink this package t
 2. Run `yarn`
 3. Run `yarn run bootstrap` // This will install all packages and build
 
-You need three processes running for the full development enviroment
+You need three processes running for the full development environment
 
 1. `yarn run watch` watches changes in hardhat-react plugin. Lerna will then symlink this package to be used in hardhat-demo.
 2. `yarn run node` runs up a blockchain node, generate typechain interfaces, compile and deploy smart-contracts then watch for changes in smart contracts and deploy them.
@@ -36,4 +54,4 @@ You need three processes running for the full development enviroment
 2. Use Mnemonic "shrug antique orange tragic direct drop abstract ring carry price anchor train".
 3. Set the Network to custom rpc at "http://127.0.0.1:8545/".
 
-Demo should be working!
+The demo should be working! 
