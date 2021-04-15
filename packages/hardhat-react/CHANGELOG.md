@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.14] - 22.01.2021
+## [0.2.0] - 22.01.2021
 
 - Removed reliance on deploymentFiles
 
