@@ -1,3 +1,9 @@
+#### 👷‍ We're hiering! Join our team to contribute full-time to the Ethereum ecosystem!
+
+We're hiring. If you're a full-stack dApp developer, we want you! 👈 This is an excellent opportunity to contribute full-time to the Ethereum ecosystem. 
+
+**[Check out our job listing](https://www.notion.so/symfoni/Symfoni-jobs-0c2bdc029d2a4cf7b91864a5e68ed00f)**
+
 # Hardhat Autogeneration All-in-one Suite
 
 * Autogenerate fully typed React hooks integrated into your Hardhat smart contract watch pipeline.
