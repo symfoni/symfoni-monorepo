@@ -1,13 +1,13 @@
 #### 👷‍ Join our team to contribute full-time to tools like Hardhat React!
 
-We're hiring. If you're a full-stack dApp developer, we want you! 👈 This is an excellent opportunity to contribute full-time to the Ethereum ecosystem. 
+We're hiring. If you're a full-stack dApp developer, we want you! 👈 This is an excellent opportunity to contribute full-time to the Ethereum ecosystem.
 
 **[Check out our job listing](https://www.notion.so/symfoni/Symfoni-jobs-0c2bdc029d2a4cf7b91864a5e68ed00f)**
 
 # Hardhat Autogeneration All-in-one Suite
 
-* Autogenerate fully typed React hooks integrated into your Hardhat smart contract watch pipeline.
-* No need to manually write your own react hooks on top of new Contract(ABI, ...) instances (which aren't function typed anyways)
+- Autogenerate fully typed React hooks integrated into your Hardhat smart contract watch pipeline.
+- No need to manually write your own react hooks on top of new Contract(ABI, ...) instances (which aren't function typed anyways)
 
 Suppose you change something in your smart contract. In that case, hardhat will recompile the ABIs hardhat-react (using Typechain) will scan those and generate React context hooks for you! Plus provider, signer, and currentAdd.
 
@@ -15,16 +15,15 @@ Suppose you change something in your smart contract. In that case, hardhat will 
 
 #### Suite includes
 
-* Typechain
-* Ethers.js
-* React.js
-* Hardhat
-* Autogeneration plugin
+- Typechain
+- Ethers.js
+- React.js
+- Hardhat
+- Autogeneration plugin
 
-## Getting started 
+## Getting started
 
-* Get started by forking 👉 [this repo. Tutorial in the Readme](https://github.com/symfoni/hardhat-react-boilerplate) 👈
-
+- Get started by forking 👉 [this repo. Tutorial in the Readme](https://github.com/symfoni/hardhat-react-boilerplate) 👈
 
 # Contribute
 
@@ -60,4 +59,4 @@ You need three processes running for the full development environment
 2. Use Mnemonic "shrug antique orange tragic direct drop abstract ring carry price anchor train".
 3. Set the Network to custom rpc at "http://127.0.0.1:8545/".
 
-The demo should be working! 
+The demo should be working!

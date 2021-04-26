@@ -1,5 +1,11 @@
 [![hardhat](https://hardhat.org/assets/img/Hardhat-logo.652a7049.svg?1)](https://hardhat.org)
 
+#### 👷‍ Join our team to contribute full-time to tools like Hardhat React!
+
+We're hiring. If you're a full-stack dApp developer, we want you! 👈 This is an excellent opportunity to contribute full-time to the Ethereum ecosystem.
+
+**[Check out our job listing](https://www.notion.so/symfoni/Symfoni-jobs-0c2bdc029d2a4cf7b91864a5e68ed00f)**
+
 #### Part of contribution to the ETHOnline hackathon
 
 **Alpha release, interfaces will change.**
