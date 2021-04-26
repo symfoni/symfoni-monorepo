@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/hardhat-demo",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publishConfig": {
     "access": "public"
   },
@@ -26,7 +26,7 @@
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "@symfoni/hardhat-react": "^0.2.0",
+    "@symfoni/hardhat-react": "^0.2.1",
     "@typechain/ethers-v5": "^5.0.0"
   },
   "scripts": {
