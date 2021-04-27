@@ -488,3 +488,5 @@ Make sure transcript target is es6 or higher.
 # Development
 
 If you want to develop this plugin in any way, we suggest you fork this Lerna repo; [hardhat-plugins](https://github.com/symfoni/hardhat-plugins).
+
+...
