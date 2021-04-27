@@ -1,6 +1,6 @@
 {
   "name": "@symfoni/hardhat-react",
-  "version": "0.3.0",
+  "version": "0.3.1-next.0",
   "description": "A Hardhat plugin that generates a React hook component from your smart contracts. Hot reloaded into your React app. Deployed or not deployed. And everything typed and initialized.",
   "repository": "https://github.com/symfoni/hardhat-plugins",
   "author": "Robertosnap",
