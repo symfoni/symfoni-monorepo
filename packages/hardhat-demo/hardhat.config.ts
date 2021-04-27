@@ -9,18 +9,21 @@ import "@typechain/ethers-v5";
 
 const config: HardhatUserConfig = {
   react: {
-    providerPriority: ["hardhat", "brreg", "web3modal"],
+    providerPriority: ["hardhat", "web3modal"],
     handle: ["SimpleStorage", "SimpleStorage2", "Greeter"],
-    fallbackProvider: "brreg",
-    providerOptions: {
-      walletconnect: {
-        options: {
-          rpc: {
-            55577: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-          },
-        },
-      },
+    fallbackProvider: "hardhat",
+    walletConnectV2: {
+      enable: true,
     },
+    // providerOptions: {
+    //   walletconnect: {
+    //     options: {
+    //       rpc: {
+    //         55577: "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
+    //       },
+    //     },
+    //   },
+    // },
   },
   solidity: {
     compilers: [
@@ -61,41 +64,6 @@ const config: HardhatUserConfig = {
       inject: true,
       accounts: {
         mnemonic: "test test test test test test test test test test test junk", // test test test test test test test test test test test junk
-      },
-    },
-    brreg: {
-      url:
-        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-
-      gasPrice: 0,
-      inject: true,
-      providerType: "JsonRpcProvider",
-      accounts: {
-        mnemonic:
-          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
-      },
-    },
-    brregStage: {
-      url:
-        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-      gasPrice: 0,
-      inject: true,
-      providerType: "StaticJsonRpcProvider",
-      accounts: {
-        mnemonic:
-          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
-      },
-    },
-    brregProd: {
-      url:
-        "https://u1qdua80h5:Er0LWdZuKqOza22YNQKhtdFCbqRzhzGCRhuZgrtHZ9s@u1txh1ent0-u1ieecy018-rpc.us1-azure.kaleido.io",
-
-      gasPrice: 0,
-      inject: false,
-      providerType: "JsonRpcProvider",
-      accounts: {
-        mnemonic:
-          "shrug antique orange tragic direct drop abstract ring carry price anchor train",
       },
     },
   },

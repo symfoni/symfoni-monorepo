@@ -7,6 +7,10 @@ export interface React {
   fallbackProvider?: string;
   skip?: string[];
   handle?: string[];
+  walletConnectV2?: {
+    enable: boolean;
+    methods?: string[];
+  };
   providerOptions?: {
     [id in "walletconnect"]: {
       options?: any;

@@ -311,27 +311,66 @@ export class ReactComponent {
       }
     };
 
-    this.component.addVariableStatement({
-      declarationKind: VariableDeclarationKind.Const,
-      declarations: [
-        {
-          name: "getSigner",
-          initializer: (writer) => {
-            writer.write(
-              `async ( _provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
-                switch (hardhatProviderName) {`
-            );
-            writeSigners(writer);
-            writer.write(
-              `default:
-                        return undefined
-                }
-            }`
-            );
+    // TODO : Refactor everything, signer has bad design
+    if (this.hre.config.react.walletConnectV2?.enable) {
+      this.component.addVariableStatement({
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: "getSigner",
+            initializer: (writer) => {
+              writer.write(
+                `async ( _provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
+                  const _signer = new WalletConnectSigner({
+                      qrModal: false,
+                  }).connect(_provider);
+
+                  await new Promise<void>(async (resolve) => {
+                      _signer.on(SIGNER_EVENTS.uri, ({ uri }: { uri: string }) => {
+                          WalletConnectQrcodeModal.open(uri, (res: any) => {
+                              console.log("Opneed, ", res);
+                          })
+                      });
+                      _signer.on("open", () => {
+                          WalletConnectQrcodeModal.close()
+                          resolve()
+                      });
+
+                      await _signer.open();
+
+                  })
+                  console.log("returning signer");
+
+                  return _signer
+                }`
+              );
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
+    } else {
+      this.component.addVariableStatement({
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: "getSigner",
+            initializer: (writer) => {
+              writer.write(
+                `async ( _provider: providers.Provider, hardhatProviderName: string): Promise<Signer | undefined> => {
+                  switch (hardhatProviderName) {`
+              );
+              writeSigners(writer);
+              writer.write(
+                `default:
+                          return undefined
+                  }
+              }`
+              );
+            },
+          },
+        ],
+      });
+    }
   }
 
   private getWeb3ModalProvider() {

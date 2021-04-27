@@ -92,14 +92,25 @@ export class ReactContext {
               "./" +
               contract.typechainFactory.replace(".ts", "").replace(`\\`, `/`),
           },
-          // REVIEW : Maybe import artifact files
-          // {
-          //   namedImports: [`${contract.name}Artifact`],
-          //   moduleSpecifier: contract.artifactFile
-          // }
         ]);
       }
     });
+    // Handle WalletConnectV2
+    if (this.hre.config.react.walletConnectV2) {
+      if (this.hre.config.react.walletConnectV2.enable) {
+        log(
+          "WalletConnectV2 configuration found. Ensure @walletconnect/qrcode-modal & @symfoni/walletconnect-v2-ethers-signer is installed in Frontend."
+        );
+        this.sourceFile.addImportDeclaration({
+          defaultImport: `${"WalletConnectQrcodeModal"}`,
+          moduleSpecifier: `${"@walletconnect/qrcode-modal"}`,
+        });
+        this.sourceFile.addImportDeclaration({
+          namedImports: ["SIGNER_EVENTS", "WalletConnectSigner"],
+          moduleSpecifier: `${"@symfoni/walletconnect-v2-ethers-signer"}`,
+        });
+      }
+    }
 
     // Handle web3modal providers
     if (this.hre.config.react.providerOptions) {
