@@ -15,7 +15,7 @@
     "test": "npx lerna run test",
     "frontend": "cd packages/hardhat-demo/frontend && yarn start",
     "publish": "npx lerna run build && npx lerna publish -y",
-    "publish:next": "npx lerna run build && npx lerna publish --dist-tag next"
+    "publish:next": "npx lerna run build && npx lerna publish"
   },
   "workspaces": [
     "packages/*"
