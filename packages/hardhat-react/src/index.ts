@@ -5,7 +5,7 @@ import path from "path";
 import chalk from "chalk";
 import { TsMorphProject } from "./TsMorhProject";
 import "hardhat-deploy/dist/src/type-extensions";
-import "@typechain/hardhat/dist/src/type-extensions";
+import "@typechain/hardhat/dist/type-extensions";
 import "./type-extensions";
 import { debug } from "debug";
 
