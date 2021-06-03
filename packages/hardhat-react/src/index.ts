@@ -76,6 +76,7 @@ extendConfig(
           "./frontend/src/hardhat/typechain"
         ),
         target: "ethers-v5",
+        alwaysGenerateOverloads: false,
       };
     } else {
       const userTypechainOutdir = userConfig.typechain.outDir;

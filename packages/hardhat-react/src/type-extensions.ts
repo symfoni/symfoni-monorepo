@@ -1,4 +1,4 @@
-import { string } from "hardhat/internal/core/params/argumentTypes";
+import { TypechainConfig } from "@typechain/hardhat/dist/types";
 import "hardhat/types/config";
 import "hardhat/types/runtime";
 
@@ -28,9 +28,11 @@ declare module "hardhat/types/config" {
 
   export interface HardhatUserConfig {
     react?: React;
+    typechain?: TypechainConfig;
   }
   export interface HardhatConfig {
     react: React;
+    typechain: TypechainConfig;
   }
 
   // HardhatNetwork
@@ -105,7 +107,5 @@ declare module "hardhat/types/config" {
 }
 
 declare module "hardhat/types/runtime" {
-  export interface HardhatRuntimeEnvironment {
-    //
-  }
+  export interface HardhatRuntimeEnvironment {}
 }
