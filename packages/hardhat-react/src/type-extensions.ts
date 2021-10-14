@@ -3,8 +3,8 @@ import "hardhat/types/config";
 import "hardhat/types/runtime";
 
 export interface React {
-  providerPriority: string[];
-  fallbackProvider?: string;
+  defaultProvider: string;
+  defaultSigner?: string;
   skip?: string[];
   handle?: string[];
   providerOptions?: {
@@ -33,37 +33,8 @@ declare module "hardhat/types/config" {
     react: React;
   }
 
-  // HardhatNetwork
-
-  // export interface HardhatNetworkHDAccountsUserConfig {
-  //   inject?: boolean;
-  // }
-  // export interface HardhatNetworkAccountUserConfig {
-  //   inject?: boolean;
-  // }
-  // export interface HardhatNetworkHDAccountsConfig {
-  //   inject?: boolean;
-  // }
-  // export interface HardhatNetworkAccountConfig {
-  //   inject?: boolean;
-  // }
-
-  export interface HardhatNetworkUserConfig {
-    inject?: boolean;
-  }
-  export interface HardhatNetworkConfig {
-    inject?: boolean;
-  }
-
   // HTTP Network
-  export interface HttpNetworkHDAccountsConfigSymfoni {
-    inject?: boolean;
-  }
-  export interface HDAccountsUserConfigSymfoni {
-    inject?: boolean;
-  }
   export interface HttpNetworkUserConfig {
-    inject?: boolean;
     providerType?:
       | "UrlJsonRpcProvider"
       | "AlchemyProvider"
@@ -83,7 +54,6 @@ declare module "hardhat/types/config" {
       | "ExternalProvider";
   }
   export interface HttpNetworkConfig {
-    inject?: boolean;
     providerType?:
       | "UrlJsonRpcProvider"
       | "AlchemyProvider"
