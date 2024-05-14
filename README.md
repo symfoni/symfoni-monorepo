@@ -1,8 +1,4 @@
-#### 👷‍ Join our team to contribute full-time to tools like Hardhat React! 👷
-
-We're hiring. If you're a full-stack dApp developer, we want you! 👈 This is an excellent opportunity to contribute full-time to the Ethereum ecosystem.
-
-**[Check out our job listing](https://www.notion.so/symfoni/Symfoni-jobs-0c2bdc029d2a4cf7b91864a5e68ed00f)**
+## IMPORTANT NOTE: THIS REPO IS DEPRECATED.
 
 # Hardhat Autogeneration All-in-one Suite
 
